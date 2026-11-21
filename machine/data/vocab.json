@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-21T14:21:58.890Z",
+ "generated": "2026-11-21T20:34:13.828Z",
  "FACES": [
   "neutral",
   "smile",
@@ -380,7 +380,7 @@
    "crowds": [
     {
      "area": "crowd",
-     "slots": 24
+     "slots": 34
     }
    ],
    "pois": [
@@ -412,7 +412,7 @@
    "crowds": [
     {
      "area": "crowd",
-     "slots": 24
+     "slots": 40
     }
    ],
    "pois": [
