@@ -1,0 +1,52 @@
+{
+ "generated": "2026-11-21T03:58:40.330Z",
+ "FACES": [
+  "neutral",
+  "smile"
+ ],
+ "POSES": [
+  "stand"
+ ],
+ "HAIR_STYLES": [
+  "short"
+ ],
+ "SHIRT_PATTERNS": [
+  "solid"
+ ],
+ "PROPS_HELD": [],
+ "PROPS": [],
+ "FRAMINGS": [
+  "medium"
+ ],
+ "MOVES": [
+  "static",
+  "push_in"
+ ],
+ "SETS": {
+  "lake_dock": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 12
+    }
+   ],
+   "pois": [
+    "lake",
+    "across"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide"
+   ]
+  }
+ }
+}
