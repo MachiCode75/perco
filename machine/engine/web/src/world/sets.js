@@ -25,7 +25,7 @@ function backdropHills(b, cx, cz, r0 = 430, n = 22, o = {}) {
     const R = r0 - 60 + r() * 60;
     b.prim('ico1', cx + Math.sin(a) * R, -10, cz + Math.cos(a) * R, range(r, 60, 100), range(r, 22, 42), range(r, 40, 70), 'foliage', pick(r, ['#4d7a45', '#557f4a', '#4a7050']), { ry: r() * 6 });
     const R2 = r0 + 160 + r() * 140; const a2 = a + 0.13;
-    b.prim('ico1', cx + Math.sin(a2) * R2, -20, cz + Math.cos(a2) * R2, range(r, 90, 150), range(r, 70, 130), range(r, 60, 100), 'foliage', pick(r, ['#5a6c7a', '#62707e', '#566878']), { ry: r() * 6 });
+    b.prim('ico1', cx + Math.sin(a2) * R2, -20, cz + Math.cos(a2) * R2, range(r, 90, 150), range(r, 50, 95), range(r, 60, 100), 'foliage', pick(r, ['#62788a', '#6a7a8c', '#5e7286']), { ry: r() * 6 });
   }
   b.chunk = keepChunk; b.cast = keepCast; b.receive = keepRecv;
 }
@@ -160,8 +160,9 @@ function lakeCommon(ctx, b, id, o) {
   const fz = house ? -8 - 39 : -47; const hd = house?.info || {};
   const church = town.far.find((h) => h.church);
   const crowd = [
+    ...slots([[-4, 0, -1], [4, 0, -1.5], [-2, 0, -4.5], [2.5, 0, -5], [-4.2, 0, -7], [4.2, 0, -7.5]]),
     ...rowSlots(-46, 46, 3.4, -10.5, 0, 0, (x) => Math.abs(x) < 8.5),
-    ...rowSlots(-4.5, 4.5, 3, 12.5, 0), ...slots([[-8, 0, 19], [-4.5, 0, 19.5], [4.5, 0, 19.5], [8, 0, 19]]),
+    ...slots([[-8.5, 0, 22], [-4.5, 0, 23], [4.5, 0, 23], [8.5, 0, 22]]),
   ];
   const far = [...rowSlots(-4.5, 4.5, 3, W - 8 - 12, Math.PI), ...rowSlots(-40, 40, 3.5, W - 8 + 2.5, Math.PI, 0, (x) => Math.abs(x) < 8.5)];
   const shore = rowSlots(-60, 60, 3.2, -10.5, 0, 0, (x) => Math.abs(x) < 8.5);
@@ -214,7 +215,7 @@ const SET_BUILDERS = {
     return { waterLevel: town.waterLevel, extra: [town.water],
       marks: { A: M(0, 0.35, 0.6), B: M(3.4, 0.35, 0.2), C: M(-3.4, 0.35, 0.2), D: M(0, 0, 5), crossing: M(dx, 0, 10), lake_side: M(0, 0.35, 20.2), crowd },
       pois: { road: V(0, 0, 10), crosswalk: V(dx, 0, 10), house: V(0, 14, -35), door: V(house?.plan?.doorX || 0, 2, -12), church: V(-132, 20, -40), lake: V(0, -1.5, 60), across: V(0, 4, 149), dock: V(dx, 0, 40) },
-      cameraHints: { establishing: H([30, 9, 30], [-40, 10, -16], 40), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50), along: H([70, 5, 4], [-60, 7, -6], 35), from_house: H([0, 6, -8], [0, 4, 14], 50) },
+      cameraHints: { establishing: H([24, 9, 32], [-18, 8, -12], 42), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50), along: H([70, 5, 4], [-60, 7, -6], 35), from_house: H([0, 6, -8], [0, 4, 14], 50) },
       shadow: { center: [0, 0, -10], radius: 60 }, lightFocus: [0, 0, 0] };
   },
   house_front(ctx, b) {
@@ -310,13 +311,14 @@ const SET_BUILDERS = {
     at(b, 0, 0, -22, Math.PI / 2, P.crosswalk, { width: 16, length: 6 });
     let i = 0;
     for (let z = 60; z > -420; z -= 40, i++) {
-      b.lod = z < -120 ? 'far' : z < -20 ? 'mid' : 'near';
+      b.lod = z < -120 ? 'far' : z < -20 ? 'mid' : 'near'; b.chunk = z < -100 ? 'far' : '';
       b.push(-20, 0, z, Math.PI / 2); lot(b, housePlan(r, i), { yard: 8 }); b.pop();
       if (i % 2 === 0) { b.push(20, 0, z - 20, -Math.PI / 2); lot(b, housePlan(r, i + 3), { yard: 8 }); b.pop(); }
       else treeAt(b, 26, z - 20, {});
     }
     b.lod = 'near';
-    for (let z = 40; z > -420; z -= 30) { at(b, -9.5, 0, z, 0, P.lamp_post, {}); at(b, 9.5, 0, z - 15, 0, P.lamp_post, {}); }
+    for (let z = 40; z > -420; z -= 30) { b.chunk = z < -100 ? 'far' : ''; at(b, -9.5, 0, z, 0, P.lamp_post, {}); at(b, 9.5, 0, z - 15, 0, P.lamp_post, {}); }
+    b.chunk = '';
     backdropHills(b, 0, -200, 420);
     const crowd = [...rowSlots(-20, 20, 4, 9.8, Math.PI / 2, 0.35).map((m) => M(10.5, 0.35, m.x * 0.9, 0)), ...rowSlots(-20, 20, 4, -9.8, 0, 0.35).map((m) => M(-10.5, 0.35, m.x * 0.9, 0))];
     while (crowd.length < 30) crowd.push(M(crowd.length % 2 ? 11.5 : -11.5, 0.35, -24 - crowd.length * 2, 0));
@@ -331,17 +333,19 @@ const SET_BUILDERS = {
     const dz = 6; b.push(0, 0, -dz, 0);
     const town = lakeTown(b, ctx, { edge: 'beach', docks: [66] });
     b.pop(); town.water.position.z -= dz;
-    // sloped beach into the water
+    // beach: dry sand down to the waterline (z≈-3), then the bed drops steeply so wading legs show through the water
     b.chunk = 'near';
-    b.prim('box', 0, -2.0, 0, 500, 1, 26, 'sand', '#ffffff', { rx: 0.14, cast: false });
-    b.prim('box', 0, -6.6, 30, 500, 1, 28, 'sand', '#cfc4a0', { rx: 0.2, cast: false });
-    const wl = town.waterLevel;
-    // marks at the waterline (sand ≈ water surface); use actor depth to wade deeper
-    const crowd = rowSlots(-48, 48, 3.2, 0.5, 0, wl, (x) => Math.abs(x) < 7).concat(rowSlots(-30, 30, 3.4, 5.5, 0, wl - 1.4, (x) => Math.abs(x) < 7));
+    b.prim('box', 0, -1.15, -6.5, 500, 1, 9, 'sand', '#ffffff', { rx: 0.16, cast: false });
+    b.prim('box', 0, -4.6, 1.2, 500, 1, 8.5, 'sand', '#d8cca6', { rx: 0.62, cast: false });
+    b.boxB(500, 1, 60, 0, -8.6, 34, 'sand', '#b9b08e', { cast: false });
+    const wl = town.waterLevel; const wade = wl - 1.8;
+    // marks A–D stand in the water at thigh depth by default (actor depth adds to it); beach marks are dry
+    const crowd = rowSlots(-48, 48, 3.2, 3.2, 0, wade, (x) => Math.abs(x) < 7).concat(rowSlots(-30, 30, 3.4, 7.5, 0, wade - 1.2, (x) => Math.abs(x) < 9));
+    const beach = rowSlots(-48, 48, 3.2, -6.5, 0, -0.7, (x) => Math.abs(x) < 5);
     return { waterLevel: wl, extra: [town.water],
-      marks: { A: M(0, wl - 0.1, 1.0), B: M(3.2, wl - 0.1, 0.6), C: M(-3.2, wl - 0.1, 0.6), D: M(0, wl + 0.4, -3.5), deep: M(0, wl - 3.2, 9), beach: M(0, -0.3, -6), crowd },
+      marks: { A: M(0, wade, 3.5), B: M(3.2, wade, 3.0), C: M(-3.2, wade, 3.0), D: M(0, wade - 1, 7), deep: M(0, wl - 3.5, 10), beach1: M(0, -0.7, -6.5), beach2: M(3.2, -0.7, -6.5), crowd, beach },
       pois: { lake: V(0, wl, 60), across: V(0, 4, 120 - 14), shore: V(0, 0, -8), house: V(0, 14, -78), road: V(0, 0, -33) },
-      cameraHints: { establishing: H([0, 4.5, 46], [0, 7, -30], 42), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 3.2, 22], [0, 3.2, -2], 50), low: H([0, -0.6, 14], [0, 2.5, 0], 55) },
+      cameraHints: { establishing: H([0, 4.5, 50], [0, 7, -30], 42), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 2.6, 24], [0, 2.2, 2], 50), low: H([0, -0.6, 16], [0, 2.0, 3], 55) },
       shadow: { center: [0, 0, -20], radius: 70 }, lightFocus: [0, 0, 0] };
   },
   underwater(ctx, b) {
@@ -501,6 +505,10 @@ export function buildSet(ctx, id, opts = {}) {
   // outdoors only ground-like surfaces receive shadows (PCF-soft = ~25 taps per fragment in SwiftShader)
   const b = new Builder(ctx, { rng, lod: 'near', grid: true, getMat: (k) => getMat(ctx, k), recvOnly: interior ? null : RECV_OUTDOOR });
   const def = fn(ctx, b, opts);
+  // crowd slots: nearest to mark A first, slots between the actors and the camera (+Z side) last
+  const A = def.marks.A || { x: 0, z: 0 };
+  if (Array.isArray(def.marks.crowd)) def.marks.crowd = def.marks.crowd.map((m, i) => ({ m, i, k: Math.hypot(m.x - A.x, m.z - A.z) + (m.z > A.z + 1.5 && !def.interior ? 1000 : 0) }))
+    .sort((p, q) => p.k - q.k || p.i - q.i).map((e) => e.m);
   const group = b.build('set:' + rid);
   for (const e of def.extra || []) group.add(e);
   let ripples = null;

@@ -218,7 +218,7 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
         voice = vcfg.get("voice")
     speed = float(speed if speed is not None else vcfg.get("speed", 1.0) or 1.0)
     pitch = pitch if pitch is not None else vcfg.get("pitch")
-    opt = {k: float(vcfg.get(k, d)) for k, d in DEFAULTS.items()}
+    opt = {k: float(vcfg[k]) if vcfg.get(k) is not None else d for k, d in DEFAULTS.items()}
     if wpm is not None:
         opt["wpm"] = float(wpm)
     language = episode.get("language", "en")

@@ -229,11 +229,11 @@ class KokoroProvider:
             d = self.durations(ph, speed)
             known = ph
             last = max((i for i, c in enumerate(known) if c not in align.PUNCT), default=len(known) - 1)
-            start = d[0]
-            end_last_start = d[: last + 1].sum()  # start frame of the last phoneme (d index = char+1)
-            # the final phoneme's predicted span includes the trailing release/silence: count ~4 frames
-            frames = end_last_start - start + min(int(d[last + 1]), 4) + 2
-            total.append(frames * HOP / SR + 0.07 * self.ratio)  # +70 ms/chunk: measured trim overhead
+            span = (d[: last + 1].sum() - d[0]) * HOP / SR      # first phoneme start → last phoneme start
+            tail = d[last + 1] * HOP / SR                       # last phoneme (incl. final lengthening)
+            # least-squares fit of the trimmed chunk length (output s) over speeds 0.8–1.33, ±20 ms median
+            out = 0.9925 * span / self.ratio + 0.684 * tail / self.ratio - 0.063
+            total.append(max(0.1, out) * self.ratio)
         return total
 
     def set_pace(self, speed):

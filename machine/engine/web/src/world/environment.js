@@ -13,7 +13,7 @@ const fogCol = (h) => C(h);
 
 const TIMES = {
   day: { top: '#3f7ccc', mid: '#78a8dc', hor: '#b9d2ea', ground: '#9db4c8', sun: [0.48, 0.72, 0.5], sunCol: '#fff1dc', sunI: 2.7, hemiSky: '#d6e6ff', hemiGnd: '#8a8a6a', hemiI: 1.25,
-    fog: '#b9d2ea', fogN: 150, fogF: 1500, exp: 1.0, water: ['#4f86b4', '#2c5f8c'], glow: 0, lamps: 0, stars: 0, sunSize: 0.0008 },
+    fog: '#b9d2ea', fogN: 110, fogF: 1000, exp: 1.0, water: ['#4f86b4', '#2c5f8c'], glow: 0, lamps: 0, stars: 0, sunSize: 0.0008 },
   golden: { top: '#4f78c0', mid: '#c9a98e', hor: '#ffc887', ground: '#b49a80', sun: [0.82, 0.24, 0.52], sunCol: '#ffc27a', sunI: 2.6, hemiSky: '#ffe2c0', hemiGnd: '#7a6650', hemiI: 0.95,
     fog: '#efc9a0', fogN: 120, fogF: 950, exp: 1.0, water: ['#5a7fa6', '#33587e'], glow: 0.25, lamps: 0.3, stars: 0, sunSize: 0.0012 },
   dusk: { top: '#1d2752', mid: '#6a4c86', hor: '#f08848', ground: '#3a3040', sun: [-0.25, 0.05, -0.97], sunCol: '#ff9a5a', sunI: 0.75, hemiSky: '#8a7ab8', hemiGnd: '#3a2e36', hemiI: 0.75,
@@ -108,7 +108,7 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   const sky = makeSky(ctx, p); group.add(sky);
   scene.background = C(p.hor);
   const sunDir = new THREE.Vector3(...p.sun).normalize();
-  const hemi = interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.4 : p.time === 'dusk' ? 0.7 : 1.5)
+  const hemi = interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.16 : p.time === 'dusk' ? 0.6 : 1.5)
     : new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI); group.add(hemi);
   const sun = new THREE.DirectionalLight(C(p.sunCol), interior ? (p.time === 'night' ? 0.15 : p.time === 'dusk' ? 0.5 : Math.max(1.6, p.sunI * 0.8)) : p.sunI);
   const focus = set?.shadow || { center: [0, 0, 0], radius: 60 };
@@ -148,17 +148,22 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
       if (n >= maxL) break;
       if (!interior && l.kind === 'interior') continue;
       const isFire = l.kind === 'fire';
-      const pl = new THREE.PointLight(isFire ? '#ff9a4a' : '#ffcf88', (interior ? (isFire ? 60 : 45) : 140) * nightK * (interior && p.time === 'day' ? 0.5 : 1), interior ? 30 : 38, 1.6);
+      const pl = new THREE.PointLight(isFire ? '#ff9a4a' : '#ffcf88', (interior ? (isFire ? 60 : (p.time === 'night' ? 80 : 45)) : 140) * nightK * (interior && p.time === 'day' ? 0.5 : 1), interior ? 30 : 38, 1.6);
       pl.position.set(l.x, l.y - (l.kind === 'post' ? 0.6 : 0), l.z); pl.userData.fire = isFire; group.add(pl); n++;
     }
     if (!interior && p.lamps >= 1) {
-      // halo sprites + warm ground pools (cheap fake lights) for the remaining lamps
-      const gm = new THREE.SpriteMaterial({ map: getTexture(ctx, 'glow'), color: '#ffd58a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.85, fog: true });
-      const pm = new THREE.MeshBasicMaterial({ map: getTexture(ctx, 'glow'), color: '#ffb860', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.35, fog: true });
-      const pg = new THREE.PlaneGeometry(1, 1); pg.rotateX(-Math.PI / 2);
-      for (const l of lamps.slice(0, 60)) {
-        const s = new THREE.Sprite(gm); s.position.set(l.x, l.y, l.z); s.scale.setScalar(l.kind === 'post' ? 4.5 : 3); group.add(s);
-        if (l.kind === 'post') { const q = new THREE.Mesh(pg, pm); q.position.set(l.x, (l.groundY ?? 0) + 0.12, l.z); q.scale.set(16, 1, 16); q.renderOrder = 3; group.add(q); }
+      // halo points + warm ground pools (cheap fake lights), batched: 2 draw calls for all lamps
+      const ls = lamps.slice(0, 80); const posts = ls.filter((l) => l.kind === 'post');
+      const hp = new Float32Array(ls.length * 3); ls.forEach((l, i) => hp.set([l.x, l.y, l.z], i * 3));
+      const hg = new THREE.BufferGeometry(); hg.setAttribute('position', new THREE.BufferAttribute(hp, 3));
+      const halos = new THREE.Points(hg, new THREE.PointsMaterial({ map: getTexture(ctx, 'glow'), color: '#ffd58a', size: 4.5, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.85, fog: true }));
+      halos.frustumCulled = false; halos.renderOrder = 21; group.add(halos);
+      if (posts.length) {
+        const pg = new THREE.PlaneGeometry(1, 1); pg.rotateX(-Math.PI / 2);
+        const pm = new THREE.MeshBasicMaterial({ map: getTexture(ctx, 'glow'), color: '#ffb860', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.24, fog: true });
+        const pools = new THREE.InstancedMesh(pg, pm, posts.length); const m4 = new THREE.Matrix4();
+        posts.forEach((l, i) => { m4.makeScale(16, 1, 16); m4.setPosition(l.x, (l.groundY ?? 0) + 0.12, l.z); pools.setMatrixAt(i, m4); });
+        pools.renderOrder = 3; pools.frustumCulled = false; group.add(pools);
       }
     }
   }

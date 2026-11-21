@@ -133,7 +133,7 @@ export class Builder {
     const chunk = o.chunk !== undefined ? o.chunk : this.chunk;
     // spatial cells (CELL units) so three's frustum culling can skip off-screen parts in both passes
     let cell = '';
-    if (this.grid && !NOGRID[chunk] && !o.nogrid) { const e = _full.elements; cell = '@' + Math.floor(e[12] / CELL) + ',' + Math.floor(e[14] / CELL); }
+    if (this.grid && !NOGRID[chunk] && !o.nogrid) { const e = _full.elements; const cs = chunk === 'far' || chunk === 'out' ? CELL * 4 : CELL; cell = '@' + Math.floor(e[12] / cs) + ',' + Math.floor(e[14] / cs); }
     const key = chunk + cell + '|' + mat + '|' + (cast ? 1 : 0) + (recv ? 1 : 0);
     let b = this.buckets.get(key);
     if (!b) { b = { mat, cast, recv, chunk, pos: [], nor: [], uv: [], col: [], idx: [], count: 0 }; this.buckets.set(key, b); }
