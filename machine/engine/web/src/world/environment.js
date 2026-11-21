@@ -59,10 +59,10 @@ function makeSky(ctx, p) {
         gl_FragColor = vec4(c, 1.0);
         #include <colorspace_fragment>
       }`,
-    side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false, toneMapped: false,
+    side: THREE.BackSide, depthWrite: false, depthTest: true, fog: false, toneMapped: false,
   });
   const s = new THREE.Mesh(new THREE.SphereGeometry(900, 24, 12), m);
-  s.renderOrder = -1000; s.frustumCulled = false; s.name = 'sky';
+  s.renderOrder = 10; s.frustumCulled = false; s.name = 'sky'; // drawn after opaque geometry: only uncovered pixels are shaded
   return s;
 }
 

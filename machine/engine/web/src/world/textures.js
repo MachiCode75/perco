@@ -31,7 +31,7 @@ function pixels(c, fn) {
   const g = c.getContext('2d'); const img = g.getImageData(0, 0, c.width, c.height); const d = img.data;
   for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
     const i = (y * c.width + x) * 4; const res = fn(x, y, d[i], d[i + 1], d[i + 2]);
-    if (typeof res === 'number') { d[i] = d[i + 1] = d[i + 2] = res; } else { d[i] = res[0]; d[i + 1] = res[1]; d[i + 2] = res[2]; if (res.length > 3) d[i + 3] = res[3]; }
+    if (typeof res === 'number') { d[i] = d[i + 1] = d[i + 2] = res; d[i + 3] = 255; } else { d[i] = res[0]; d[i + 1] = res[1]; d[i + 2] = res[2]; d[i + 3] = res.length > 3 ? res[3] : 255; }
   }
   g.putImageData(img, 0, 0);
 }

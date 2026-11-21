@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "id": "_post_test",
+  "title": "Post-production test (synthetic inputs)",
+  "language": "en",
+  "voice": { "provider": "espeak-ng", "voice": "en-us", "speed": 1.0 },
+  "music": { "mood": "calm_to_eerie", "file": null },
+  "captions": { "highlight": ["one day later", "Toby", { "text": "find out", "color": "pink" }] },
+  "cast": { "me": { "name": "Me", "build": "kid" }, "toby": { "name": "Toby", "build": "kid" } },
+  "shots": [
+    { "id": "001", "say": "There's a copy of everyone across the lake.", "set": "lake_dock", "framing": "wide", "binoculars": false, "actors": [] },
+    { "id": "002", "say": "Grandpa says they do everything we do,", "set": "lake_dock", "framing": "medium", "binoculars": false, "actors": [] },
+    { "id": "003", "say": "one day later.", "set": "lake_dock", "framing": "close_up", "binoculars": false, "actors": [] },
+    { "id": "004", "say": "Every morning I watch them with binoculars.", "set": "lake_far_shore", "framing": "pov", "binoculars": true, "actors": [] },
+    { "id": "005", "say": "Other Toby holds up a sign.", "set": "lake_far_shore", "framing": "pov", "binoculars": true, "actors": [] },
+    { "id": "006", "say": "It says: hi me!", "set": "lake_dock", "framing": "medium", "binoculars": false, "actors": [] },
+    { "id": "007", "say": "Nobody knows why they're always copying us.", "set": "lake_far_shore", "framing": "pov", "binoculars": true, "actors": [] },
+    { "id": "008", "say": "Tomorrow, I'm going to find out.", "set": "lake_dock", "framing": "close_up", "binoculars": false, "actors": [] }
+  ],
+  "ending": { "hold": 1.5 }
+}

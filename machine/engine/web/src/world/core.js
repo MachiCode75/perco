@@ -96,6 +96,9 @@ const _e = new THREE.Euler(), _q = new THREE.Quaternion(), _p = new THREE.Vector
 const _lm = new THREE.Matrix4(), _full = new THREE.Matrix4(), _nm = new THREE.Matrix3();
 const _v = new THREE.Vector3(), _n = new THREE.Vector3(), _ax = new THREE.Vector3(), _az = new THREE.Vector3();
 
+const CHUNK_ORDER = { far: 2, out: 2, bg: 3, bed: 4 };
+const CELL = 64; const NOGRID = { bg: 1, bed: 1 };
+
 export class Builder {
   /**
    * @param ctx  world ctx (THREE, textures …)
@@ -104,7 +107,7 @@ export class Builder {
   constructor(ctx, o = {}) {
     this.ctx = ctx; this.rng = o.rng || ctx.rng || Math.random; this.lod = o.lod || 'near';
     this.getMat = o.getMat; this.buckets = new Map(); this.stack = [new THREE.Matrix4()];
-    this.objects = []; this.chunk = ''; this.cast = true; this.receive = true;
+    this.objects = []; this.chunk = ''; this.cast = true; this.receive = true; this.grid = !!o.grid;
     this.lamps = [];     // world positions of light sources (lamp heads, porch lights) for night lighting
     this.windows = [];   // window glass centres (for night glows), optional
     this.blockers = [];  // simple AABB footprints {x0,x1,z0,z1} (layout helpers)
@@ -127,7 +130,10 @@ export class Builder {
     const cast = o.cast !== undefined ? o.cast : this.cast;
     const recv = o.receive !== undefined ? o.receive : this.receive;
     const chunk = o.chunk !== undefined ? o.chunk : this.chunk;
-    const key = chunk + '|' + mat + '|' + (cast ? 1 : 0) + (recv ? 1 : 0);
+    // spatial cells (CELL units) so three's frustum culling can skip off-screen parts in both passes
+    let cell = '';
+    if (this.grid && !NOGRID[chunk] && !o.nogrid) { const e = _full.elements; cell = '@' + Math.floor(e[12] / CELL) + ',' + Math.floor(e[14] / CELL); }
+    const key = chunk + cell + '|' + mat + '|' + (cast ? 1 : 0) + (recv ? 1 : 0);
     let b = this.buckets.get(key);
     if (!b) { b = { mat, cast, recv, chunk, pos: [], nor: [], uv: [], col: [], idx: [], count: 0 }; this.buckets.set(key, b); }
     return b;
@@ -199,7 +205,7 @@ export class Builder {
   cylf(r, h, x, y, z, mat, color, seg = 6, o = {}) { return this.prim('cylf' + seg, x, y + h / 2, z, r, h, r, mat, color, { uv: 'cyl', uvScale: [Math.PI * 2 * r, h], ...o }); }
   cone(r, h, x, y, z, mat, color, seg = 8, flat = true, o = {}) { return this.prim((flat ? 'conef' : 'cone') + seg, x, y + h / 2, z, r, h, r, mat, color, o); }
   sphere(r, x, y, z, mat, color, seg = 12, o = {}) { return this.prim('sph' + seg, x, y, z, r, r, r, mat, color, o); }
-  blob(r, x, y, z, mat, color, o = {}) { return this.prim('ico1', x, y, z, r * (o.sx || 1), r * (o.sy || 1), r * (o.sz || 1), mat, color, o); }
+  blob(r, x, y, z, mat, color, o = {}) { return this.prim(o.detail === 1 || (o.detail === undefined && r > 2.2 && this.lod === 'near') ? 'ico1' : 'ico0', x, y, z, r * (o.sx || 1), r * (o.sy || 1), r * (o.sz || 1), mat, color, o); }
   /** triangular prism: base width w (x), height h (y, apex at top), depth d (z); base at y */
   prism(w, h, d, x, y, z, mat, color, o) { return this.prim('prism', x, y, z, w, h, d, mat, color, o); }
   /** vertical quad facing +Z (local), centre */
@@ -235,7 +241,9 @@ export class Builder {
       const mesh = new THREE.Mesh(g, this.getMat(b.mat));
       mesh.castShadow = b.cast; mesh.receiveShadow = b.recv; mesh.name = key;
       mesh.matrixAutoUpdate = false; mesh.updateMatrix();
-      if (mesh.material.transparent) mesh.renderOrder = 2;
+      // front-to-back-ish ordering so early-z rejects hidden ground/backdrop pixels (big win in SwiftShader)
+      mesh.renderOrder = (mesh.material.userData.def?.order || 0) + (CHUNK_ORDER[b.chunk] || 0);
+      if (mesh.material.transparent) mesh.renderOrder = 20;
       group.add(mesh);
     }
     for (const o of this.objects) group.add(o);

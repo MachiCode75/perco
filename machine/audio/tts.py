@@ -239,8 +239,20 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
     target_total = len(toks) / (opt["wpm"] * speed) * 60.0 if opt["wpm"] > 0 else None
     pauses = sum(gaps) + sum(t for _, _, t in internal)
     if target_total:
-        est1 = sum(prov.estimate_speech_seconds(texts, 1.0)) / getattr(prov, "ratio", 1.0)
-        eng_speed = float(np.clip(est1 / max(1e-3, target_total - pauses), 0.7, 1.4))
+        ratio, want = getattr(prov, "ratio", 1.0), max(1e-3, target_total - pauses)
+        # predicted speech time is monotone (but not proportional: per-token rounding) in speed → bisect
+        est = lambda s: sum(prov.estimate_speech_seconds(texts, s)) / ratio
+        lo, hi = 0.7, 1.4
+        if est(lo) < want:
+            eng_speed = lo
+        elif est(hi) > want:
+            eng_speed = hi
+        else:
+            for _ in range(9):
+                mid = 0.5 * (lo + hi)
+                lo, hi = (mid, hi) if est(mid) > want else (lo, mid)
+            eng_speed = 0.5 * (lo + hi)
+        print(f"[tts] pace: want {want:.2f}s speech -> engine speed {eng_speed:.3f}", file=sys.stderr)
     else:
         eng_speed = speed
     prov.set_pace(eng_speed)
@@ -299,7 +311,7 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
             "preset": getattr(prov, "cfg", {}).get("preset"), "pitch": getattr(prov, "cfg", {}).get("pitch"),
             "language": language, "engine_speed": round(eng_speed, 3), "pause_scale": round(scale, 3),
             "words": len(toks), "chunks": len(chunks), "duration": round(duration, 3),
-            "wpm": round(len(toks) / span * 60, 1), "target_wpm": round(opt["wpm"] * speed, 1),
+            "wpm": round(float(len(toks) / span * 60), 1), "target_wpm": round(opt["wpm"] * speed, 1),
             "lufs": round(al.loudness_lufs(wav, sr) or 0, 2), "true_peak_db": round(al.true_peak_db(wav, sr), 2),
             "seconds": round(time.time() - t0, 1)}
     (out_dir / "tts_info.json").write_text(json.dumps(info, indent=1))

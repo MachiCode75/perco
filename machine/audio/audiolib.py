@@ -100,14 +100,39 @@ def true_peak_db(audio, sr):
     return float(db(peak))
 
 
-def normalize(audio, sr, target_lufs=-16.0, peak_ceiling_db=-1.0):
-    """Gain to `target_lufs`, but never let the (true) peak exceed `peak_ceiling_db`. No limiter."""
+def limit(audio, sr, ceiling_db=-1.5, hold=0.008):
+    """Transparent-ish lookahead peak limiter (vectorised): gain = moving average of a min-filtered
+    gain curve, which can never exceed the gain each sample needs, so sample peaks <= ceiling."""
+    from scipy.ndimage import minimum_filter1d, uniform_filter1d
     a = np.asarray(audio, dtype=np.float64)
-    lufs = loudness_lufs(a, sr)
-    gain_db = (target_lufs - lufs) if lufs is not None and np.isfinite(lufs) else 0.0
-    tp = true_peak_db(a, sr)
-    gain_db = min(gain_db, peak_ceiling_db - tp)
-    return (a * 10 ** (gain_db / 20.0)).astype(np.float32), gain_db
+    mono = np.abs(a) if a.ndim == 1 else np.abs(a).max(axis=1)
+    c = 10 ** (ceiling_db / 20.0)
+    g = np.minimum(1.0, c / np.maximum(mono, 1e-12))
+    if g.min() >= 1.0:
+        return a.astype(np.float32)
+    n = max(1, int(hold * sr))
+    g = uniform_filter1d(minimum_filter1d(g, 2 * n + 1, mode="nearest"), 2 * n + 1, mode="nearest")
+    g = np.minimum(g, c / np.maximum(mono, 1e-12))  # numerical safety
+    return (a * (g if a.ndim == 1 else g[:, None])).astype(np.float32)
+
+
+def normalize(audio, sr, target_lufs=-16.0, peak_ceiling_db=-1.0):
+    """Gain to `target_lufs`, then a lookahead limiter keeps the true peak under `peak_ceiling_db`."""
+    a = np.asarray(audio, dtype=np.float64)
+    total = 0.0
+    for _ in range(4):
+        lufs = loudness_lufs(a, sr)
+        gain_db = (target_lufs - lufs) if lufs is not None and np.isfinite(lufs) else 0.0
+        a = a * 10 ** (gain_db / 20.0)
+        total += gain_db
+        a = limit(a, sr, peak_ceiling_db - 0.5)
+        tp = true_peak_db(a, sr)
+        if tp > peak_ceiling_db:
+            a = a * 10 ** ((peak_ceiling_db - tp - 0.05) / 20.0)
+        if abs(gain_db) < 0.2:
+            break
+    gain_db = total
+    return a.astype(np.float32), gain_db
 
 
 def fade(audio, sr, fade_in=0.0, fade_out=0.0):

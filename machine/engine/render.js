@@ -98,7 +98,7 @@ function ffprobeFrames(file) {
   return { frames: Number(s.nb_read_packets), width: s.width, height: s.height, rate: s.avg_frame_rate };
 }
 const fmtT = (s) => (!isFinite(s) ? '?' : s >= 3600 ? `${Math.floor(s / 3600)}h${String(Math.floor(s / 60) % 60).padStart(2, '0')}m` : s >= 60 ? `${Math.floor(s / 60)}m${String(Math.round(s % 60)).padStart(2, '0')}s` : `${s.toFixed(0)}s`);
-const withTimeout = (p, ms, what) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout after ${ms / 1000}s: ${what}`)), ms))]);
+const withTimeout = (p, ms, what) => { let h; return Promise.race([p, new Promise((_, rej) => { h = setTimeout(() => rej(new Error(`timeout after ${ms / 1000}s: ${what}`)), ms); })]).finally(() => clearTimeout(h)); };
 
 const report = {
   episode: path.relative(ROOT, episodePath), timeline: path.relative(ROOT, timelinePath), slug, out: path.relative(ROOT, outDir),
@@ -164,7 +164,7 @@ async function renderShot(rt, j, tag) {
     fs.renameSync(tmp, j.file);
     const ms = Date.now() - t0;
     const warnings = [...new Set([...j.warnings, ...(info && info.warnings ? info.warnings : []),
-      ...rt.logs.slice(logStart).filter((l) => /^\[(warning|error|pageerror)/.test(l)).map((l) => l.replace(/^\[\w+\]\s*/, ''))])].slice(0, 50);
+      ...rt.logs.slice(logStart).filter((l) => /^\[(warning|error|pageerror)/.test(l)).map((l) => l.replace(/^\[\w+\]\s*/, '')).filter((l) => !l.startsWith('[engine]'))])].slice(0, 50);
     const rec = { id: j.id, status: 'ok', frames: j.frames, probedFrames: probe.frames, ms, loadMs, msPerFrame: Math.round((ms - loadMs) / j.frames), file: path.relative(ROOT, j.file), camera: info && info.camera, warnings };
     fs.writeFileSync(j.meta, JSON.stringify({ hash: j.hash, frames: j.frames, rendered: new Date().toISOString(), ms }, null, 1));
     return rec;

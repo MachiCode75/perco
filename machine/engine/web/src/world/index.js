@@ -1,22 +1,51 @@
-// STUB — to be replaced by the world module owner. Contract: ARCHITECTURE.md §4.
-export const SETS = ['lake_dock'];
-export const PROPS = [];
-export function createProp(ctx) { return new ctx.THREE.Group(); }
+// World module — public API. Contract: ARCHITECTURE.md §4. Owner: world module.
+//   SETS, PROPS, createSet(ctx, id, opts), createProp(ctx, id, opts), applyEnvironment(ctx, {time, weather, interior})
+// See README.md in this folder for sets (marks / pois / cameraHints), props and options.
+import * as THREE from 'three';
+import { Builder, makeRng } from './core.js';
+import { getMat } from './materials.js';
+import { P, PROP_IDS } from './props.js';
+import { buildSet, SET_IDS } from './sets.js';
+import { applyEnvironment as applyEnv } from './environment.js';
+
+export const SETS = SET_IDS.slice();
+export const PROPS = PROP_IDS.slice();
+export const TIMES = ['day', 'golden', 'dusk', 'night'];
+export const WEATHERS = ['clear', 'overcast', 'snow', 'rain', 'fog'];
+
+const CACHE_MAX = 3;
+
+/**
+ * Build (or reuse) a set. Sets are deterministic per (id, opts.seed) and do NOT consume ctx.rng, so the
+ * same location looks identical in every shot. Built sets are cached on ctx (last 3) and reused.
+ */
 export function createSet(ctx, id, opts = {}) {
-  const { THREE } = ctx; const group = new THREE.Group();
-  const g = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: '#6a9a45' }));
-  g.rotation.x = -Math.PI / 2; g.receiveShadow = true; group.add(g);
-  const crowd = []; for (let i = 0; i < 12; i++) crowd.push({ x: -12 + i * 2.2, y: 0, z: -8, yaw: 0 });
-  return { group, interior: false, waterLevel: null,
-    marks: { A: { x: 0, y: 0, z: 0, yaw: 0 }, B: { x: 3, y: 0, z: 0, yaw: 0 }, C: { x: -3, y: 0, z: 0, yaw: 0 }, D: { x: 0, y: 0, z: -4, yaw: 0 }, crowd },
-    pois: { lake: { x: 0, y: 0, z: -50 }, across: { x: 0, y: 0, z: -80 } },
-    cameraHints: { establishing: { pos: [0, 12, 30], target: [0, 2, 0], fov: 50 }, aerial: { pos: [0, 60, 40], target: [0, 0, -20], fov: 50 }, wide: { pos: [0, 4, 20], target: [0, 2.5, 0], fov: 50 } },
-    update() {} };
+  if (!ctx.worldSetCache) ctx.worldSetCache = new Map();
+  const key = id + ':' + JSON.stringify(opts || {});
+  let inst = ctx.worldSetCache.get(key);
+  if (!inst) {
+    inst = buildSet(ctx, id, opts || {});
+    ctx.worldSetCache.set(key, inst);
+    while (ctx.worldSetCache.size > CACHE_MAX) {
+      const [k0, old] = ctx.worldSetCache.entries().next().value; ctx.worldSetCache.delete(k0);
+      if (old.group.parent) old.group.parent.remove(old.group);
+      old.group.traverse((o) => { if (o.geometry && o.name !== 'water') o.geometry.dispose(); });
+    }
+  } else { ctx.worldSetCache.delete(key); ctx.worldSetCache.set(key, inst); }
+  ctx.worldSet = inst;
+  return inst;
 }
-export function applyEnvironment(ctx, { time = 'day' } = {}) {
-  const { THREE, scene } = ctx;
-  scene.background = new THREE.Color(time === 'night' ? '#0b1630' : '#8fc1ee');
-  scene.add(new THREE.HemisphereLight('#dfefff', '#6b5a40', 1.3));
-  const d = new THREE.DirectionalLight('#ffffff', 2.0); d.position.set(20, 40, 25); d.castShadow = true; d.shadow.mapSize.set(2048, 2048);
-  Object.assign(d.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40 }); scene.add(d);
+
+/** Standalone prop (merged by material). opts.seed for a fixed variation, else ctx.rng is used. */
+export function createProp(ctx, id, opts = {}) {
+  const fn = P[id];
+  if (!fn) { console.warn('[world] unknown prop', id); return new THREE.Group(); }
+  const rng = opts.seed !== undefined ? makeRng(opts.seed) : (ctx.rng || Math.random);
+  const b = new Builder(ctx, { rng, lod: opts.lod || 'near', getMat: (k) => getMat(ctx, k) });
+  const info = fn(b, opts) || {};
+  const g = b.build('prop:' + id);
+  g.userData = { prop: id, info, lamps: b.lamps };
+  return g;
 }
+
+export function applyEnvironment(ctx, o = {}) { return applyEnv(ctx, o); }

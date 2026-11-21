@@ -23,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 MODELS = HERE.parent / "models" / "kokoro"
 BASE_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 MODEL_FILE, VOICES_FILE = "kokoro-v1.0.onnx", "voices-v1.0.bin"
-TIMED_FILE, DUR_FILE = "kokoro-v1.0-timed.onnx", "kokoro-v1.0-dur.onnx"
+TIMED_FILE, DUR_FILE = "kokoro-v1.0-timed.onnx", "kokoro-v1.0-durf.onnx"
 SR = 24000
 HOP = 600                 # samples per duration frame (24 kHz / 40 frames per second)
 MAX_TOKENS = 500          # model context is 510 incl. the two pad tokens
@@ -86,7 +86,7 @@ def ensure_models(models_dir: Path = MODELS):
     if not timed.exists():
         onnx.save(m, str(timed))
     if not dur.exists():
-        onnx.utils.extract_model(str(timed), str(dur), ["tokens", "style", "speed"], ["duration"])
+        onnx.utils.extract_model(str(timed), str(dur), ["tokens", "style"], ["/encoder/predictor/ReduceSum_output_0"])
     try:
         base.unlink()  # the timed graph is a strict superset; save 325 MB
     except OSError:
@@ -163,6 +163,7 @@ class KokoroProvider:
         self.ratio = 2.0 ** (self.cfg["pitch"] / 12.0)   # playback-rate factor of the pitch trick
         self.sample_rate = SR * self.ratio                # chunk audio is to be read at this rate
         self.speed = 1.0
+        self._ph_cache, self._raw_cache = {}, {}
 
     # -- phonemes
     def _init_espeak(self):
@@ -209,17 +210,22 @@ class KokoroProvider:
 
     # -- pace
     def durations(self, ph: str, speed=1.0):
-        toks = self.tokens(ph)
-        out = self.dur_sess.run(None, {"tokens": np.array([[0, *toks, 0]], dtype=np.int64),
-                                       "style": self._style(len(toks)),
-                                       "speed": np.array([speed], dtype=np.float32)})
-        return np.asarray(out[0]).ravel()
+        """Frame count per token at `speed`, from the float predictor output (one model run per text):
+        the model itself computes max(1, round(x / speed))."""
+        raw = self._raw_cache.get(ph)
+        if raw is None:
+            toks = self.tokens(ph)
+            out = self.dur_sess.run(None, {"tokens": np.array([[0, *toks, 0]], dtype=np.int64),
+                                           "style": self._style(len(toks))})
+            raw = self._raw_cache[ph] = np.asarray(out[0], dtype=np.float32).ravel()
+        return np.maximum(1, np.round(raw / np.float32(speed))).astype(np.int64)
 
     def estimate_speech_seconds(self, chunk_texts, speed=1.0):
         """Predicted *trimmed* speech time of every chunk at kokoro speed `speed` (model seconds)."""
         total = []
         for text in chunk_texts:
-            ph = self.phonemize(text)
+            ph = self._ph_cache.get(text) or self.phonemize(text)
+            self._ph_cache[text] = ph
             d = self.durations(ph, speed)
             known = ph
             last = max((i for i, c in enumerate(known) if c not in align.PUNCT), default=len(known) - 1)
@@ -227,7 +233,7 @@ class KokoroProvider:
             end_last_start = d[: last + 1].sum()  # start frame of the last phoneme (d index = char+1)
             # the final phoneme's predicted span includes the trailing release/silence: count ~4 frames
             frames = end_last_start - start + min(int(d[last + 1]), 4) + 2
-            total.append(frames * HOP / SR)
+            total.append(frames * HOP / SR + 0.07 * self.ratio)  # +70 ms/chunk: measured trim overhead
         return total
 
     def set_pace(self, speed):

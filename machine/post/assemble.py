@@ -3,7 +3,7 @@
 python3 post/assemble.py --episode episodes/<slug>/episode.json --timeline build/<slug>/timeline.json \
     --words build/<slug>/audio/words.json --shots build/<slug>/shots \
     --narration build/<slug>/audio/narration.wav --music build/<slug>/audio/music.wav --out out/<slug>.mp4
-    [--force] [--crf 18] [--preset medium] [--music-rel -8] [--duck-db 4] [--no-contact]
+    [--force] [--crf 18] [--preset medium] [--music-rel -6] [--duck-db 4] [--no-contact]
 
 Steps (logged with timings; any failure → non-zero exit):
  1. validate: every timeline shot has build/<slug>/shots/<id>.mp4, 720x1280 @ 30 fps, frame count ==
@@ -11,7 +11,7 @@ Steps (logged with timings; any failure → non-zero exit):
     → error unless --lenient), timeline ids == episode ids, sum(frames) == timeline total, narration
     not longer than the video;
  2. captions: build/<slug>/post/captions.ass (post/captions.py, reference style, 1080x1920);
- 3. audio: narration → −16 LUFS; music looped/trimmed to the video, faded, set `--music-rel` LU under
+ 3. audio: narration → −16 LUFS; music looped/trimmed to the video, faded, set `--music-rel` (−6) LU under
     the voice and ducked `--duck-db` dB under speech (envelope follower on the narration, attack 80 ms,
     release 350 ms); look-ahead true-peak limiter; two-pass loudnorm → −14 LUFS, −1.5 dBTP target
     (≤ −1 dBTP after AAC);
@@ -232,7 +232,7 @@ def build_audio(a, n_samples, work):
     music = music[:n_samples].copy()
     # levels
     tmpv, tmpm = os.path.join(work, "voice_raw.wav"), os.path.join(work, "music_raw.wav")
-    write_wav(tmpv, voice)
+    write_wav(tmpv, voice.repeat(2, axis=1))  # measured as played: dual-mono stereo (+3 dB vs mono)
     write_wav(tmpm, music)
     lv, lm = float(loudness(tmpv)["input_i"]), float(loudness(tmpm)["input_i"])
     if not np.isfinite(lv) or lv < -70:
@@ -254,14 +254,25 @@ def build_audio(a, n_samples, work):
     # pre-limit so the final loudnorm can stay linear (gain to −14 LUFS must not push peaks over the TP target)
     mixp = os.path.join(work, "mix_prelim.wav")
     write_wav(mixp, mix)
-    li = float(loudness(mixp)["input_i"])
-    ceiling = a.tp - 0.3 - (a.lufs - li)
-    mix, nlim = limiter(mix, ceiling)
+    m = loudness(mixp)
+    li = float(m["input_i"])
     mixf = os.path.join(work, "mix.wav")
-    write_wav(mixf, mix)
-    m = loudness(mixf)
-    log(f"audio: mix {li:.1f} LUFS, limiter ceiling {ceiling:.1f} dBFS ({nlim} samples limited); "
-        f"pass-1 measure I={m['input_i']} TP={m['input_tp']} LRA={m['input_lra']}")
+    nlim, ceiling = 0, None
+    for _ in range(4):  # limiting lowers the loudness a little → the final gain grows → re-check
+        gain = a.lufs - float(m["input_i"])
+        if float(m["input_tp"]) + gain <= a.tp - 0.1:
+            break
+        ceiling = a.tp - 0.3 - gain if ceiling is None else min(ceiling, a.tp - 0.3 - gain) - 0.2
+        mix, n = limiter(mix, ceiling)
+        nlim += n
+        write_wav(mixf, mix)
+        m = loudness(mixf)
+    else:
+        log("WARNING: could not pre-limit enough; loudnorm may switch to dynamic mode")
+    if ceiling is None:
+        write_wav(mixf, mix)
+    log(f"audio: mix {li:.1f} LUFS, limiter ceiling {ceiling if ceiling is None else round(ceiling, 1)} dBFS "
+        f"({nlim} samples limited); pass-1 measure I={m['input_i']} TP={m['input_tp']} LRA={m['input_lra']}")
     os.remove(tmpv), os.remove(tmpm), os.remove(mixp)
     return mixf, m
 
@@ -309,7 +320,7 @@ def main():
     ap.add_argument("--lufs", type=float, default=-14.0, help="final integrated loudness")
     ap.add_argument("--tp", type=float, default=-1.5, help="loudnorm true-peak target (AAC adds ~0.3 dB)")
     ap.add_argument("--voice-lufs", type=float, default=-16.0, help="narration level before the final loudnorm")
-    ap.add_argument("--music-rel", type=float, default=-8.0, help="music bed loudness relative to the voice (LU)")
+    ap.add_argument("--music-rel", type=float, default=-6.0, help="music bed loudness relative to the voice (LU)")
     ap.add_argument("--duck-db", type=float, default=4.0, help="extra music attenuation while the narrator speaks")
     ap.add_argument("--fade-out", type=float, default=2.0, help="music fade-out at the end (s)")
     ap.add_argument("--lenient", action="store_true", help="pad/trim clips whatever their frame-count error")
@@ -328,7 +339,6 @@ def main():
         raise SystemExit(f"[post] ERROR reading inputs: {e}")
     slug = ep.get("id") or os.path.splitext(os.path.basename(a.out))[0]
     work = os.path.join(os.path.dirname(a.shots.rstrip("/")), "post")
-    os.makedirs(work, exist_ok=True)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     contact = os.path.join(os.path.dirname(a.out), f"{os.path.splitext(os.path.basename(a.out))[0]}_contact.jpg")
     try:
@@ -341,6 +351,9 @@ def main():
             log(f"up to date: {a.out} (inputs and code unchanged; --force to rebuild)")
             return
         log(f"assembling '{slug}': {len(tl['shots'])} shots → {a.out}")
+        if not os.path.isdir(a.shots):
+            raise Fail(f"shots directory not found: {a.shots}")
+        os.makedirs(work, exist_ok=True)
         clips, total, cs = validate(a, ep, tl, wd, work)
         fps = 30
         dur = total / fps
