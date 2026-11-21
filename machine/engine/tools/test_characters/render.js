@@ -47,10 +47,10 @@ function tile(files, cols, out, scaleW) {
   if (SCENE === 'lineup') {
     const keys = args.keys ? String(args.keys).split(',') : ['toby', 'brother', 'mom', 'grandpa', 'mayor', 'bride', 'groom', 'oldlady', 'argyle', 'pyjama', 'overalls', 'dad'];
     const W = +(args.w || 1600), H = +(args.h || 760);
-    const n = keys.length, sp = 3.3;
-    const items = keys.map((k, i) => ({ spec: CAST[k], x: (i - (n - 1) / 2) * sp, z: 0, yaw: 0, label: CAST[k].name, labelY: -0.25, pose: 'stand' }));
+    const n = keys.length, sp = +(args.sp || 4.3);
+    const items = keys.map((k, i) => ({ spec: CAST[k], x: (i - (n - 1) / 2) * sp, z: 0, yaw: 0, label: CAST[k].name, labelY: -0.25, pose: "stand", yaw: 12 }));
     await withPage(W, H, async (page) => {
-      const info = await page.evaluate((c) => window.test.setup(c), { items, camera: { pos: [0, 3.2, n * 3.05], target: [0, 2.35, 0], fov: 32 } });
+      const info = await page.evaluate((c) => window.test.setup(c), { items, camera: { pos: [0, 3.6, n * sp * 0.82], target: [0, 2.5, 0], fov: 32 } });
       console.log('setup', info);
       const r = await page.evaluate((t) => window.test.render(t), T); console.log('render ms', r.renderMs.toFixed(0), 'calls', r.calls);
       save(r.url, OUT); console.log('wrote', OUT);
