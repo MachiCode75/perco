@@ -217,7 +217,7 @@ and `node engine/tools/preview.js --spec scene.json --out x.png` (free-form scen
   "id": "lac-miroir",
   "title": "…",
   "language": "en",
-  "voice": { "provider": "kokoro", "voice": "am_michael", "speed": 1.0 },
+  "voice": { "provider": "kokoro", "voice": "young_storyteller", "wpm": 255 },
   "music": { "mood": "calm_to_eerie", "file": null },
   "captions": { "highlight": ["Toby", "Grandpa"] },
   "cast": { "me": { …CharacterSpec… }, "toby": { … } },

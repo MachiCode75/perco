@@ -352,7 +352,8 @@ export function frameShot(ctx, opts = {}) {
     base = unblock(mk, az);
   } else if (!subject) {
     note(`framing ${framing} needs a subject; using set camera hints`);
-    base = hintPose(['wide', 'establishing']) || fallbackSetPose();
+    const pref = { low_angle: ['low', 'wide', 'establishing'], high_angle: ['aerial', 'establishing', 'wide'] }[framing] || ['wide', 'establishing'];
+    base = hintPose(pref) || fallbackSetPose();
   } else if (framing === 'pov') {
     const g = charGeom(THREE, subject);
     const eye = g.eyes.clone().addScaledVector(g.fwd, 0.35 * g.H / 5.2);
