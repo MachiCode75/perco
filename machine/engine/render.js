@@ -3,7 +3,7 @@
 //
 // node engine/render.js --episode episodes/<slug>/episode.json --timeline build/<slug>/timeline.json \
 //      [--out build/<slug>/shots] [--only 001,002,010-014] [--quality preview|final] [--workers 2] [--force]
-//      [--crf 18] [--preset medium] [--jpeg 0.92] [--no-code-hash] [--dry-run] [--restart-every 20]
+//      [--crf 18] [--preset medium] [--jpeg 0.92] [--no-shadows] [--no-code-hash] [--dry-run] [--restart-every 20]
 //
 // Writes one silent H.264 MP4 per shot (exactly `frames` frames, t = frame / fps), verifies frame counts with
 // ffprobe, skips shots that are up to date (content hash of the resolved shot + frame count + engine code), and
@@ -78,7 +78,7 @@ for (const s of epShots) {
   const frames = Math.max(1, Math.round(Number(tl.frames) || ((tl.end - tl.start) * fps) || 45));
   const r = resolveShot(episode, s, { frames, fps });
   warnings.push(...r.warnings);
-  const hash = crypto.createHash('sha1').update(JSON.stringify({ shot: r.shot, frames, fps, width, height, quality, crf, jpegQ, code: CODE })).digest('hex').slice(0, 16);
+  const hash = crypto.createHash('sha1').update(JSON.stringify({ shot: r.shot, frames, fps, width, height, quality, crf, jpegQ, shadows: !args['no-shadows'], code: CODE })).digest('hex').slice(0, 16);
   jobs.push({ id, frames, shot: r.shot, hash, warnings, file: path.join(outDir, `${id}.mp4`), meta: path.join(metaDir, `${id}.json`) });
 }
 if (only) for (const id of only) if (!jobs.some((j) => j.id === id)) console.warn(`render: --only ${id}: no such shot`);
@@ -208,7 +208,7 @@ async function renderShot(rt, j, tag) {
       try {
         if (!rt || count >= restartEvery) {
           if (rt) { runtimes.delete(rt); await rt.close(); }
-          rt = await openRuntime({ width, height, quality, server, options: { quality, jpegQuality: jpegQ } }); runtimes.add(rt); count = 0;
+          rt = await openRuntime({ width, height, quality, server, options: { quality, jpegQuality: jpegQ, ...(args['no-shadows'] ? { shadows: false } : {}) } }); runtimes.add(rt); count = 0;
         }
         console.log(`${tag} ${j.id} start (${j.frames} frames)`);
         const rec = await renderShot(rt, j, tag);

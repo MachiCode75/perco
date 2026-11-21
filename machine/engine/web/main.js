@@ -19,7 +19,7 @@ function hashStr(s) { let h = 2166136261 >>> 0; s = String(s); for (let i = 0; i
 const num = (x, d) => (typeof x === 'number' && isFinite(x) ? x : d);
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
-const options = { quality: 'final', shadows: true, jpegQuality: 0.92, exposure: null, maxShadowMap: 4096, shadowFollow: true, pointShadows: true, faceFill: 1 };
+const options = { quality: 'final', shadows: true, jpegQuality: 0.92, exposure: null, maxShadowMap: 4096, shadowFollow: true, pointShadows: true, faceFill: 1, baseZoom: null };
 let ctx = null; let state = null;
 
 // ---- track async texture loads so loadShot can wait for them
@@ -441,7 +441,8 @@ window.engine = {
       blockers: state.actorList.filter((e) => !e.crowd && e !== subjEntry && e !== targetEntry).map((e) => e.character),
       duration, fov: camFov, binoculars: !!shot.binoculars, seed, setId,
       allowUnderwater: !!(shot.underwater || shot.camera?.underwater || setId === 'underwater'),
-      subjectProp: subjEntry ? subjEntry.def.prop : null, subjectPropObject: subjEntry ? subjEntry.propObject : null, camera: shot.camera || {}, moveAmount: shot.moveAmount,
+      subjectTravel: subjEntry && subjEntry.walk ? [0.33, 0.66, 1].map((k) => { const w = subjEntry.walk; const tt = Math.max(0, k * duration - w.delay); const d = Math.min(w.dist, w.speed * Math.max(0, tt - 0.15)); return w.dir.clone().multiplyScalar(d); }) : null,
+      baseZoom: typeof shot.zoom === 'number' ? shot.zoom : (options.baseZoom ?? undefined), subjectProp: subjEntry ? subjEntry.def.prop : null, subjectPropObject: subjEntry ? subjEntry.propObject : null, camera: shot.camera || {}, moveAmount: shot.moveAmount,
     };
     const frame = (extra = {}) => {
       try { return director.frameShot(ctx, { ...frameArgs, ...extra }); } catch (e) {
@@ -568,6 +569,16 @@ window.engine = {
     const url = ctx.renderer.domElement.toDataURL(mime, q ?? options.jpegQuality);
     state.lastStats = { renderMs: T1 - T0, encodeMs: performance.now() - T1 };
     return url;
+  },
+
+  // QA helper: what does the director's collision ray see between two points?
+  debugRay(from, to) {
+    if (!state) return null;
+    const a = new THREE.Vector3(...from), b = new THREE.Vector3(...to);
+    const all = []; ctx.scene.traverse((o) => { if (o.isMesh) all.push(o); });
+    const col = new Set(director.collectColliders(THREE, state.set));
+    const r = new THREE.Raycaster(a, b.clone().sub(a).normalize(), 0, a.distanceTo(b));
+    return r.intersectObjects(all, false).slice(0, 12).map((h) => ({ name: h.object.name, type: h.object.type, d: +h.distance.toFixed(2), collider: col.has(h.object), mat: [].concat(h.object.material).map((m) => `${m.type}${m.transparent ? ' t' + m.opacity : ''}`).join(',') }));
   },
 
   info() {

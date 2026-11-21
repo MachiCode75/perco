@@ -43,6 +43,7 @@ function finish(ctx, key, c, o = {}) {
   if (o.repeat) t.repeat.set(o.repeat[0], o.repeat[1]);
   t.colorSpace = o.linear ? THREE.NoColorSpace : THREE.SRGBColorSpace;
   t.anisotropy = o.aniso || 1;
+  t.minFilter = THREE.LinearMipmapNearestFilter; // bilinear+mip (trilinear is ~2x the taps in SwiftShader)
   if (o.nearest) { t.magFilter = THREE.NearestFilter; }
   t.needsUpdate = true;
   ctx.textures.set('world:' + key, t);

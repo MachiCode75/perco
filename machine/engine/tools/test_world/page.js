@@ -107,12 +107,45 @@ window.tw.ab = function (reps = 4) {
     noRecv: () => meshes.forEach((m) => { m.receiveShadow = false; m.material = m.material.clone(); }),
     noPatch: () => meshes.forEach((m) => { const c = m.material.clone(); c.onBeforeCompile = () => {}; c.customProgramCacheKey = () => 'np'; m.material = c; }),
     basic: () => meshes.forEach((m) => { m.material = new THREE.MeshBasicMaterial({ color: '#888' }); }),
+    lambertAll: () => meshes.forEach((m) => { if (m.material.isMeshStandardMaterial) { const l = new THREE.MeshLambertMaterial({ map: m.material.map, vertexColors: true, emissive: m.material.emissive, emissiveMap: m.material.emissiveMap }); m.material = l; } }),
+    noWater: () => { const w = state.set.group.getObjectByName('water'); if (w) { w.visible = false; setTimeout(() => {}, 0); } },
+    noChars: () => state.actors.forEach((a) => (a.root.visible = false)),
   };
   const res = {}; for (const k in variants) res[k] = 1e9;
   for (let r = 0; r < reps; r++) for (const k in variants) {
     variants[k](); one(); res[k] = Math.min(res[k], one());
-    meshes.forEach((m, i) => { m.material = orig[i]; m.receiveShadow = recv[i]; });
+    meshes.forEach((m, i) => { m.material = orig[i]; m.receiveShadow = recv[i]; }); const w = state.set.group.getObjectByName('water'); if (w) w.visible = true; state.actors.forEach((a) => (a.root.visible = true));
   }
   for (const k in res) res[k] = +res[k].toFixed(0);
   return res;
+};
+window.tw.renderN = function (n = 3, which = 'scene') {
+  const gl = ctx.renderer.getContext(); const px = new Uint8Array(4);
+  if (which === 'calib' && !window.__calibScene) {
+    const sc = new THREE.Scene(); sc.background = new THREE.Color('#8fc1ee');
+    const g = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: '#6a9a45' })); g.rotation.x = -Math.PI / 2; g.receiveShadow = true; sc.add(g);
+    sc.add(new THREE.HemisphereLight('#dfefff', '#6b5a40', 1.3));
+    const d = new THREE.DirectionalLight('#ffffff', 2.0); d.position.set(20, 40, 25); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); Object.assign(d.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40 }); sc.add(d);
+    for (let i = 0; i < 10; i++) { const ch = characters.createCharacter(ctx, characters.randomSpec(ctx.rng)); ch.root.position.set(-9 + i * 2, 0, -i); sc.add(ch.root); }
+    window.__calibScene = sc;
+  }
+  const sc = which === 'calib' ? window.__calibScene : ctx.scene;
+  for (let i = 0; i < n; i++) { if (which !== 'calib') state.set.update(i / 30, ctx.camera); ctx.renderer.render(sc, ctx.camera); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
+  return true;
+};
+window.tw.toggle = function (name) {
+  const meshes = []; state.set.group.traverse((o) => { if (o.isMesh && o.name !== 'water') meshes.push(o); });
+  if (!window.__orig) window.__orig = new Map(meshes.map((m) => [m, { mat: m.material, recv: m.receiveShadow, cast: m.castShadow }]));
+  for (const [m, o] of window.__orig) { m.material = o.mat; m.receiveShadow = o.recv; m.castShadow = o.cast; m.visible = true; }
+  const w = state.set.group.getObjectByName('water'); if (w) w.visible = true; state.actors.forEach((a) => (a.root.visible = true));
+  const clone = (m) => { const c = m.material.clone(); c.onBeforeCompile = m.material.onBeforeCompile; c.customProgramCacheKey = m.material.customProgramCacheKey; return c; };
+  if (name === 'noRecv') meshes.forEach((m) => { m.receiveShadow = false; m.material = clone(m); });
+  if (name === 'noCast') meshes.forEach((m) => { m.castShadow = false; });
+  if (name === 'noWater' && w) w.visible = false;
+  if (name === 'noChars') state.actors.forEach((a) => (a.root.visible = false));
+  if (name === 'basic') meshes.forEach((m) => { m.material = new THREE.MeshBasicMaterial({ map: m.material.map, vertexColors: true }); });
+  if (name === 'lambert') meshes.forEach((m) => { if (m.material.isMeshStandardMaterial) { const l = new THREE.MeshLambertMaterial({ map: m.material.map, vertexColors: true }); l.onBeforeCompile = m.material.onBeforeCompile; m.material = l; } });
+  if (name === 'noMap') meshes.forEach((m) => { m.material = clone(m); m.material.map = null; });
+  if (name === 'noSet') state.set.group.visible = false; else state.set.group.visible = true;
+  return true;
 };

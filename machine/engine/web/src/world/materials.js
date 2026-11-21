@@ -7,13 +7,13 @@ import { getTexture } from './textures.js';
 
 // key → definition. tex = texture key; rough/metal; emissive handled by applyEnvironment for 'win*' & 'glow*'
 const DEFS = {
-  plain: { rough: 0.82 },
+  plain: { rough: 0.82, lambert: true },
   satin: { rough: 0.55 },                       // painted trim, furniture lacquer
   plastic: { rough: 0.4 },
   metal: { rough: 0.45, metal: 0.25 },
-  siding: { tex: 'siding', rough: 0.8 },
+  siding: { tex: 'siding', rough: 0.8, lambert: true },
   shingle: { tex: 'shingle', rough: 0.9, lambert: true },
-  planks: { tex: 'planks', rough: 0.85 },
+  planks: { tex: 'planks', rough: 0.85, lambert: true },
   brick: { tex: 'brick', rough: 0.9, lambert: true },
   asphalt: { tex: 'asphalt', rough: 0.95, lambert: true, order: 1 },
   concrete: { tex: 'concrete', rough: 0.92, lambert: true, order: 1 },
@@ -23,18 +23,18 @@ const DEFS = {
   bed: { tex: 'sand', basic: true, order: 4 },
   dirt: { tex: 'dirt', rough: 0.97, lambert: true, order: 1 },
   foliage: { rough: 0.9, lambert: true },
-  louvre: { tex: 'louvre', rough: 0.8, unit: true },
+  louvre: { tex: 'louvre', rough: 0.8, lambert: true, unit: true },
   door: { tex: 'door', rough: 0.6, unit: true },
   win: { tex: 'window_day', glow: 'window_glow', rough: 0.25, unit: true },      // lit at night
   win_dark: { tex: 'window_day', rough: 0.25, unit: true },                       // stays dark at night
   lampglass: { rough: 0.3, lamp: true },                                          // lamp heads (emissive at night)
   bulb: { rough: 0.3, bulb: true },                                               // interior lamps: always glowing a bit
   fire: { rough: 1, fire: true },
-  woodpanel: { tex: 'woodpanel', rough: 0.7, interior: true },
+  woodpanel: { tex: 'woodpanel', rough: 0.7, lambert: true, interior: true },
   floorwood: { tex: 'floorwood', rough: 0.55, interior: true },
   tile: { tex: 'tile', rough: 0.6, interior: true },
-  fabric: { tex: 'fabric', rough: 0.95, interior: true },
-  wallpaper: { tex: 'wallpaper', rough: 0.9, interior: true },
+  fabric: { tex: 'fabric', rough: 0.95, lambert: true, interior: true },
+  wallpaper: { tex: 'wallpaper', rough: 0.9, lambert: true, interior: true },
   rug: { tex: 'rug', rough: 1, unit: true, interior: true },
   art: { tex: 'art', rough: 0.6, unit: true, interior: true },
   books: { tex: 'books', rough: 0.8, unit: true, interior: true },

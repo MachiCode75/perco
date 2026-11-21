@@ -3,7 +3,8 @@
 //   node engine/tools/bench.js --episode episodes/_test/episode.json --shot 004 [--frames 30] [--w 720 --h 1280]
 //        [--quality final|preview] [--no-shadows]
 //   node engine/tools/bench.js --spec scene.json [...]
-// Prints load time, render (scene) ms, JPEG encode ms, round-trip ms per frame (what render.js pays) and fps.
+// Prints load time, submit ms (JS + GL command submission), GPU+readback+JPEG ms (SwiftShader work happens at
+// readback), round-trip ms per frame (what render.js pays per worker) and fps.
 const fs = require('fs');
 const { openRuntime, dataUrlToBuffer, parseArgs, resolveShot } = require('../browser');
 const args = parseArgs();
@@ -35,7 +36,7 @@ const args = parseArgs();
     const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
     const draw = await rt.page.evaluate(() => window.engine.info().draw);
     console.log(JSON.stringify({
-      shot: shot.id, size: `${w}x${h}`, frames: n, loadMs, sceneRenderMs: +avg(rs).toFixed(1), jpegEncodeMs: +avg(es).toFixed(1),
+      shot: shot.id, size: `${w}x${h}`, frames: n, loadMs, submitMs: +avg(rs).toFixed(1), gpuReadbackEncodeMs: +avg(es).toFixed(1),
       roundTripMsPerFrame: +rt_ms.toFixed(1), fps: +(1000 / rt_ms).toFixed(2), avgJpegKB: Math.round(bytes / n / 1024),
       camera: info.camera, warnings: info.warnings, draw,
     }, null, 1));

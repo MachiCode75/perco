@@ -30,7 +30,7 @@ node engine/render.js --episode episodes/_test/episode.json --timeline episodes/
 ```
 node engine/render.js --episode episodes/<slug>/episode.json --timeline build/<slug>/timeline.json
      [--out build/<slug>/shots] [--only 001,004,010-014] [--quality preview|final] [--workers 2] [--force]
-     [--crf 18] [--preset medium] [--jpeg 0.92] [--no-code-hash] [--dry-run] [--restart-every 20]
+     [--crf 18] [--preset medium] [--jpeg 0.92] [--no-shadows] [--no-code-hash] [--dry-run] [--restart-every 20]
 ```
 - Cast resolution: `actors[].id` → `episode.cast[id]`; `extra:<n>` → `randomSpec` seeded by the id (the same
   `extra:3` looks identical in every shot); unknown ids → random townsperson + warning. A `subject` that is a cast
@@ -56,7 +56,7 @@ node engine/render.js --episode episodes/<slug>/episode.json --timeline build/<s
 | `await loadShot(resolvedShot)` | builds set, environment, actors, crowd, camera. Returns `{ok, ms, warnings, camera, actors, crowd}`. Waits for async textures/fonts. |
 | `renderFrame(t, mime='image/jpeg', q)` | steps walks + `character.update(t)` + camera + `set.update(t, camera)`, renders, returns a data URL. Pure function of `t` (frames can be rendered in any order). |
 | `setOptions({quality, shadows, jpegQuality, exposure, maxShadowMap, shadowFollow, pointShadows})` | runtime options (unknown keys warn). |
-| `info()`, `capabilities()` | last shot info + render stats / module enums. |
+| `info()`, `capabilities()`, `debugRay(from, to)` | last shot info + render stats / module enums / what the collision ray hits. |
 
 Shot fields understood (episode §8 plus optional extensions, all fault-tolerant):
 - `set`, `setOptions` (passed to `createSet`), `time`, `weather`, `interior` (override), `exposure` (multiplier).
@@ -98,24 +98,27 @@ line (verticals stay vertical), slow eased moves. Character framings are defined
 subject in character heights `H` (`character.height`), the eye position and the camera elevation; the distance is
 `frameH·H / (2·tan(fov/2))`, then the camera is aimed so the eyes land exactly at `eyeY` (uses `anchors()`).
 
-| framing | composition |
+Values fitted to `docs/02-style-bible.md` (normal vertical FOV 50–60°, binoculars 20–30°, single subjects centred,
+eyes at 35–42 %, eye-level camera). `H` = `character.height` (adult 5.2, kid ≈ 4.3).
+
+| framing | composition (frame height at subject · eyes · camera elevation · fov) |
 |---|---|
-| `extreme_wide` | `cameraHints.extreme_wide` (else `wide`/`establishing` pulled back); with a character subject and no hint: subject ≈ 1/9 of frame |
-| `wide` | subject full body ≈ 30 % of frame, eyes at 50 % (no subject → `cameraHints.wide`) |
+| `extreme_wide` | `cameraHints.extreme_wide` (else `wide`/`establishing` pulled back); character subject w/o hint: 10 H · 60 % · +8° |
+| `wide` | 4.5 H (characters at 15–30 % of frame height) · 55 % · +4° · 55° (no subject → `cameraHints.wide`) |
 | `establishing` / `aerial` | `set.cameraHints` (aerial derived from establishing if missing; fallback from marks) |
-| `medium` | 1.45 H, ankles/shins up (reference "medium-full"), eyes 40 %, fov 42 |
-| `medium_close` | 1.0 H, mid-thigh up, fov 40 |
-| `close_up` | 0.72 H, head + shoulders, fov 36 |
-| `extreme_close_up` | 0.4 H, face |
+| `medium` | 2.0 H, full body / knees-up, head top ≈ 34 % · 40 % · −3° · 55° |
+| `medium_close` | 1.3 H, waist-up · 40 % · 52° |
+| `close_up` | 0.9 H, head + shoulders (head ≈ 30–40 % of width) · 40 % · 50° |
+| `extreme_close_up` | 0.5 H, face · 44 % |
 | `over_shoulder` | 1.7 H behind the subject, over the right shoulder (`camera.side`), raised; solved so the head sits in the lower third on its side and the target at 40 % |
-| `pov` | camera at the subject's eyes looking at `target` (subject hidden). Binoculars: FOV computed so a target actor is framed medium-close inside the mask band (steps back along the sight line if the target is too close) |
-| `two_shot` | subject + `target` actor (else nearest actor), camera perpendicular to their line, wide enough for both |
-| `insert` | held prop: right hand for one-hand props, hands midpoint for sign/binoculars/book; size per prop |
-| `low_angle` / `high_angle` | medium-ish, camera 24° below / 30° above the eye line |
-| `back` | behind the subject (seen from the back), slightly raised |
+| `pov` | camera at the subject's eyes looking at `target` (subject hidden). Binoculars: FOV computed so a target actor is framed medium-close inside the mask band (≤ 27°; steps back along the sight line if the target is too close) |
+| `two_shot` | subject + `target` actor (else nearest actor), camera perpendicular to their line, 1.9 H and wide enough for both |
+| `insert` | the held prop's bounding box (found by diffing the character subtree around `setProp`), else right hand / hands midpoint; use a presenting pose (`carry`, `hold_sign`) |
+| `low_angle` / `high_angle` | 2.0 H, camera 24° below / 30° above the eye line |
+| `back` | behind the subject (seen from the back), 2.0 H, +8° |
 
 `angle`: `eye` (default), `low`, `high`, `top`, `worm` or a number (elevation°) for any character framing.
-Binocular shots: `frameH /= 0.29` and eyes mapped into the band y ∈ [0.28, 0.57] (the mask's centre column), default FOV 20°.
+Binocular shots: `frameH /= 0.29` and eyes mapped into the band y ∈ [0.28, 0.57] (the mask's centre column), default FOV 25°.
 
 Collision rules: the line pivot → camera is ray-cast against the set (meshes; water sheets, sky, transparent and
 `userData.noCollide`/`cameraIgnore` meshes ignored). If blocked, azimuths ±14°, ±28°, ±45°, ±70° are tried; if all
@@ -123,16 +126,28 @@ are blocked the camera dollies in front of the obstacle and widens the FOV to ke
 0.45 above the floor / below ceilings and above `waterLevel + 0.35` (unless `underwater`).
 A deterministic ±7° azimuth variation is added to character framings (seeded per shot).
 
-Moves (eased in-out sine, deterministic, **symmetric around mid-shot** so `t = duration/2` is the composed frame):
-`static`; `push_in` / `pull_out` (distance 1.045 → 0.955, i.e. 9 %; zoom for `pov`); `pan_left`/`pan_right` (5°);
-`tilt_up`/`tilt_down` (4°); `orbit` (8° around the pivot); `drift` (lateral truck ≈ 3.5 % of distance, no re-aim);
-`follow` (camera translates with the subject, e.g. walking); `shake` (handheld noise ≈ 0.5°). Combine with `+`
-(`"push_in+shake"`). Binocular shots always add a slow wobble (≈1 % of the FOV). Aliases (`ms`, `cu`, `ots`, `dolly_in`, …) accepted; unknown values fall back with a warning.
+Occlusion is tested with rays from several body points (eyes, chest, ±shoulder width) and, for walking subjects,
+along the walk path (moving the camera too for `follow`).
+
+Moves — measured on the reference (style bible §5): **every shot has a linear centred zoom 1.00 → 1.05** (FOV ramp;
+binocular shots 1.07). All moves are linear and symmetric around mid-shot, so `t = duration/2` is the composed frame:
+`static` = base zoom only; `push_in` = dolly, total apparent scale 1.2 (replaces the base zoom; zoom for `pov`);
+`pull_out` = 1/1.11; `pan_left`/`pan_right` = 15 % of the frame width (+ base zoom); `tilt_up`/`tilt_down` 4°;
+`orbit` 8° around the pivot; `drift` = lateral truck of 10 % of frame width (no re-aim); `follow` = camera translates
+with the (walking) subject; `shake` = handheld noise ≈ 0.5°. Combine with `+` (`"pan_left+shake"`). Binocular shots
+always add a slow wobble (≈1 % of the FOV). `moveAmount` scales intensities; `shot.zoom` (or option `baseZoom`)
+overrides the base zoom (0 disables it — **post must not add its own zoom on top**). Aliases (`ms`, `cu`, `ots`,
+`dolly_in`, …) are accepted; unknown values fall back with a warning.
+
+Lighting help: for character framings the runtime adds a soft camera-side "face fill" point light whose range ≈ the
+subject distance (stronger at night/dusk/interiors) so faces are always readable, like the reference. `shot.faceFill`
+(or option `faceFill`) scales it, 0 disables it.
 
 ## Tools
 
 ```bash
-node engine/tools/preview.js --episode e.json --shot 012 --t 0,0.5 --out x.png      # stills of one shot
+node engine/tools/preview.js --episode e.json --shot 012 --t 0,0.5 --out x.png      # stills of one shot (same seed as render)
+     [--framing close_up --move push_in --fov 40 --angle low]                          # quick director overrides
 node engine/tools/preview.js --spec scene.json --out x.png [--w 360 --h 640]          # free-form resolvedShot
 node engine/tools/storyboard.js --episode e.json [--timeline t.json] --out sheet.jpg  # one still per shot (mid-shot)
      [--only 001-020] [--at 0.5] [--cols 6] [--tile 240] [--w 360 --h 640] [--workers 2] [--no-mask] [--stills dir] [--verbose]
@@ -149,8 +164,13 @@ binocular pov, medium+pan_right with sign, two_shot+pan_left, wide+follow with a
 close_up+tilt_up (interior, night), insert+tilt_down (stopwatch, kitchen), low_angle+orbit (snow), aerial+pull_out,
 back+static (bedroom, night), medium_close+shake with wading actors/crowd (depth). `extreme_wide`,
 `extreme_close_up` and `high_angle` are covered by `storyboard.js --matrix`.
+QA images: `docs/img/engine_test_storyboard.jpg` (test episode, mid-shot stills) and `docs/img/engine_framings.jpg` (framing matrix).
 
 ## Performance (4 shared cores, SwiftShader)
 
-See the report of the last test render: ≈ 150–300 ms per 720×1280 frame per worker with the stub world;
-2 workers ≈ 8 frames/s aggregate. Storyboards render at 360×640 (≈ 4× cheaper).
+Measured on the `_test` episode with the real characters + world modules while other agents were rendering
+(load average ≈ 11 on 4 cores): full render 489 frames in 4 min 34 s with 2 workers, ≈ 1.1 s/frame per worker
+(range 0.56 s aerial … 1.75 s street two-shot). `bench.js` on shot 004: 745 ms/frame final (shadows), 262 ms/frame
+with `--quality preview --no-shadows`; ≈ 90 draw calls / 32 k triangles. On an idle machine the stub scene ran
+≈ 150–300 ms/frame. Shadow mapping dominates: use `--quality preview` or `--no-shadows` for drafts.
+Storyboards render at 360×640: 12 shots in ≈ 10–15 s.

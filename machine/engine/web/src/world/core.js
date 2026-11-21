@@ -107,7 +107,7 @@ export class Builder {
   constructor(ctx, o = {}) {
     this.ctx = ctx; this.rng = o.rng || ctx.rng || Math.random; this.lod = o.lod || 'near';
     this.getMat = o.getMat; this.buckets = new Map(); this.stack = [new THREE.Matrix4()];
-    this.objects = []; this.chunk = ''; this.cast = true; this.receive = true; this.grid = !!o.grid;
+    this.objects = []; this.chunk = ''; this.cast = true; this.receive = true; this.grid = !!o.grid; this.recvOnly = o.recvOnly || null;
     this.lamps = [];     // world positions of light sources (lamp heads, porch lights) for night lighting
     this.windows = [];   // window glass centres (for night glows), optional
     this.blockers = [];  // simple AABB footprints {x0,x1,z0,z1} (layout helpers)
@@ -128,7 +128,8 @@ export class Builder {
 
   _bucket(mat, o) {
     const cast = o.cast !== undefined ? o.cast : this.cast;
-    const recv = o.receive !== undefined ? o.receive : this.receive;
+    let recv = o.receive !== undefined ? o.receive : this.receive;
+    if (recv && this.recvOnly && !this.recvOnly.has(mat)) recv = false;
     const chunk = o.chunk !== undefined ? o.chunk : this.chunk;
     // spatial cells (CELL units) so three's frustum culling can skip off-screen parts in both passes
     let cell = '';

@@ -18,11 +18,14 @@ function ground(b, x0, x1, z0, z1, mat = 'grass', color = '#ffffff', y = 0) {
 }
 function at(b, x, y, z, ry, fn, o) { b.push(x, y, z, ry); const r = fn(b, o || {}); b.pop(); return r; }
 function backdropHills(b, cx, cz, r0 = 430, n = 22, o = {}) {
+  // two rings: green wooded hills, then hazy blue-grey mountains (far shore look of the reference)
   const r = b.rng; const keepChunk = b.chunk, keepCast = b.cast, keepRecv = b.receive; b.chunk = 'bg'; b.cast = false; b.receive = false;
   for (let i = 0; i < n; i++) {
     const a = (i / n) * Math.PI * 2 + r() * 0.2; if (o.skip && o.skip(a)) continue;
-    const R = r0 + r() * 120;
-    b.prim('ico1', cx + Math.sin(a) * R, -6, cz + Math.cos(a) * R, range(r, 70, 130), range(r, 40, 85), range(r, 50, 90), 'foliage', pick(r, ['#5d7f5a', '#56786a', '#64845c', '#5a7470']), { ry: r() * 6 });
+    const R = r0 - 60 + r() * 60;
+    b.prim('ico1', cx + Math.sin(a) * R, -10, cz + Math.cos(a) * R, range(r, 60, 100), range(r, 22, 42), range(r, 40, 70), 'foliage', pick(r, ['#4d7a45', '#557f4a', '#4a7050']), { ry: r() * 6 });
+    const R2 = r0 + 160 + r() * 140; const a2 = a + 0.13;
+    b.prim('ico1', cx + Math.sin(a2) * R2, -20, cz + Math.cos(a2) * R2, range(r, 90, 150), range(r, 70, 130), range(r, 60, 100), 'foliage', pick(r, ['#5a6c7a', '#62707e', '#566878']), { ry: r() * 6 });
   }
   b.chunk = keepChunk; b.cast = keepCast; b.receive = keepRecv;
 }
@@ -44,7 +47,7 @@ function lot(b, plan, o = {}) {
     const pw = plan.width + 0.6; const zf = -3.2 - 0.6;
     for (let x = -pw / 2 + 1.5; x < pw / 2 - 1; x += 2.6) if (Math.abs(x - dx) > 4.6) at(b, x, 0, zf + 1.4, 0, P.bush, { size: 1.15, blobs: 1, flowers: r() < 0.7 });
     if (o.fence !== false && r() < 0.6) { const L = (plan.width + 8) / 2 - 3.5; for (const s of [-1, 1]) at(b, dx + s * (3.5 + L / 2), 0, yard - 0.8, 0, P.fence, { length: L }); }
-    if (o.mailbox !== false) at(b, dx + 4.2, 0, yard - 0.6, 0, P.mailbox, { color: pick(r, ['#1f2b46', '#202020', '#7a2a2a']) });
+    if (o.mailbox !== false) at(b, dx + 8, 0, yard - 0.6, 0, P.mailbox, { color: pick(r, ['#1f2b46', '#202020', '#7a2a2a']) });
     if (r() < 0.5) at(b, (r() < 0.5 ? -1 : 1) * (plan.width / 2 - 3), 0, 3, 0, P.flowerbed, { width: 6, depth: 2.2 });
   } else at(b, -plan.width / 2 + 3, 0, 1, 0, P.bush, { size: 1.6, blobs: 2, flowers: false });
   return { ...info, frontZ };
@@ -117,7 +120,7 @@ function lakeTown(b, ctx, o = {}) {
   const W = o.width || 120; const half = o.half || 210; const wl = -1.5;
   b.chunk = 'near'; b.lod = 'near';
   b.push(0, 0, -8, 0);
-  const near = shoreSide(b, { half, docks: [0], church: o.nearChurch ?? -176, gazebo: o.nearGazebo, boats: [-30, 46], edge: o.edge, lodFor: (x) => (Math.abs(x) < 60 ? 'near' : 'mid'), seedShift: 0 });
+  const near = shoreSide(b, { half, docks: o.docks || [0], church: o.nearChurch ?? -176, gazebo: o.nearGazebo, boats: [-30, 46], edge: o.edge, lodFor: (x) => (Math.abs(x) < 60 ? 'near' : 'mid'), seedShift: 0 });
   b.pop();
   b.chunk = 'far'; b.lod = 'far'; b.cast = false; b.receive = false;
   b.push(0, 0, W - 8, Math.PI);
@@ -181,7 +184,7 @@ const SET_BUILDERS = {
     const c = lakeCommon(ctx, b, 'lake_far_shore', { nearChurch: 132, nearGazebo: 44 });
     return { ...c, waterLevel: c.wl, extra: [c.town.water],
       pois: { ...c.pois, across: V(0, 4, c.W - 22), viewer: V(0, 6, c.W - 22) },
-      cameraHints: { establishing: H([0, 7, c.W - 20], [0, 7, -12], 16), aerial: H([-60, 80, 110], [0, 0, -10], 45), wide: H([0, 6, 70], [0, 6, -6], 24),
+      cameraHints: { establishing: H([0, 8, c.W - 20], [0, 9, -16], 26), aerial: H([-60, 80, 110], [0, 0, -10], 45), wide: H([0, 6, 70], [0, 6, -6], 24),
         binoculars: H([0, 7, c.W - 20], [0, 4, 4], 8), across: H([0, 6, 8], [0, 6, c.W], 30) },
       shadow: { center: [0, 0, -18], radius: 72 }, lightFocus: [0, 0, 0] };
   },
@@ -201,18 +204,18 @@ const SET_BUILDERS = {
       shadow: { center: [mid.x, 0, 0], radius: 130 }, lightFocus: [mid.x, 0, 0] };
   },
   street(ctx, b) {
-    // lakeside street: origin on the lake-side sidewalk; road and houses toward −Z, lawn + lake behind camera
-    const dz = 17; b.push(0, 0, dz, 0);
-    const town = lakeTown(b, ctx, { nearChurch: -88 });
-    b.pop(); town.water.position.z += dz;
-    const z0 = -8 + dz; // water edge
-    const crowd = [...rowSlots(-50, 50, 3.4, 0, 0, 0.35, (x) => Math.abs(x) < 5), ...rowSlots(-30, 30, 3.4, -21.5, 0, 0.35)];
-    const house = town.near.find((h) => Math.abs(h.x) < 1);
+    // lakeside street seen from the road: origin on the house-side sidewalk, houses toward −Z,
+    // road (z≈2..18) and the lake-side lawn/lake behind the camera; church down the street at x≈-44
+    const dx = 54, dz = 37; b.push(dx, 0, dz, 0);
+    const town = lakeTown(b, ctx, { nearChurch: -176 });
+    b.pop(); town.water.position.x += dx; town.water.position.z += dz;
+    const crowd = [...rowSlots(-40, 40, 3.4, 0.4, 0, 0.35, (x) => Math.abs(x) < 6 || Math.abs(x - 8) < 1.5), ...rowSlots(-24, 24, 3.4, 20.2, Math.PI, 0.35)];
+    const house = town.near.find((h) => Math.abs(h.x + dx) < 1);
     return { waterLevel: town.waterLevel, extra: [town.water],
-      marks: { A: M(0, 0.35, 0.5), B: M(3.2, 0.35, 0), C: M(-3.2, 0.35, 0), D: M(1.5, 0.35, -2.5), crossing: M(0, 0, -10), far_side: M(0, 0.35, -21.5), lawn: M(-6, 0, 5), crowd },
-      pois: { road: V(0, 0, -10), crosswalk: V(0, 0, -10), house: V(0, 14, -31 - 24), door: V(house?.plan?.doorX || 0, 2, -32), church: V(-88, 20, -31 - 25), lake: V(0, -1.5, z0 + 30), lamp: V(-12, 9, 2.6), across: V(0, 4, 120 - 8 + dz) },
-      cameraHints: { establishing: H([22, 9, 30], [-30, 9, -36], 42), aerial: H([40, 60, 60], [0, 0, -25], 45), wide: H([0, 5, 22], [0, 4.5, -4], 50), along: H([60, 5, 0.5], [-60, 6, -14], 35), across_road: H([0, 5, -24], [0, 4, 0], 50) },
-      shadow: { center: [0, 0, -20], radius: 70 }, lightFocus: [0, 0, 0] };
+      marks: { A: M(0, 0.35, 0.6), B: M(3.4, 0.35, 0.2), C: M(-3.4, 0.35, 0.2), D: M(0, 0, 5), crossing: M(dx, 0, 10), lake_side: M(0, 0.35, 20.2), crowd },
+      pois: { road: V(0, 0, 10), crosswalk: V(dx, 0, 10), house: V(0, 14, -35), door: V(house?.plan?.doorX || 0, 2, -12), church: V(-132, 20, -40), lake: V(0, -1.5, 60), across: V(0, 4, 149), dock: V(dx, 0, 40) },
+      cameraHints: { establishing: H([30, 9, 30], [-40, 10, -16], 40), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50), along: H([70, 5, 4], [-60, 7, -6], 35), from_house: H([0, 6, -8], [0, 4, 14], 50) },
+      shadow: { center: [0, 0, -10], radius: 60 }, lightFocus: [0, 0, 0] };
   },
   house_front(ctx, b) {
     const r = b.rng;
@@ -232,7 +235,7 @@ const SET_BUILDERS = {
     const crowd = [...rowSlots(-24, 24, 3, 3.5, 0, 0.35, (x) => Math.abs(x) < 4), ...rowSlots(-15, 15, 3.3, 27, Math.PI, 0.35)];
     return { waterLevel: null,
       marks: { A: M(0, 0, -2), B: M(3.4, 0, -2.6), C: M(-3.4, 0, -2.6), D: M(0, 0, -6.5), porch: M(-6, 1.3, -14.5), steps: M(0, 0, -9.6), sidewalk: M(6, 0.35, 3.5), crowd },
-      pois: { house: V(0, 14, -32), door: V(0, 4, -18), porch: V(-6, 3, -15), window: V(-8, 15, -22.5), mailbox: V(4.2, 4, 0.9), road: V(0, 0, 15), garden: V(10, 1, -3.5) },
+      pois: { house: V(0, 14, -32), door: V(0, 4, -18), porch: V(-6, 3, -15), window: V(-8, 15, -22.5), mailbox: V(8, 4, 0.9), road: V(0, 0, 15), garden: V(10, 1, -3.5) },
       cameraHints: { establishing: H([0, 9, 44], [0, 13, -20], 45), aerial: H([30, 55, 60], [0, 5, -15], 45), wide: H([0, 5.5, 20], [0, 4.5, -3], 50), porch: H([6, 5, -2], [-2, 4, -16], 50) },
       shadow: { center: [0, 0, -12], radius: 50 }, lightFocus: [0, 0, -12] };
   },
@@ -272,7 +275,7 @@ const SET_BUILDERS = {
     return { waterLevel: null,
       marks: { A: M(0, 0, 2.5), B: M(3.4, 0, 2), C: M(-3.4, 0, 2), D: M(0, 0, -3), gazebo: M(0, 1.2, -24), bench1: M(-10, 0, 0.6), bench2: M(10, 0, 0.6), crowd },
       pois: { gazebo: V(0, 5, -26), path: V(0, 0, 3), bench: V(10, 1, 0), trees: V(-34, 8, -8), lamp: V(6, 9, 6) },
-      cameraHints: { establishing: H([0, 9, 46], [0, 7, -20], 45), aerial: H([40, 70, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50) },
+      cameraHints: { establishing: H([0, 7, 34], [0, 6.5, -18], 45), aerial: H([40, 70, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50) },
       shadow: { center: [0, 0, -12], radius: 55 }, lightFocus: [0, 0, 0] };
   },
   forest_edge(ctx, b) {
@@ -286,7 +289,7 @@ const SET_BUILDERS = {
     }
     b.lod = 'near';
     for (let k = 0; k < 16; k++) at(b, range(r, -40, 40), 0, range(r, -16, -8), 0, P.bush, { flowers: false });
-    for (let k = 0; k < 10; k++) at(b, range(r, -30, 30), 0, range(r, -14, 14), 0, P.rock, {});
+    for (let k = 0; k < 10; k++) { const x = range(r, -30, 30), z = range(r, -14, 14); if (Math.abs(x) < 9 && z > -8) continue; at(b, x, 0, z, 0, P.rock, {}); }
     for (let k = 0; k < 6; k++) treeAt(b, (k % 2 ? 1 : -1) * range(r, 25, 60), range(r, 20, 60), {});
     b.push(-14, 0, -9, 0); P.rail_fence(b, { length: 18, color: '#8a6a4a' }); b.pop(); b.push(16, 0, -9, 0); P.rail_fence(b, { length: 18, color: '#8a6a4a' }); b.pop();
     at(b, 6, 0, -6, -0.3, P.sign_board, { text: 'WOODS', width: 4, height: 1.8, colors: ['#2a4a2a'], bg: '#c8a878', underline: false });
@@ -326,17 +329,17 @@ const SET_BUILDERS = {
   shore_water(ctx, b) {
     // beach shore: waterline at z=0, land toward −Z, water (camera side) toward +Z
     const dz = 6; b.push(0, 0, -dz, 0);
-    const town = lakeTown(b, ctx, { edge: 'beach' });
+    const town = lakeTown(b, ctx, { edge: 'beach', docks: [66] });
     b.pop(); town.water.position.z -= dz;
     // sloped beach into the water
     b.chunk = 'near';
-    b.prim('box', 0, -2.0, 4, 500, 1, 26, 'sand', '#ffffff', { rx: 0.14, cast: false });
+    b.prim('box', 0, -2.0, 0, 500, 1, 26, 'sand', '#ffffff', { rx: 0.14, cast: false });
     b.prim('box', 0, -6.6, 30, 500, 1, 28, 'sand', '#cfc4a0', { rx: 0.2, cast: false });
     const wl = town.waterLevel;
     // marks at the waterline (sand ≈ water surface); use actor depth to wade deeper
     const crowd = rowSlots(-48, 48, 3.2, 0.5, 0, wl, (x) => Math.abs(x) < 7).concat(rowSlots(-30, 30, 3.4, 5.5, 0, wl - 1.4, (x) => Math.abs(x) < 7));
     return { waterLevel: wl, extra: [town.water],
-      marks: { A: M(0, wl, 1.0), B: M(3.4, wl, 0.6), C: M(-3.4, wl, 0.6), D: M(0, wl, -3.5), deep: M(0, wl - 3.2, 9), beach: M(0, -0.3, -6), crowd },
+      marks: { A: M(0, wl - 0.1, 1.0), B: M(3.2, wl - 0.1, 0.6), C: M(-3.2, wl - 0.1, 0.6), D: M(0, wl + 0.4, -3.5), deep: M(0, wl - 3.2, 9), beach: M(0, -0.3, -6), crowd },
       pois: { lake: V(0, wl, 60), across: V(0, 4, 120 - 14), shore: V(0, 0, -8), house: V(0, 14, -78), road: V(0, 0, -33) },
       cameraHints: { establishing: H([0, 4.5, 46], [0, 7, -30], 42), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 3.2, 22], [0, 3.2, -2], 50), low: H([0, -0.6, 14], [0, 2.5, 0], 55) },
       shadow: { center: [0, 0, -20], radius: 70 }, lightFocus: [0, 0, 0] };
@@ -347,8 +350,9 @@ const SET_BUILDERS = {
     b.boxB(600, 1, 600, 0, bed - 1, 0, 'sand', '#d8cfa8', { cast: false });
     b.prim('box', 0, bed / 2 - 0.4, -46, 600, 1, 34, 'sand', '#ffffff', { rx: 0.42, cast: false });
     ground(b, -300, 300, -300, -60, 'grass', '#ffffff', 0.2);
-    for (let k = 0; k < 30; k++) at(b, range(r, -40, 40), bed, range(r, -40, 10), 0, P.rock, { size: range(r, 0.8, 2.8), color: '#7f8a84' });
-    for (let k = 0; k < 40; k++) at(b, range(r, -45, 45), bed, range(r, -45, 12), 0, P.seaweed, {});
+    const clear = (x, z) => Math.abs(x) < 9 && z > -9 && z < 8;
+    for (let k = 0; k < 30; k++) { const x = range(r, -40, 40), z = range(r, -40, 10); if (!clear(x, z)) at(b, x, bed, z, 0, P.rock, { size: range(r, 0.8, 2.8), color: '#7f8a84' }); }
+    for (let k = 0; k < 40; k++) { const x = range(r, -45, 45), z = range(r, -45, 12); if (!clear(x, z)) at(b, x, bed, z, 0, P.seaweed, {}); }
     for (const [x, z] of [[-6, -8], [6, -8], [-6, -20], [6, -20]]) at(b, x, wl + 1.5, z, 0, P.pier_post, { height: 17, below: 15.5 });
     b.boxB(14, 0.6, 18, 0, wl + 1.5, -14, 'planks', '#7a5a40');
     const water = createWaterSurface(ctx, { x0: -300, x1: 300, z0: -60, z1: 300, level: wl });
@@ -362,47 +366,47 @@ const SET_BUILDERS = {
 
   // ------------------------------------------------------------------ interiors
   kitchen(ctx, b) {
-    const R = room(b, { w: 34, d: 30, h: 13, floor: 'tile', floorColor: '#e3cfa6', wall: 'wallpaper', wallColor: '#efe2c0', backOpen: [{ x: 4, y: 4.6, w: 8, h: 5.2 }], leftOpen: [{ x: 2, y: 3.4, w: 7, h: 6.4 }] });
-    const bz = -15 + 1.5 + 0.5;
+    const R = room(b, { w: 34, d: 36, h: 13, floor: 'tile', floorColor: '#e3cfa6', wall: 'wallpaper', wallColor: '#efe2c0', backOpen: [{ x: 4, y: 4.6, w: 8, h: 5.2 }], leftOpen: [{ x: 2, y: 3.4, w: 7, h: 6.4 }] });
+    const bz = -18 + 1.5 + 0.5;
     at(b, -6, 0, bz, 0, P.kitchen_counter, { length: 14, sink: true, sinkX: 4 - -6 });
     at(b, 10.5, 0, bz + 0.2, 0, P.stove, {}); at(b, 14.5, 0, bz + 0.2, 0, P.fridge, {});
     at(b, 16.5, 0, -2, -Math.PI / 2, P.kitchen_counter, { length: 8, upper: false });
-    b.push(4, 0, -15, 0); P.window(b, { width: 8, height: 5.2, y: 7.2, mullionY: 0 }); b.pop();
+    b.push(4, 0, -18, 0); P.window(b, { width: 8, height: 5.2, y: 7.2, mullionY: 0 }); b.pop();
     b.push(-17, 0, 2, Math.PI / 2); P.window(b, { width: 7, height: 6.4, y: 6.6, curtains: '#f2e8d0' }); b.pop();
     at(b, 0, 0, -1, 0, P.table, { width: 10, depth: 5.5, items: true, color: '#8e5a32' });
     for (const s of [-1, 1]) { at(b, s * 2.6, 0, -4.8, 0, P.chair, { color: '#8e5a32' }); at(b, s * 2.6, 0, 2.8, Math.PI, P.chair, { color: '#8e5a32' }); }
     at(b, -6.4, 0, -1, Math.PI / 2, P.chair, { color: '#8e5a32' });
     for (const s of [-1, 1]) at(b, s * 2.6, 13, -1, 0, P.pendant_lamp, { drop: 4.5, color: '#1f5a5a' });
-    b.push(14, 0, -15, 0); P.clock(b, { y: 11 }); b.pop();
-    at(b, -13, 0, -12.5, 0, P.potted_plant, {});
-    outsideView(b, 'back', 34, 30); outsideView(b, 'left', 34, 30);
-    const crowd = gridSlots(-14, 14, -10, 12, 36, 0, 0, (x, z) => Math.abs(x) < 7.5 && z > -7 && z < 5);
+    b.push(14, 0, -18, 0); P.clock(b, { y: 11 }); b.pop();
+    at(b, -13, 0, -15.5, 0, P.potted_plant, {});
+    outsideView(b, 'back', 34, 36); outsideView(b, 'left', 34, 36);
+    const crowd = gridSlots(-14, 14, -12, 15, 36, 0, 0, (x, z) => Math.abs(x) < 7.5 && z > -7 && z < 5);
     return { interior: true, waterLevel: null,
-      marks: { A: M(0, 0, 5.5), B: M(3.6, 0, 5), C: M(-3.6, 0, 5), D: M(-9, 0, -8), seat1: M(-2.6, 0, -4.8, 0), seat2: M(2.6, 0, 2.8, Math.PI), stove: M(10.5, 0, -10, Math.PI), crowd },
-      pois: { table: V(0, 3, -1), counter: V(-6, 3.4, -13), stove: V(10.5, 3.5, -12.5), fridge: V(14.5, 6, -12.5), window: V(4, 7, -15), door: V(16.5, 4, 8), lamp: V(0, 8, -1) },
-      cameraHints: { establishing: H([10, 10, 14], [-1, 3, -6], 55), aerial: H([0, 12.3, 13], [0, 0, -4], 60), wide: H([3, 6, 14], [0, 4, 0], 55), table: H([0, 7, 9], [0, 3, -1], 50) },
+      marks: { A: M(0, 0, 5.5), B: M(3.0, 0, 5), C: M(-3.0, 0, 5), D: M(-8, 0, -10), seat1: M(-2.6, 0, -4.8, 0), seat2: M(2.6, 0, 2.8, Math.PI), stove: M(10.5, 0, -10, Math.PI), crowd },
+      pois: { table: V(0, 3, -1), counter: V(-6, 3.4, -16), stove: V(10.5, 3.5, -15.5), fridge: V(14.5, 6, -15.5), window: V(4, 7, -18), door: V(16.5, 4, 8), lamp: V(0, 8, -1) },
+      cameraHints: { establishing: H([14, 10, 17], [-3, 3.5, -8], 58), aerial: H([0, 12.3, 16], [0, 0, -5], 62), wide: H([0.5, 6, 17.3], [0, 3.4, 2], 62), table: H([0, 7, 10], [0, 3, -1], 50) },
       shadow: { center: [0, 0, 0], radius: 22 }, lightFocus: [0, 6, 0], windowLight: [-0.55, 0.55, 0.62] };
   },
   living_room(ctx, b) {
-    const R = room(b, { w: 34, d: 30, h: 13, floor: 'floorwood', floorColor: '#9a5a32', wall: 'woodpanel', wallColor: '#d8853e', backWall: 'wallpaper', backColor: '#8f9466', leftOpen: [{ x: -2, y: 3.4, w: 7, h: 6.6 }] });
-    at(b, 0, 0, -15, 0, P.fireplace, { width: 10, height: 13 });
-    b.push(0, 0, -15 + 2.4, 0); P.picture_frame(b, { width: 6, height: 4, y: 9.2, variant: 0 }); b.pop();
-    b.push(-11, 0, -15, 0); P.picture_frame(b, { width: 3, height: 3.6, y: 7, variant: 1 }); b.pop();
-    at(b, 0, 0, -1, 0, P.rug, { width: 16, depth: 11 });
-    at(b, 8.5, 0, -6.5, -0.6, P.armchair, { color: '#a3352a' });
-    at(b, -9, 0, -6, 0.6, P.armchair, { color: '#3f5a3a' });
+    const R = room(b, { w: 34, d: 36, h: 13, floor: 'floorwood', floorColor: '#9a5a32', wall: 'woodpanel', wallColor: '#d8853e', backWall: 'wallpaper', backColor: '#8f9466', leftOpen: [{ x: -2, y: 3.4, w: 7, h: 6.6 }] });
+    at(b, 0, 0, -18, 0, P.fireplace, { width: 10, height: 13 });
+    b.push(0, 0, -18 + 2.4, 0); P.picture_frame(b, { width: 6, height: 4, y: 9.2, variant: 0 }); b.pop();
+    b.push(-11, 0, -18, 0); P.picture_frame(b, { width: 3, height: 3.6, y: 7, variant: 1 }); b.pop();
+    at(b, 0, 0, -3, 0, P.rug, { width: 16, depth: 12 });
+    at(b, 8.5, 0, -9, -0.6, P.armchair, { color: '#a3352a' });
+    at(b, -9, 0, -8.5, 0.6, P.armchair, { color: '#3f5a3a' });
     at(b, -12.5, 0, 3, Math.PI / 2, P.sofa, { length: 10, color: '#a3352a' });
-    at(b, 0, 0, 1, 0, P.table, { width: 6, depth: 3.5, height: 1.8, color: '#6a3e22' });
-    at(b, 14, 0, -13, 0, P.bookshelf, { width: 5, height: 10 });
-    at(b, 12.5, 0, -9.5, 0, P.lamp, {}); at(b, -14.5, 0, -12.5, 0, P.lamp, {});
+    at(b, 0, 0, -1.5, 0, P.table, { width: 6, depth: 3.5, height: 1.8, color: '#6a3e22' });
+    at(b, 14, 0, -16, 0, P.bookshelf, { width: 5, height: 10 });
+    at(b, 12.5, 0, -12.5, 0, P.lamp, {}); at(b, -14.5, 0, -15.5, 0, P.lamp, {});
     at(b, 15.6, 0, 6, -Math.PI / 2, P.tv, {});
     b.push(-17, 0, -2, Math.PI / 2); P.window(b, { width: 7, height: 6.6, y: 6.7, curtains: '#c8742e' }); b.pop();
-    outsideView(b, 'left', 34, 30);
-    const crowd = gridSlots(-13, 13, -6, 12, 36, 0, 0, (x, z) => Math.abs(x) < 4 && Math.abs(z - 1) < 3);
+    outsideView(b, 'left', 34, 36);
+    const crowd = gridSlots(-13, 13, -6, 15, 36, 0, 0, (x, z) => Math.abs(x) < 4 && Math.abs(z + 1.5) < 3);
     return { interior: true, waterLevel: null,
-      marks: { A: M(0, 0, 5), B: M(3.6, 0, 4.4), C: M(-3.6, 0, 4.4), D: M(-3, 0, -8), armchair: M(8.5, 0, -6.5, -0.6), sofa: M(-12.5, 0, 3, Math.PI / 2), fire: M(3.5, 0, -9.5, 0), crowd },
-      pois: { fireplace: V(0, 2.5, -12), armchair: V(8.5, 2, -6.5), sofa: V(-12.5, 2, 3), tv: V(15.6, 4.5, 6), window: V(-17, 6.7, -2), picture: V(0, 9.2, -12.5), table: V(0, 1.8, 1) },
-      cameraHints: { establishing: H([9, 9, 13], [-1, 4, -8], 55), aerial: H([0, 12.3, 13], [0, 0, -4], 60), wide: H([2, 6, 14], [0, 4.5, -1], 55), fireplace: H([0, 6, 8], [0, 5, -13], 50) },
+      marks: { A: M(0, 0, 4), B: M(3.0, 0, 3.4), C: M(-3.0, 0, 3.4), D: M(-3.5, 0, -11), armchair: M(8.5, 0, -9, -0.6), sofa: M(-12.5, 0, 3, Math.PI / 2), fire: M(4, 0, -12.5, 0), crowd },
+      pois: { fireplace: V(0, 2.5, -15), armchair: V(8.5, 2, -9), sofa: V(-12.5, 2, 3), tv: V(15.6, 4.5, 6), window: V(-17, 6.7, -2), picture: V(0, 9.2, -15.5), table: V(0, 1.8, -1.5) },
+      cameraHints: { establishing: H([10, 9.5, 16], [-2, 4.5, -10], 56), aerial: H([0, 12.3, 16], [0, 0, -5], 62), wide: H([0.5, 6, 17.3], [0, 3.6, 0], 62), fireplace: H([0, 6, 6], [0, 5, -16], 50) },
       shadow: { center: [0, 0, 0], radius: 22 }, lightFocus: [0, 5, -6], windowLight: [-0.6, 0.5, 0.4] };
   },
   bedroom(ctx, b) {
@@ -419,7 +423,7 @@ const SET_BUILDERS = {
     const keep = b.chunk; b.chunk = 'out'; b.cast = false; b.lod = 'far';
     b.push(0, -14, -40, 0);
     ground(b, -200, 200, -20, 10);
-    b.push(0, 0, -100, Math.PI); shoreSide(b, { half: 140, docks: [0], church: -44, seedShift: 5 }); b.pop();
+    b.push(0, 0, -100, 0); shoreSide(b, { half: 140, docks: [0], church: -44, seedShift: 5 }); b.pop();
     b.boxB(400, 1, 100, 0, -10.5, -50, 'sand', '#3a5a64', { cast: false });
     b.pop(); b.chunk = keep; b.cast = true; b.lod = 'near';
     backdropHills(b, 0, -150, 420);
@@ -428,7 +432,7 @@ const SET_BUILDERS = {
     return { interior: true, waterLevel: null, extra: [water],
       marks: { A: M(0, 0, -9.5), B: M(3.4, 0, -8.5), C: M(-3, 0, -8.5), D: M(2, 0, 4), bed: M(-9, 2.6, 2, Math.PI / 2), desk: M(8.5, 0, -7.6, Math.PI), crowd },
       pois: { window: V(0, 7, -14), across: V(0, -8, -150), bed: V(-9, 2, 2), desk: V(8.5, 3.2, -10.8), door: V(13, 4, 8), lamp: V(-11.5, 4, -5.5) },
-      cameraHints: { establishing: H([4, 8, 11], [0, 5, -13], 55), aerial: H([0, 11.3, 11], [0, 0, -4], 60), wide: H([1, 6, 9], [0, 5, -10], 55), window: H([1.5, 7.5, -3], [0, 5, -60], 40) },
+      cameraHints: { establishing: H([6, 8, 12], [-1, 4.5, -12], 58), aerial: H([0, 11.3, 12], [0, 0, -4], 62), wide: H([1, 6, 12], [0, 4.5, -9], 58), window: H([1.5, 7.5, -4], [0, 2, -80], 40) },
       shadow: { center: [0, 0, 0], radius: 20 }, lightFocus: [0, 5, -6], windowLight: [0.3, 0.5, -0.8] };
   },
   classroom(ctx, b) {
@@ -448,7 +452,7 @@ const SET_BUILDERS = {
     return { interior: true, waterLevel: null,
       marks: { A: M(0, 0, -12), B: M(3.4, 0, -12.6), C: M(-3.4, 0, -12.6), D: M(-6, 0, -9), teacher: M(9, 0, -14.5), seats: crowd.slice(0, 12), crowd },
       pois: { board: V(0, 6.8, -17), desk: V(9, 3.2, -12), window: V(-20, 6.8, -2), students: V(0, 3, 4), door: V(18, 4, 10) },
-      cameraHints: { establishing: H([12, 10, 15], [-2, 4, -10], 55), aerial: H([0, 12.3, 15], [0, 0, -5], 60), wide: H([0, 7, 8], [0, 5, -14], 55), students: H([0, 6, -14], [0, 3, 6], 55) },
+      cameraHints: { establishing: H([14, 10, 16], [-3, 4, -10], 58), aerial: H([0, 12.3, 16], [0, 0, -5], 62), wide: H([0, 6.5, 6], [0, 4, -14], 55), students: H([0, 6, -14], [0, 3, 6], 55) },
       shadow: { center: [0, 0, 0], radius: 25 }, lightFocus: [0, 6, -6], windowLight: [-0.6, 0.6, 0.35] };
   },
 };
@@ -486,12 +490,16 @@ function outsideView(b, side, w, d) {
 }
 
 export const SET_IDS = Object.keys(SET_BUILDERS);
+const INTERIORS = new Set(['kitchen', 'living_room', 'bedroom', 'classroom']);
+const RECV_OUTDOOR = new Set(['grass', 'asphalt', 'concrete', 'sand', 'dirt', 'planks', 'stone']);
 
 export function buildSet(ctx, id, opts = {}) {
   const fn = SET_BUILDERS[id] || SET_BUILDERS.lake_dock;
   const rid = SET_BUILDERS[id] ? id : 'lake_dock';
   const rng = makeRng(rid + ':' + (opts.seed ?? 1));
-  const b = new Builder(ctx, { rng, lod: 'near', grid: true, getMat: (k) => getMat(ctx, k) });
+  const interior = INTERIORS.has(rid);
+  // outdoors only ground-like surfaces receive shadows (PCF-soft = ~25 taps per fragment in SwiftShader)
+  const b = new Builder(ctx, { rng, lod: 'near', grid: true, getMat: (k) => getMat(ctx, k), recvOnly: interior ? null : RECV_OUTDOOR });
   const def = fn(ctx, b, opts);
   const group = b.build('set:' + rid);
   for (const e of def.extra || []) group.add(e);

@@ -8,12 +8,12 @@ import { getTexture } from './textures.js';
 import { makeRng } from './core.js';
 
 const C = (h) => new THREE.Color(h);
-/** fog colour is mixed after the sRGB conversion in three's shaders → pre-encode it */
-const fogCol = (h) => C(h).convertLinearToSRGB();
+/** three converts fog colour to the output colour space itself (getUnlitUniformColorSpace) */
+const fogCol = (h) => C(h);
 
 const TIMES = {
   day: { top: '#3f7ccc', mid: '#78a8dc', hor: '#b9d2ea', ground: '#9db4c8', sun: [0.48, 0.72, 0.5], sunCol: '#fff1dc', sunI: 2.7, hemiSky: '#d6e6ff', hemiGnd: '#8a8a6a', hemiI: 1.25,
-    fog: '#b9d2ea', fogN: 140, fogF: 1100, exp: 1.0, water: ['#4f86b4', '#2c5f8c'], glow: 0, lamps: 0, stars: 0, sunSize: 0.0008 },
+    fog: '#b9d2ea', fogN: 150, fogF: 1500, exp: 1.0, water: ['#4f86b4', '#2c5f8c'], glow: 0, lamps: 0, stars: 0, sunSize: 0.0008 },
   golden: { top: '#4f78c0', mid: '#c9a98e', hor: '#ffc887', ground: '#b49a80', sun: [0.82, 0.24, 0.52], sunCol: '#ffc27a', sunI: 2.6, hemiSky: '#ffe2c0', hemiGnd: '#7a6650', hemiI: 0.95,
     fog: '#efc9a0', fogN: 120, fogF: 950, exp: 1.0, water: ['#5a7fa6', '#33587e'], glow: 0.25, lamps: 0.3, stars: 0, sunSize: 0.0012 },
   dusk: { top: '#1d2752', mid: '#6a4c86', hor: '#f08848', ground: '#3a3040', sun: [-0.25, 0.05, -0.97], sunCol: '#ff9a5a', sunI: 0.75, hemiSky: '#8a7ab8', hemiGnd: '#3a2e36', hemiI: 0.75,
@@ -108,8 +108,9 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   const sky = makeSky(ctx, p); group.add(sky);
   scene.background = C(p.hor);
   const sunDir = new THREE.Vector3(...p.sun).normalize();
-  const hemi = new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI * (interior ? 0.9 : 1)); group.add(hemi);
-  const sun = new THREE.DirectionalLight(C(p.sunCol), p.sunI);
+  const hemi = interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.4 : p.time === 'dusk' ? 0.7 : 1.5)
+    : new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI); group.add(hemi);
+  const sun = new THREE.DirectionalLight(C(p.sunCol), interior ? (p.time === 'night' ? 0.15 : p.time === 'dusk' ? 0.5 : Math.max(1.6, p.sunI * 0.8)) : p.sunI);
   const focus = set?.shadow || { center: [0, 0, 0], radius: 60 };
   const fc = new THREE.Vector3(...focus.center);
   let ldir = sunDir.clone(); if (ldir.y < 0.25) { ldir.y = 0.25; ldir.normalize(); } // keep shadows sane at dusk

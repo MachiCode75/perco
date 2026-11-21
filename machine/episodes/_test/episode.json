@@ -338,7 +338,7 @@
           "id": "grandpa",
           "mark": "A",
           "facing": "camera",
-          "pose": "stand",
+          "pose": "carry",
           "face": "worried",
           "prop": "stopwatch"
         }
@@ -425,17 +425,20 @@
       "actors": [
         {
           "id": "me",
-          "mark": "deep",
+          "mark": {
+            "x": 0,
+            "z": 14
+          },
           "facing": "camera",
           "pose": "wade",
           "face": "scream",
-          "depth": "chest"
+          "depth": "waist"
         },
         {
           "id": "toby",
           "mark": {
             "x": 3.6,
-            "z": 7.5
+            "z": 12.5
           },
           "facing": "camera",
           "pose": "wade",

@@ -25,8 +25,8 @@ void main() {
   vec2 p = vW.xz;
   vec3 n1 = texture2D(uNormal, p * 0.031 + vec2(uTime * 0.011, uTime * 0.007)).rgb * 2.0 - 1.0;
   vec3 n2 = texture2D(uNormal, p * 0.083 + vec2(-uTime * 0.009, uTime * 0.015)).rgb * 2.0 - 1.0;
-  vec3 n3 = texture2D(uNormal, p * 0.21 + vec2(uTime * 0.02, -uTime * 0.012)).rgb * 2.0 - 1.0;
-  vec2 g = (n1.xy * 0.5 + n2.xy * 0.35 + n3.xy * 0.2) * uWave;
+  float dist = length(cameraPosition - vW);
+  vec2 g = (n1.xy * 0.62 + n2.xy * 0.34) * uWave * 0.5 * mix(1.0, 0.4, smoothstep(40.0, 260.0, dist));
   vec3 n = normalize(vec3(g.x, 1.0, g.y));
   vec3 V = normalize(cameraPosition - vW);
   vec3 c; float a;
@@ -35,12 +35,12 @@ void main() {
     float F = 0.02 + 0.98 * pow(1.0 - cosT, 5.0);
     vec3 R = reflect(-V, n);
     float ry = clamp(R.y, 0.0, 1.0);
-    vec3 sky = mix(uSkyHor, uSkyTop, pow(ry, 0.55));
+    vec3 sky = mix(uSkyHor, uSkyTop, 0.6 + 0.4 * pow(ry, 0.5));
     float graz = 1.0 - clamp(V.y, 0.0, 1.0);
     vec3 body = mix(uColor, uDeep, smoothstep(0.15, 0.95, graz));
     // subtle light streaks from the normal map (Roblox water look)
     body *= 0.93 + 0.16 * (n2.x * 0.5 + 0.5) * (n1.y * 0.5 + 0.5);
-    c = mix(body, sky, clamp(F * 0.9, 0.0, 1.0));
+    c = mix(body, sky * 0.9, clamp(F * 0.5, 0.0, 0.7));
     float s = pow(max(dot(R, uSunDir), 0.0), 220.0) * uSpec + pow(max(dot(R, uSunDir), 0.0), 18.0) * uSpec * 0.04;
     c += uSunCol * s;
     a = mix(uAlphaNear, uAlphaFar, smoothstep(0.2, 0.9, graz));

@@ -34,19 +34,20 @@ export const MOVE_ALIASES = {
 // eyeY = where the eyes land (fraction of frame height from the top); el = camera elevation in degrees as seen
 // from the subject's eyes (negative = camera below the eye line); fov = default vertical FOV in degrees.
 export const FRAMING_SPECS = {
-  extreme_wide: { frameH: 9.0, eyeY: 0.60, el: 8, fov: 50 },
-  wide: { frameH: 3.3, eyeY: 0.50, el: 4, fov: 50 },
-  medium: { frameH: 1.45, eyeY: 0.40, el: -3, fov: 42 },
-  medium_close: { frameH: 1.0, eyeY: 0.40, el: -3, fov: 40 },
-  close_up: { frameH: 0.72, eyeY: 0.41, el: -2, fov: 36 },
-  extreme_close_up: { frameH: 0.4, eyeY: 0.45, el: -1, fov: 32 },
-  two_shot: { frameH: 1.35, eyeY: 0.41, el: -3, fov: 44 },
-  low_angle: { frameH: 1.4, eyeY: 0.36, el: -24, fov: 46 },
-  high_angle: { frameH: 1.45, eyeY: 0.44, el: 30, fov: 46 },
-  back: { frameH: 1.6, eyeY: 0.45, el: 8, fov: 44 },
-  insert: { frameH: 0.42, eyeY: 0.48, el: 24, fov: 38 },
-  over_shoulder: { fov: 45 },
-  pov: { fov: 55 },
+  // values fitted to docs/02-style-bible.md §5 (normal vertical FOV 50–60°, subjects centred, eyes ≈ 35–42 %)
+  extreme_wide: { frameH: 10.0, eyeY: 0.60, el: 8, fov: 55 },
+  wide: { frameH: 4.5, eyeY: 0.55, el: 4, fov: 55 },            // characters at 15–30 % of frame height
+  medium: { frameH: 2.0, eyeY: 0.40, el: -3, fov: 55 },         // full body / knees-up, 30–50 % of frame height
+  medium_close: { frameH: 1.3, eyeY: 0.40, el: -3, fov: 52 },   // waist-up, head top ≈ 25–38 %
+  close_up: { frameH: 0.9, eyeY: 0.40, el: -2, fov: 50 },       // head + shoulders, head ≈ 30–40 % of width
+  extreme_close_up: { frameH: 0.5, eyeY: 0.44, el: -1, fov: 48 },
+  two_shot: { frameH: 1.9, eyeY: 0.41, el: -3, fov: 55 },
+  low_angle: { frameH: 2.0, eyeY: 0.36, el: -24, fov: 58 },
+  high_angle: { frameH: 2.0, eyeY: 0.44, el: 30, fov: 55 },
+  back: { frameH: 2.0, eyeY: 0.45, el: 8, fov: 55 },
+  insert: { frameH: 0.42, eyeY: 0.48, el: 24, fov: 50 },
+  over_shoulder: { fov: 55 },
+  pov: { fov: 60 },
   aerial: { fov: 50 },
   establishing: { fov: 50 },
 };
@@ -56,7 +57,7 @@ const ANGLE_EL = { eye: null, level: null, low: -22, worm: -40, worms_eye: -40, 
 // Binocular mask: visible band (fractions of frame height) where the subject must stay. Mask spans y≈326–749 of
 // 1280 but the centre column (between the two circles) only shows ≈ 0.28–0.57.
 export const BINO_BAND = [0.28, 0.57];
-export const BINO_FOV = 20;
+export const BINO_FOV = 25;
 
 const DEG = Math.PI / 180;
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
@@ -275,6 +276,7 @@ export function frameShot(ctx, opts = {}) {
     let el = extra.el != null ? extra.el : (angleEl != null && !extra.lockEl ? angleEl : sp.el);
     if (typeof camOpt.elevation === 'number') el = camOpt.elevation;
     const H = g.H;
+    if (bino && el < 0 && el > -10) el = -0.4; // long lens: keep the camera near eye height (don't sink 3 units at 60 m)
     // lying / very low subjects: look from above
     if (g.eyes.y - g.feet.y < 0.3 * H && el < 20) el = 35;
     const d = Math.max(1.2, frameH * H / (2 * Math.tan(fov * DEG / 2)));
@@ -292,8 +294,14 @@ export function frameShot(ctx, opts = {}) {
       const p = makePose(az0 + off * DEG);
       constrainY(p.pos);
       const fs = [].concat(from ? from(p) : p.pivot);
-      const free = Math.min(...fs.map((f) => segFree(f, p.pos)));
-      if (free === Infinity) { if (off) notes.push(`azimuth +${off}° to clear the view`); return p; }
+      let free = Math.min(...fs.map((f) => segFree(f, p.pos)));
+      // walking subject: the view must stay clear along the path (camera travels too when following)
+      for (const d of travel) {
+        if (free !== Infinity) break;
+        const cp = followMove ? p.pos.clone().add(d) : p.pos;
+        free = Math.min(...fs.slice(0, 3).map((f) => segFree(f.clone().add(d), cp)));
+      }
+      if (free === Infinity) { if (off) notes.push(`azimuth ${off > 0 ? "+" : ""}${off}° to clear the view`); return p; }
       if (!best || free > best.free) best = { p, free, off };
     }
     // nothing clear: take the most open direction and dolly in front of the blocker
@@ -309,6 +317,14 @@ export function frameShot(ctx, opts = {}) {
     return p;
   }
 
+  // sample points across a character's body, spread perpendicular to the view direction (catches posts in front of an arm)
+  const bodyPts = (g, camPos) => {
+    const f = g.pivot.clone().sub(camPos); f.y = 0; if (f.lengthSq() < 1e-6) f.set(0, 0, 1); f.normalize();
+    const r = rightOf(THREE, f).multiplyScalar(0.33 * g.H);
+    return [g.pivot, g.chest, g.chest.clone().add(r), g.chest.clone().sub(r), g.pivot.clone().addScaledVector(r, 0.5), g.pivot.clone().addScaledVector(r, -0.5)];
+  };
+  const travel = (Array.isArray(opts.subjectTravel) ? opts.subjectTravel : []).filter((v) => v && v.isVector3);
+  const followMove = moves.includes('follow');
   const azOffset = () => {
     if (typeof camOpt.azimuth === 'number') return camOpt.azimuth * DEG;
     // subtle deterministic variety (±7°) for character framings, like a human operator
@@ -351,7 +367,7 @@ export function frameShot(ctx, opts = {}) {
         if (!fovOverride) {
           fov = 2 * Math.atan(fh * tg.H / (2 * dist)) / DEG;
           if (fov > 30) { // target too close for a long lens: step back along the sight line (keeps the look)
-            const need = fh * tg.H / (2 * Math.tan(15 * DEG));
+            const need = fh * tg.H / (2 * Math.tan(13.5 * DEG));
             const back = eye.clone().sub(pivot).normalize();
             const cand = pivot.clone().addScaledVector(back, need);
             const free = segFree(pivot, cand);
@@ -427,7 +443,7 @@ export function frameShot(ctx, opts = {}) {
         return pose;
       };
       const az0 = lockAz != null ? lockAz : Math.atan2(n.x, n.z) + azOffset() * 0.5;
-      base = unblock(mk, az0, () => [mid, g.pivot, p.pivot, g.chest, p.chest]);
+      base = unblock(mk, az0, (q) => [mid, ...bodyPts(g, q.pos), ...bodyPts(p, q.pos)]);
     }
   } else if (framing === 'insert') {
     const g = charGeom(THREE, subject);
@@ -456,7 +472,7 @@ export function frameShot(ctx, opts = {}) {
     const extra = {};
     if (framing === 'low_angle' || framing === 'high_angle') extra.lockEl = true;
     const az0 = lockAz != null ? lockAz : g.yaw + (behind ? Math.PI : 0) + azOffset();
-    base = unblock((a) => subjectPose(g, sp, a, extra), az0, (p) => [p.pivot, g.chest]);
+    base = unblock((a) => subjectPose(g, sp, a, extra), az0, (q) => bodyPts(g, q.pos));
   }
 
   if (!base) base = fallbackSetPose();
@@ -471,14 +487,22 @@ export function frameShot(ctx, opts = {}) {
   const ph = Array.from({ length: 12 }, () => rng() * Math.PI * 2);
   const has = (m) => moves.includes(m);
   const wob = (t, f, i) => 0.55 * Math.sin(t * 2 * Math.PI * f + ph[i]) + 0.3 * Math.sin(t * 2 * Math.PI * f * 2.31 + ph[i + 1]) + 0.15 * Math.sin(t * 2 * Math.PI * f * 4.7 + ph[i + 2]);
-  const PUSH = 0.09 * amount, PAN = 5 * DEG * amount, TILT = 4 * DEG * amount, ORBIT = 8 * DEG * amount, DRIFT = 0.035 * amount;
+  // Measured on the reference (docs/02-style-bible.md): every shot has a LINEAR centred zoom 1.00 → 1.05 (FOV ramp);
+  // push_in = stronger dolly (total 1.08–1.34, default 1.2); pans/trucks 4–28 % of frame width; binoculars zoom 4–10 %.
+  // All moves are linear and symmetric around mid-shot (t = duration/2 is the composed frame).
+  const baseZoom = clamp(num(opts.baseZoom, bino ? 0.07 : 0.05), 0, 0.5);
+  const PUSH = Math.max(1.001, 1 + 0.2 * amount), PULL = Math.max(1.001, 1 + 0.11 * amount);
+  const hfov0 = 2 * Math.atan(Math.tan(base.fov * DEG / 2) * aspect);
+  const PAN = 0.15 * hfov0 * amount, TILT = 4 * DEG * amount, ORBIT = 8 * DEG * amount;
+  const DRIFT = 0.10 * 2 * Math.tan(hfov0 / 2) * amount; // × distance = 10 % of frame width at the pivot
   const tmp = new THREE.Vector3();
   const follow = has('follow') && !!subject;
   if (has('follow') && !subject) notes.push('follow without subject → drift');
+  const dolly = has('push_in') || has('pull_out');
 
   function update(t) {
     t = num(t, 0);
-    const e = ease(t / duration) - 0.5; // −0.5 … +0.5 eased, 0 at mid-shot
+    const u = clamp(t / duration, 0, 1), e = u - 0.5; // linear, 0 at mid-shot
     let pos = base.pos.clone(); let pivot = base.pivot.clone(); let fov = base.fov;
     if (follow) {
       const now = charGeom(THREE, subject).pivot;
@@ -486,18 +510,20 @@ export function frameShot(ctx, opts = {}) {
       pos.add(tmp); pivot.add(tmp);
     }
     const reAim = !(has('drift') || (has('follow') && !subject));
-    if (has('push_in') || has('pull_out')) {
-      const k = (has('push_in') ? -1 : 1) * PUSH * e; // push_in: 1.045 → 0.955
-      if (base.zoomMoves) fov = fov * (1 + k);
-      else pos = pivot.clone().add(pos.clone().sub(pivot).multiplyScalar(1 + k));
-    }
+    // apparent size scale relative to the composed frame
+    let zoom = 1;
+    if (dolly) {
+      const S = has('push_in') ? Math.pow(PUSH, e) : Math.pow(PULL, -e);
+      if (base.zoomMoves) zoom = S; else pos = pivot.clone().add(pos.clone().sub(pivot).multiplyScalar(1 / S));
+    } else zoom = (1 + baseZoom * u) / (1 + baseZoom / 2);
+    if (zoom !== 1) fov = 2 * Math.atan(Math.tan(fov * DEG / 2) / zoom) / DEG;
     if (has('orbit')) {
       const off = pos.clone().sub(pivot); off.applyAxisAngle(new THREE.Vector3(0, 1, 0), ORBIT * e * dirSign); pos = pivot.clone().add(off);
     }
     if (has('drift') || (has('follow') && !subject)) {
       const fwd = pivot.clone().sub(pos); fwd.y = 0; if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
       const right = rightOf(THREE, fwd);
-      pos.addScaledVector(right, DRIFT * dist0 * e * dirSign * 2).add(new THREE.Vector3(0, DRIFT * dist0 * e * 0.4, 0));
+      pos.addScaledVector(right, DRIFT * dist0 * e * dirSign);
     }
     if (!allowUnderwater && waterLevel !== null && pos.y < waterLevel + 0.35) pos.y = waterLevel + 0.35;
     let { yaw, pitch } = reAim ? aimAngles(pos, pivot, base.u, base.v, fov, aspect) : baseAngles;
@@ -509,7 +535,6 @@ export function frameShot(ctx, opts = {}) {
     if (has('shake')) {
       const A = 0.55 * DEG * amount;
       yaw += A * wob(t, 1.3, 0); pitch += A * wob(t, 1.1, 3); roll += A * 0.5 * wob(t, 0.9, 6);
-      pos.y += 0.02 * dist0 * 0.05 * wob(t, 1.7, 9);
     }
     if (bino) { // handheld binoculars: slow wobble scaled with the (narrow) field of view
       const A = fov * DEG * 0.011;
