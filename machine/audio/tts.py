@@ -29,8 +29,10 @@ ELLIPSIS = re.compile(r"(\.\.\.|…)[\"'”’»)\]]*$")
 CLAUSE_END = re.compile(r"[,;:—–][\"'”’»)\]]*$")
 ABBREV = {"mr.", "mrs.", "ms.", "dr.", "st.", "jr.", "sr.", "vs.", "etc.", "m.", "mme.", "mlle.", "prof."}
 
-DEFAULTS = {"wpm": 165.0, "sentence_pause": 0.32, "ellipsis_pause": 0.50, "paragraph_pause": 0.60,
-            "clause_pause": 0.15, "lead_in": 0.15, "tail": 0.40, "lufs": -16.0}
+# Reference reel (docs/01-reference-analysis.md): 757 words / 170.6 s ≈ 266 wpm, pauses 0.12–0.24 s.
+DEFAULTS = {"wpm": 255.0, "sentence_pause": 0.18, "ellipsis_pause": 0.24, "paragraph_pause": 0.26,
+            "clause_pause": 0.10, "lead_in": 0.12, "tail": 0.40, "lufs": -16.0}
+SPEED_RANGE = (0.6, 1.9)  # kokoro engine speed bounds (model accepts 0.5–2.0)
 
 
 # ---------------------------------------------------------------- segmentation
@@ -130,6 +132,12 @@ def trim_chunk(audio, sr, times, rel_db=-42.0):
     out = al.fade(audio[s:e], sr, 0.004, 0.025)
     off, dur = s / sr, (e - s) / sr
     new = [None if t is None else (min(max(0.0, t[0] - off), dur), min(max(0.0, t[1] - off), dur)) for t in times]
+    # the first word of a chunk starts exactly at the detected energy onset (sound fades in a few
+    # frames before the predicted phoneme boundary when it follows silence)
+    k = next(i for i, t in enumerate(new) if t)
+    onset = (c0 - s) / sr if (c0 := (loud[loud >= lo][0] if (loud >= lo).any() else None)) is not None else None
+    if onset is not None and 0 <= new[k][0] - onset < 0.15:
+        new[k] = (onset, new[k][1])
     return out, new
 
 
@@ -242,7 +250,7 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
         ratio, want = getattr(prov, "ratio", 1.0), max(1e-3, target_total - pauses)
         # predicted speech time is monotone (but not proportional: per-token rounding) in speed → bisect
         est = lambda s: sum(prov.estimate_speech_seconds(texts, s)) / ratio
-        lo, hi = 0.7, 1.4
+        lo, hi = SPEED_RANGE
         if est(lo) < want:
             eng_speed = lo
         elif est(hi) > want:
@@ -273,7 +281,7 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
     speech = sum(len(p[0]) for p in pieces) / al.OUT_SR
     scale = 1.0
     if target_total and sum(gaps) > 0:
-        scale = float(np.clip((target_total - speech) / sum(gaps), 0.6, 1.5))
+        scale = float(np.clip((target_total - speech) / sum(gaps), 0.6, 1.4))
     sr = al.OUT_SR
     out, word_times, cursor = [np.zeros(int(opt["lead_in"] * sr), np.float32)], [], opt["lead_in"]
     for (audio, times), g in zip(pieces, gaps):
@@ -326,7 +334,7 @@ def main():
     ap.add_argument("--provider", choices=["kokoro", "elevenlabs", "espeak"])
     ap.add_argument("--voice", help="kokoro: preset (young_storyteller, adult_calm, fr_storyteller…), voice id "
                                     "or blend 'am_fenrir*0.7+am_michael*0.3'; elevenlabs: name or voice_id")
-    ap.add_argument("--speed", type=float, help="pace multiplier on --wpm (1.0 = 165 wpm)")
+    ap.add_argument("--speed", type=float, help="pace multiplier on --wpm (1.0 = 255 wpm)")
     ap.add_argument("--pitch", type=float, help="kokoro: semitones (tape-style resampling)")
     ap.add_argument("--wpm", type=float, help="target overall words/min incl. pauses (0 = raw engine speed)")
     ap.add_argument("--threads", type=int, help="onnxruntime threads (default 2 or $AUDIO_THREADS)")

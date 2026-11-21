@@ -216,4 +216,4 @@ Measured at 720×1280 (see `docs/img/caption_crop.png`):
 
 Rule: **direct speech is coloured by speaker**, while the speech tag ("Grandpa always says",
 "he whispered") stays white. The narrator's own words and the sign texts (hi ME / bye ME) stay
-white. Only 22 / 756 tokens (2.9 %) are coloured.
+white. Only 29 / 756 tokens (3.8 %) are coloured.

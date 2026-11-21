@@ -283,3 +283,14 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
 
 ## Contract change log
 - v1 (initial).
+- v1.1 (after reference analysis — see docs/01..04):
+  - Reference = **140 shots** (mean 1.22 s), **757 words at 266 wpm**, all hard cuts, every shot has a
+    linear ~5 % centred zoom; binocular shots ≈ 15 % of runtime; cut ≈ 0.07 s before the first word.
+  - `ending.hold` default **0.8 s** (was 2.5).
+  - `captions.highlight` entries may be strings or `{"text", "color"}`; the reference colours ONLY
+    quoted direct speech, one colour per speaker (yellow #F7DE72, blue #74CAF8, pink #F7A5C0). Extra
+    optional keys supported by post: `highlight_color`, `auto_proper_nouns`, `palette`, `lead`,
+    `hold_gap_max`, `last_hold` (see post/README.md).
+  - Characters: extra spec fields (`shirt.sleeves`, `sleevePattern`, `sleeveColors`, `neck`, `logo`,
+    `inner`, `pants.pattern`, `colors`, `shoes`, `hair.capColor`), extra patterns `vest`, `cardigan`,
+    extra face `wink`, setPose options (see engine/web/src/characters/README.md).

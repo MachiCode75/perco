@@ -15,7 +15,7 @@ sys.path.insert(0, HERE)
 import text as T  # noqa: E402
 
 # Reference-reel targets (see docs/01-reference-analysis.md)
-REF = {"words_per_shot": (2.0, 6.0), "wpm": 165, "binocular_share": (0.10, 0.30), "words_total": (300, 650)}
+REF = {"words_per_shot": (3.5, 7.0), "wpm": 266, "binocular_share": (0.10, 0.25), "words_total": (450, 800)}
 FACING_WORDS = {"camera", "away", "left", "right"}
 
 
@@ -116,13 +116,13 @@ def validate(ep, vocab, strict=False):
     }
     lo, hi = REF["words_total"]
     if not lo <= len(words) <= hi:
-        W(f"narration has {len(words)} words (reference ≈ 450–500; target {lo}–{hi})")
+        W(f"narration has {len(words)} words (reference 757 words / 170 s; target {lo}–{hi})")
     lo, hi = REF["words_per_shot"]
     if not lo <= stats["words_per_shot_mean"] <= hi:
-        W(f"mean {stats['words_per_shot_mean']} words/shot (reference ≈ 3.5–4)")
+        W(f"mean {stats['words_per_shot_mean']} words/shot (reference ≈ 5.4, median 5, range 2–11)")
     for s, n in zip(shots, per_shot):
-        if n > 9:
-            W(f"shot {s.get('id')}: {n} words — too long for this style, split it")
+        if n > 12:
+            W(f"shot {s.get('id')}: {n} words — too long for this style (reference max 11), split it")
     return errors, warnings, stats
 
 

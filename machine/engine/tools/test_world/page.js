@@ -83,3 +83,36 @@ window.tw.calib = function (reps = 3) {
   return { calib: +best.toFixed(0), scene: +best2.toFixed(0), ratio: +(best2 / best).toFixed(2), calls: ctx.renderer.info.render.calls, tris: ctx.renderer.info.render.triangles };
 };
 window.tw.stats = function () { const rows = []; state.set.group.traverse((o) => { if (o.isMesh) rows.push([o.name, o.geometry.attributes.position.count, o.geometry.index ? o.geometry.index.count / 3 : 0]); }); rows.sort((a, b) => b[1] - a[1]); return rows.slice(0, 25).map((r) => r.join(' ')).join('\n') + '\nTOTAL verts ' + rows.reduce((s, r) => s + r[1], 0); };
+window.tw.prof2 = function (reps = 3) {
+  const gl = ctx.renderer.getContext(); const px = new Uint8Array(4);
+  const time = () => { let best = 1e9; for (let i = 0; i < reps; i++) { const t0 = performance.now(); ctx.renderer.render(ctx.scene, ctx.camera); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); best = Math.min(best, performance.now() - t0); } return +best.toFixed(0); };
+  const out = { base: time() };
+  const vis = (objs, v) => objs.forEach((o) => (o.visible = v));
+  vis([state.set.group], false); out.noSet = time(); vis([state.set.group], true);
+  const chars = state.actors.map((a) => a.root); vis(chars, false); out.noChars = time(); vis(chars, true);
+  const W = ctx.width, H = ctx.height; ctx.renderer.setSize(W / 2, H / 2); out.quarterRes = time(); ctx.renderer.setSize(W, H);
+  ctx.renderer.setScissorTest(true); ctx.renderer.setScissor(0, 0, 8, 8); out.tinyScissor = time(); ctx.renderer.setScissorTest(false);
+  const t0 = performance.now(); for (let i = 0; i < 5; i++) { ctx.scene.updateMatrixWorld(); } out.jsTraverse5 = +(performance.now() - t0).toFixed(1);
+  out.calls = ctx.renderer.info.render.calls; let meshes = 0; ctx.scene.traverse((o) => { if (o.isMesh) meshes++; }); out.meshes = meshes;
+  return out;
+};
+window.tw.ab = function (reps = 4) {
+  const gl = ctx.renderer.getContext(); const px = new Uint8Array(4);
+  const one = () => { const t0 = performance.now(); ctx.renderer.render(ctx.scene, ctx.camera); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); return performance.now() - t0; };
+  const meshes = []; state.set.group.traverse((o) => { if (o.isMesh && o.material.isMaterial && o.name !== 'water') meshes.push(o); });
+  const orig = meshes.map((m) => m.material); const recv = meshes.map((m) => m.receiveShadow);
+  const variants = {
+    base: () => {},
+    noMap: () => meshes.forEach((m) => { const c = m.material.clone(); c.map = null; c.onBeforeCompile = m.material.onBeforeCompile; m.material = c; }),
+    noRecv: () => meshes.forEach((m) => { m.receiveShadow = false; m.material = m.material.clone(); }),
+    noPatch: () => meshes.forEach((m) => { const c = m.material.clone(); c.onBeforeCompile = () => {}; c.customProgramCacheKey = () => 'np'; m.material = c; }),
+    basic: () => meshes.forEach((m) => { m.material = new THREE.MeshBasicMaterial({ color: '#888' }); }),
+  };
+  const res = {}; for (const k in variants) res[k] = 1e9;
+  for (let r = 0; r < reps; r++) for (const k in variants) {
+    variants[k](); one(); res[k] = Math.min(res[k], one());
+    meshes.forEach((m, i) => { m.material = orig[i]; m.receiveShadow = recv[i]; });
+  }
+  for (const k in res) res[k] = +res[k].toFixed(0);
+  return res;
+};

@@ -42,7 +42,7 @@ function finish(ctx, key, c, o = {}) {
   t.wrapS = t.wrapT = o.clamp ? THREE.ClampToEdgeWrapping : THREE.RepeatWrapping;
   if (o.repeat) t.repeat.set(o.repeat[0], o.repeat[1]);
   t.colorSpace = o.linear ? THREE.NoColorSpace : THREE.SRGBColorSpace;
-  t.anisotropy = o.aniso || 4;
+  t.anisotropy = o.aniso || 1;
   if (o.nearest) { t.magFilter = THREE.NearestFilter; }
   t.needsUpdate = true;
   ctx.textures.set('world:' + key, t);

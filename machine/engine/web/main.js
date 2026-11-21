@@ -19,7 +19,7 @@ function hashStr(s) { let h = 2166136261 >>> 0; s = String(s); for (let i = 0; i
 const num = (x, d) => (typeof x === 'number' && isFinite(x) ? x : d);
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
-const options = { quality: 'final', shadows: true, jpegQuality: 0.92, exposure: null, maxShadowMap: 4096, shadowFollow: true, pointShadows: true };
+const options = { quality: 'final', shadows: true, jpegQuality: 0.92, exposure: null, maxShadowMap: 4096, shadowFollow: true, pointShadows: true, faceFill: 1 };
 let ctx = null; let state = null;
 
 // ---- track async texture loads so loadShot can wait for them
@@ -279,7 +279,10 @@ window.engine = {
       if (d.face) { if (FACES.length && !FACES.includes(d.face)) W(`unknown face "${d.face}"`); safe(`setFace(${d.face})`, () => ch.setFace(d.face)); }
       if (d.prop !== undefined && d.prop !== null && d.prop !== false && d.prop !== 'none') {
         const ps = typeof d.prop === 'string' ? { type: d.prop } : d.prop;
+        const before = new Set(); ch.root.traverse((o) => before.add(o));
         safe(`setProp(${ps && ps.type})`, () => ch.setProp(ps));
+        const added = []; ch.root.traverse((o) => { if (!before.has(o) && before.has(o.parent)) added.push(o); });
+        e.propObject = added.length === 1 ? added[0] : null;
       }
     };
     const actorDefs = Array.isArray(shot.actors) ? shot.actors.filter((a) => a && typeof a === 'object') : [];
@@ -295,7 +298,13 @@ window.engine = {
       const H = ch.height;
       const depth = depthUnits(def.depth, H);
       let y = m.y;
-      if (depth > 0) { if (set.waterLevel !== null) y = set.waterLevel - depth; else { y = m.y - depth; W(`actor "${id}": depth without water in set "${setId}"`); } }
+      if (depth > 0) {
+        if (set.waterLevel !== null) {
+          y = set.waterLevel - depth;
+          const g = res.groundAt(m.x, m.z, set.waterLevel);
+          if (g !== null && g > y + 0.25) { W(`actor "${id}": ground at mark is above the requested depth → standing on it (use a mark further in the water)`); y = g; }
+        } else { y = m.y - depth; W(`actor "${id}": depth without water in set "${setId}"`); }
+      }
       const pos = new THREE.Vector3(m.x, y, m.z);
       // keep actors from standing inside each other
       for (const q of placed) {
@@ -335,7 +344,8 @@ window.engine = {
         const ch = makeChar(spec, 'crowd'); if (!ch) continue;
         const yaw = num(s.yaw, 0);
         const depth = depthUnits(crowd.depth, ch.height);
-        let y = num(s.y, 0); if (depth > 0) y = set.waterLevel !== null ? set.waterLevel - depth : y - depth;
+        let y = num(s.y, 0);
+        if (depth > 0) { if (set.waterLevel !== null) { y = set.waterLevel - depth; const g = res.groundAt(s.x, s.z, set.waterLevel); if (g !== null && g > y + 0.25) y = g; } else y -= depth; }
         const back = row * 2.6, jit = row ? (crng() - 0.5) * 1.2 : 0;
         ch.root.position.set(s.x - Math.sin(yaw) * back + Math.cos(yaw) * jit, y, s.z - Math.cos(yaw) * back - Math.sin(yaw) * jit);
         ch.root.rotation.y = yaw;
@@ -431,7 +441,7 @@ window.engine = {
       blockers: state.actorList.filter((e) => !e.crowd && e !== subjEntry && e !== targetEntry).map((e) => e.character),
       duration, fov: camFov, binoculars: !!shot.binoculars, seed, setId,
       allowUnderwater: !!(shot.underwater || shot.camera?.underwater || setId === 'underwater'),
-      subjectProp: subjEntry ? subjEntry.def.prop : null, camera: shot.camera || {}, moveAmount: shot.moveAmount,
+      subjectProp: subjEntry ? subjEntry.def.prop : null, subjectPropObject: subjEntry ? subjEntry.propObject : null, camera: shot.camera || {}, moveAmount: shot.moveAmount,
     };
     const frame = (extra = {}) => {
       try { return director.frameShot(ctx, { ...frameArgs, ...extra }); } catch (e) {
@@ -499,6 +509,18 @@ window.engine = {
         }
       }
     });
+
+    // face fill: a soft light from the camera side so faces stay readable (the reference never has dark faces).
+    // Point light with a short range ≈ subject distance → lifts the subject, barely touches the background.
+    const ff = num(+(shot.faceFill ?? options.faceFill), 1);
+    if (ff > 0 && subjEntry && framing !== 'pov' && camCtl.info.kind !== 'hint' && dist < 40) {
+      const dark = time === 'night' || time === 'dusk' || interior;
+      const E = (dark ? 1.1 : 0.45) * ff;
+      const L = new THREE.PointLight('#fff4e6', E * dist * dist, dist * 2.2, 2);
+      const cp = camCtl.basePosition.clone(); const toS = camCtl.pivot.clone().sub(cp);
+      L.position.copy(cp).addScaledVector(toS, 0.15).add(new THREE.Vector3(0, 0.6, 0));
+      L.castShadow = false; L.userData.faceFill = true; scene.add(L);
+    }
 
     state.cam = camCtl;
     // wait for async textures / fonts (bounded)

@@ -9,7 +9,7 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (
   await page.evaluate((o) => window.tw.init(o), { width: W, height: H });
   for (const set of String(args.set || 'lake_dock').split(',')) {
     await page.evaluate((s) => window.tw.load(s), { set, time: args.time || 'day', weather: args.weather || 'clear', actors: [{ mark: 'A' }, { mark: 'B' }, { mark: 'C' }, { mark: 'D' }], crowd: { count: 6 } });
-    for (const v of String(args.view || 'establishing').split(',')) { await page.evaluate((vv) => window.tw.view(vv), v); await page.evaluate(() => window.tw.render(0)); console.log(set, v, JSON.stringify(await page.evaluate((m) => (m ? window.tw.calib(3) : window.tw.profile(2)), !!args.calib))); }
+    for (const v of String(args.view || 'establishing').split(',')) { await page.evaluate((vv) => window.tw.view(vv), v); await page.evaluate(() => window.tw.render(0)); console.log(set, v, JSON.stringify(await page.evaluate((m) => (m === 3 ? window.tw.ab(3) : m === 2 ? window.tw.prof2(3) : m ? window.tw.calib(3) : window.tw.profile(2)), +(args.calib || 0)))); }
   }
   await browser.close(); srv.server.close();
 })();

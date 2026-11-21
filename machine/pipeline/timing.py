@@ -14,7 +14,7 @@ import argparse, json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import text as T  # noqa: E402
 
-LEAD = 0.05          # cut this many seconds before the first word of a shot
+LEAD = 0.07          # cut ~2 frames before the first word of a shot (measured on the reference)
 MIN_SHOT = 0.35      # warn below this duration
 
 
@@ -28,7 +28,7 @@ def build_timeline(episode, words_doc, fps=30, width=720, height=1280):
             raise SystemExit(f"timing: word {i} mismatch: words.json '{w['text']}' vs episode '{e}'")
 
     ranges = T.shot_word_ranges(episode)
-    hold = float(episode.get("ending", {}).get("hold", 2.0))
+    hold = float(episode.get("ending", {}).get("hold", 0.8))  # reference: video ends 0.46 s after the last word
     speech_end = max(float(words_doc.get("duration", 0)), words[-1]["end"] if words else 0)
     total = speech_end + hold
 

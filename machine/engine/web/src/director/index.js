@@ -290,14 +290,14 @@ export function frameShot(ctx, opts = {}) {
     let best = null;
     for (const off of offsets) {
       const p = makePose(az0 + off * DEG);
-      const f = from ? from(p) : p.pivot;
       constrainY(p.pos);
-      const free = segFree(f, p.pos);
+      const fs = [].concat(from ? from(p) : p.pivot);
+      const free = Math.min(...fs.map((f) => segFree(f, p.pos)));
       if (free === Infinity) { if (off) notes.push(`azimuth +${off}° to clear the view`); return p; }
       if (!best || free > best.free) best = { p, free, off };
     }
     // nothing clear: take the most open direction and dolly in front of the blocker
-    const p = best.p; const f = from ? from(p) : p.pivot;
+    const p = best.p; const f = [].concat(from ? from(p) : p.pivot)[0];
     const dir = p.pos.clone().sub(f); const len = dir.length(); dir.normalize();
     const newLen = Math.max(1.0, best.free - 0.6);
     if (newLen < len) {
@@ -427,7 +427,7 @@ export function frameShot(ctx, opts = {}) {
         return pose;
       };
       const az0 = lockAz != null ? lockAz : Math.atan2(n.x, n.z) + azOffset() * 0.5;
-      base = unblock(mk, az0);
+      base = unblock(mk, az0, () => [mid, g.pivot, p.pivot, g.chest, p.chest]);
     }
   } else if (framing === 'insert') {
     const g = charGeom(THREE, subject);
@@ -435,7 +435,17 @@ export function frameShot(ctx, opts = {}) {
     const sp = { ...FRAMING_SPECS.insert, frameH: INSERT_SIZE[pt] || FRAMING_SPECS.insert.frameH };
     if (pt === 'sign') sp.el = 6;
     const twoHands = ['sign', 'binoculars', 'book', ''].includes(pt);
-    const pivot = (!twoHands && g.handR ? g.handR : g.hands).clone();
+    let pivot = (!twoHands && g.handR ? g.handR : g.hands).clone();
+    const po = opts.subjectPropObject;
+    if (po && po.isObject3D) {
+      const bb = new THREE.Box3().setFromObject(po);
+      if (!bb.isEmpty()) {
+        const sz = bb.getSize(new THREE.Vector3());
+        pivot = bb.getCenter(new THREE.Vector3());
+        const need = Math.max(sz.y, Math.max(sz.x, sz.z) / aspect) * (pt === 'sign' ? 1.35 : 2.4);
+        sp.frameH = clamp(need / g.H, 0.18, 1.3);
+      }
+    }
     const az0 = lockAz != null ? lockAz : g.yaw + (typeof camOpt.azimuth === 'number' ? camOpt.azimuth * DEG : 0);
     base = unblock((a) => { const p = subjectPose(g, sp, a, { pivot }); p.v = 1 - 2 * sp.eyeY; return p; }, az0, (p) => p.pivot);
   } else {
@@ -446,7 +456,7 @@ export function frameShot(ctx, opts = {}) {
     const extra = {};
     if (framing === 'low_angle' || framing === 'high_angle') extra.lockEl = true;
     const az0 = lockAz != null ? lockAz : g.yaw + (behind ? Math.PI : 0) + azOffset();
-    base = unblock((a) => subjectPose(g, sp, a, extra), az0);
+    base = unblock((a) => subjectPose(g, sp, a, extra), az0, (p) => [p.pivot, g.chest]);
   }
 
   if (!base) base = fallbackSetPose();

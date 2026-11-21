@@ -3,79 +3,460 @@
   "id": "_test",
   "title": "Engine test episode (all framings / moves / binoculars / crowd / walk / water / interior / night)",
   "language": "en",
-  "voice": { "provider": "kokoro", "voice": "am_michael", "speed": 1.0 },
-  "music": { "mood": "calm_to_eerie", "file": null },
-  "captions": { "highlight": ["Toby", "Grandpa"] },
+  "voice": {
+    "provider": "kokoro",
+    "voice": "am_michael",
+    "speed": 1.0
+  },
+  "music": {
+    "mood": "calm_to_eerie",
+    "file": null
+  },
+  "captions": {
+    "highlight": [
+      "Toby",
+      "Grandpa"
+    ]
+  },
   "cast": {
-    "me": { "name": "Me", "build": "kid", "skin": "#f2c8a0", "hair": { "style": "spiky", "color": "#f5d742" },
-            "shirt": { "pattern": "stripes_h", "colors": ["#f2c511", "#151515"] }, "pants": { "style": "pants", "color": "#151515" }, "face": "smile" },
-    "toby": { "name": "Toby", "build": "kid", "skin": "#f2c8a0", "hair": { "style": "messy", "color": "#6b3d1f" },
-              "shirt": { "pattern": "tee_logo", "colors": ["#e8442e", "#f2c511"] }, "pants": { "style": "pants", "color": "#2c5bd6" }, "face": "grin" },
-    "mom": { "name": "Mom", "build": "adult", "skin": "#f2c8a0", "hair": { "style": "ponytail", "color": "#161616" },
-             "shirt": { "pattern": "hoodie", "colors": ["#f4c6cf", "#ffffff"] }, "pants": { "style": "pants", "color": "#4a78c2" }, "face": "smile" },
-    "grandpa": { "name": "Grandpa", "build": "elder", "skin": "#f2c8a0", "hair": { "style": "bald", "color": "#dddddd" },
-                 "shirt": { "pattern": "plaid", "colors": ["#f3e6dc", "#d9776a"] }, "pants": { "style": "pants", "color": "#7d7a72" },
-                 "accessories": ["glasses"], "face": "angry" },
-    "mayor": { "name": "Mayor", "build": "adult", "skin": "#f2c8a0", "hair": { "style": "short", "color": "#161616" },
-               "shirt": { "pattern": "suit", "colors": ["#1d2f6b", "#ffffff"] }, "pants": { "style": "pants", "color": "#1d2f6b" },
-               "accessories": ["mayor_chain", "tie"], "face": "smile" }
+    "me": {
+      "name": "Me",
+      "build": "kid",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "spiky",
+        "color": "#f5d742"
+      },
+      "shirt": {
+        "pattern": "stripes_h",
+        "colors": [
+          "#f2c511",
+          "#151515"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#151515"
+      },
+      "face": "smile"
+    },
+    "toby": {
+      "name": "Toby",
+      "build": "kid",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "messy",
+        "color": "#6b3d1f"
+      },
+      "shirt": {
+        "pattern": "tee_logo",
+        "colors": [
+          "#e8442e",
+          "#f2c511"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#2c5bd6"
+      },
+      "face": "grin"
+    },
+    "mom": {
+      "name": "Mom",
+      "build": "adult",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "ponytail",
+        "color": "#161616"
+      },
+      "shirt": {
+        "pattern": "hoodie",
+        "colors": [
+          "#f4c6cf",
+          "#ffffff"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#4a78c2"
+      },
+      "face": "smile"
+    },
+    "grandpa": {
+      "name": "Grandpa",
+      "build": "elder",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "bald",
+        "color": "#dddddd"
+      },
+      "shirt": {
+        "pattern": "plaid",
+        "colors": [
+          "#f3e6dc",
+          "#d9776a"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#7d7a72"
+      },
+      "accessories": [
+        "glasses"
+      ],
+      "face": "angry"
+    },
+    "mayor": {
+      "name": "Mayor",
+      "build": "adult",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "short",
+        "color": "#161616"
+      },
+      "shirt": {
+        "pattern": "suit",
+        "colors": [
+          "#1d2f6b",
+          "#ffffff"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#1d2f6b"
+      },
+      "accessories": [
+        "mayor_chain",
+        "tie"
+      ],
+      "face": "smile"
+    }
   },
   "shots": [
-    { "id": "001", "say": "This is our little town by the lake.", "set": "lake_dock", "time": "day", "weather": "clear",
-      "framing": "establishing", "angle": "eye", "move": "push_in", "subject": "set",
-      "actors": [ { "id": "me", "mark": "A", "facing": "poi:lake", "pose": "stand" } ],
-      "crowd": { "count": 4, "pose": ["stand", "idle", "wave"] }, "note": "establishing from set.cameraHints" },
-
-    { "id": "002", "say": "Every morning I watch the far shore.", "set": "lake_dock", "time": "day", "weather": "clear",
-      "framing": "over_shoulder", "angle": "eye", "move": "drift", "subject": "me", "target": "poi:across",
-      "actors": [ { "id": "me", "mark": "A", "facing": "poi:across", "pose": "stand", "face": "neutral" } ] },
-
-    { "id": "003", "say": "Toby waves at me.", "set": "lake_dock", "time": "day", "weather": "clear",
-      "framing": "pov", "move": "static", "subject": "me", "target": "toby", "binoculars": true,
-      "actors": [ { "id": "me", "mark": "A", "pose": "binoculars", "prop": "binoculars" },
-                  { "id": "toby", "mark": "D", "facing": "actor:me", "pose": "wave", "face": "grin" } ],
-      "note": "binocular POV: narrow FOV, subject inside the mask band" },
-
-    { "id": "004", "say": "He holds up a sign.", "set": "lake_dock", "time": "day", "weather": "clear",
-      "framing": "medium", "angle": "eye", "move": "pan_right", "subject": "toby",
-      "actors": [ { "id": "toby", "mark": "B", "facing": "camera", "pose": "hold_sign", "face": "happy", "prop": { "type": "sign", "text": "HI ME!" } },
-                  { "id": "extra:1", "mark": "C", "facing": "actor:toby", "pose": "idle" } ] },
-
-    { "id": "005", "say": "Mom and the mayor talk on the street.", "set": "street", "time": "golden", "weather": "clear",
-      "framing": "two_shot", "angle": "eye", "move": "pan_left", "subject": "mom", "target": "mayor",
-      "actors": [ { "id": "mom", "mark": "A", "facing": "camera", "pose": "talk", "face": "talk" },
-                  { "id": "mayor", "mark": "B", "facing": "camera", "pose": "point", "face": "smile" } ] },
-
-    { "id": "006", "say": "Toby runs past the whole crowd.", "set": "street", "time": "day", "weather": "clear",
-      "framing": "wide", "angle": "eye", "move": "follow", "subject": "toby",
-      "actors": [ { "id": "toby", "mark": "C", "pose": "run", "face": "grin", "walk": { "to": "mark:B", "speed": 6 } } ],
-      "crowd": { "count": 8, "pose": ["wave", "stand", "arms_up"], "face": ["smile", "happy"], "facing": "camera" } },
-
-    { "id": "007", "say": "Grandpa says nothing.", "set": "living_room", "time": "night", "weather": "clear",
-      "framing": "close_up", "angle": "eye", "move": "tilt_up", "subject": "grandpa",
-      "actors": [ { "id": "grandpa", "mark": "A", "facing": "camera", "pose": "sit", "face": "angry" } ] },
-
-    { "id": "008", "say": "He presses his stopwatch.", "set": "kitchen", "time": "day", "weather": "clear",
-      "framing": "insert", "move": "tilt_down", "subject": "grandpa",
-      "actors": [ { "id": "grandpa", "mark": "A", "facing": "camera", "pose": "stand", "face": "worried", "prop": "stopwatch" } ] },
-
-    { "id": "009", "say": "The mayor smiles in the snow.", "set": "church_front", "time": "day", "weather": "snow",
-      "framing": "low_angle", "move": "orbit", "subject": "mayor",
-      "actors": [ { "id": "mayor", "mark": "A", "facing": "camera", "pose": "wave", "face": "grin" } ] },
-
-    { "id": "010", "say": "From above, the lake looks like a mirror.", "set": "lake_aerial", "time": "day", "weather": "clear",
-      "framing": "aerial", "move": "pull_out", "subject": "set", "actors": [] },
-
-    { "id": "011", "say": "At night I look out of my window.", "set": "bedroom", "time": "night", "weather": "clear",
-      "framing": "back", "angle": "eye", "move": "static", "subject": "me", "target": "poi:window",
-      "actors": [ { "id": "me", "mark": "A", "facing": "poi:window", "pose": "stand",
-                    "spec": { "build": "kid", "hair": { "style": "spiky", "color": "#f5d742" }, "shirt": { "pattern": "pajamas_stars", "colors": ["#1d2f6b", "#f2c511"] }, "pants": { "style": "pants", "color": "#1d2f6b" } } } ] },
-
-    { "id": "012", "say": "Then everyone walks into the water.", "set": "shore_water", "time": "day", "weather": "overcast",
-      "framing": "medium_close", "angle": "eye", "move": "shake", "subject": "me",
-      "actors": [ { "id": "me", "mark": "A", "facing": "camera", "pose": "wade", "face": "scream", "depth": "chest" },
-                  { "id": "toby", "mark": "B", "facing": "camera", "pose": "wade", "face": "cry", "depth": "waist" } ],
-      "crowd": { "count": 6, "pose": "wade", "face": "neutral", "depth": "waist", "facing": "camera" } }
+    {
+      "id": "001",
+      "say": "This is our little town by the lake.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "establishing",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "set",
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "facing": "poi:lake",
+          "pose": "stand"
+        }
+      ],
+      "crowd": {
+        "count": 4,
+        "pose": [
+          "stand",
+          "idle",
+          "wave"
+        ]
+      },
+      "note": "establishing from set.cameraHints"
+    },
+    {
+      "id": "002",
+      "say": "Every morning I watch the far shore.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "over_shoulder",
+      "angle": "eye",
+      "move": "drift",
+      "subject": "me",
+      "target": "poi:across",
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "facing": "poi:across",
+          "pose": "stand",
+          "face": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "say": "Toby waves at me.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "pov",
+      "move": "static",
+      "subject": "me",
+      "target": "toby",
+      "binoculars": true,
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "pose": "binoculars",
+          "prop": "binoculars"
+        },
+        {
+          "id": "toby",
+          "mark": "D",
+          "facing": "actor:me",
+          "pose": "wave",
+          "face": "grin"
+        }
+      ],
+      "note": "binocular POV: narrow FOV, subject inside the mask band"
+    },
+    {
+      "id": "004",
+      "say": "He holds up a sign.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "medium",
+      "angle": "eye",
+      "move": "pan_right",
+      "subject": "toby",
+      "actors": [
+        {
+          "id": "toby",
+          "mark": "B",
+          "facing": "camera",
+          "pose": "hold_sign",
+          "face": "happy",
+          "prop": {
+            "type": "sign",
+            "text": "HI ME!"
+          }
+        },
+        {
+          "id": "extra:1",
+          "mark": "C",
+          "facing": "actor:toby",
+          "pose": "idle"
+        }
+      ]
+    },
+    {
+      "id": "005",
+      "say": "Mom and the mayor talk on the street.",
+      "set": "street",
+      "time": "golden",
+      "weather": "clear",
+      "framing": "two_shot",
+      "angle": "eye",
+      "move": "pan_left",
+      "subject": "mom",
+      "target": "mayor",
+      "actors": [
+        {
+          "id": "mom",
+          "mark": "A",
+          "facing": "camera",
+          "pose": "talk",
+          "face": "talk"
+        },
+        {
+          "id": "mayor",
+          "mark": "B",
+          "facing": "camera",
+          "pose": "point",
+          "face": "smile"
+        }
+      ]
+    },
+    {
+      "id": "006",
+      "say": "Toby runs past the whole crowd.",
+      "set": "street",
+      "time": "day",
+      "weather": "clear",
+      "framing": "wide",
+      "angle": "eye",
+      "move": "follow",
+      "subject": "toby",
+      "actors": [
+        {
+          "id": "toby",
+          "mark": "C",
+          "pose": "run",
+          "face": "grin",
+          "walk": {
+            "to": "mark:B",
+            "speed": 6
+          }
+        }
+      ],
+      "crowd": {
+        "count": 8,
+        "pose": [
+          "wave",
+          "stand",
+          "arms_up"
+        ],
+        "face": [
+          "smile",
+          "happy"
+        ],
+        "facing": "camera"
+      }
+    },
+    {
+      "id": "007",
+      "say": "Grandpa says nothing.",
+      "set": "living_room",
+      "time": "night",
+      "weather": "clear",
+      "framing": "close_up",
+      "angle": "eye",
+      "move": "tilt_up",
+      "subject": "grandpa",
+      "actors": [
+        {
+          "id": "grandpa",
+          "mark": "A",
+          "facing": "camera",
+          "pose": "sit",
+          "face": "angry"
+        }
+      ]
+    },
+    {
+      "id": "008",
+      "say": "He presses his stopwatch.",
+      "set": "kitchen",
+      "time": "day",
+      "weather": "clear",
+      "framing": "insert",
+      "move": "tilt_down",
+      "subject": "grandpa",
+      "actors": [
+        {
+          "id": "grandpa",
+          "mark": "A",
+          "facing": "camera",
+          "pose": "stand",
+          "face": "worried",
+          "prop": "stopwatch"
+        }
+      ]
+    },
+    {
+      "id": "009",
+      "say": "The mayor smiles in the snow.",
+      "set": "church_front",
+      "time": "day",
+      "weather": "snow",
+      "framing": "low_angle",
+      "move": "orbit",
+      "subject": "mayor",
+      "actors": [
+        {
+          "id": "mayor",
+          "mark": "A",
+          "facing": "camera",
+          "pose": "wave",
+          "face": "grin"
+        }
+      ]
+    },
+    {
+      "id": "010",
+      "say": "From above, the lake looks like a mirror.",
+      "set": "lake_aerial",
+      "time": "day",
+      "weather": "clear",
+      "framing": "aerial",
+      "move": "pull_out",
+      "subject": "set",
+      "actors": []
+    },
+    {
+      "id": "011",
+      "say": "At night I look out of my window.",
+      "set": "bedroom",
+      "time": "night",
+      "weather": "clear",
+      "framing": "back",
+      "angle": "eye",
+      "move": "static",
+      "subject": "me",
+      "target": "poi:window",
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "facing": "poi:window",
+          "pose": "stand",
+          "spec": {
+            "build": "kid",
+            "hair": {
+              "style": "spiky",
+              "color": "#f5d742"
+            },
+            "shirt": {
+              "pattern": "pajamas_stars",
+              "colors": [
+                "#1d2f6b",
+                "#f2c511"
+              ]
+            },
+            "pants": {
+              "style": "pants",
+              "color": "#1d2f6b"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "012",
+      "say": "Then everyone walks into the water.",
+      "set": "shore_water",
+      "time": "day",
+      "weather": "overcast",
+      "framing": "medium_close",
+      "angle": "eye",
+      "move": "shake",
+      "subject": "me",
+      "actors": [
+        {
+          "id": "me",
+          "mark": "deep",
+          "facing": "camera",
+          "pose": "wade",
+          "face": "scream",
+          "depth": "chest"
+        },
+        {
+          "id": "toby",
+          "mark": {
+            "x": 3.6,
+            "z": 7.5
+          },
+          "facing": "camera",
+          "pose": "wade",
+          "face": "cry",
+          "depth": "waist"
+        }
+      ],
+      "crowd": {
+        "count": 6,
+        "pose": "wade",
+        "face": [
+          "neutral",
+          "sad",
+          "scared"
+        ],
+        "depth": "waist",
+        "facing": "camera"
+      }
+    }
   ],
-  "ending": { "hold": 1.0 }
+  "ending": {
+    "hold": 1.0
+  }
 }
