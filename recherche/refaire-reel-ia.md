@@ -1,13 +1,127 @@
-# Refaire un reel IA « à l'identique » (sauf l'histoire) : boîte à outils complète
+# Refaire ce reel « à l'identique » (sauf l'histoire) : analyse et boîte à outils
 
-*Recherche du 21 novembre 2026. Reel de référence : `instagram.com/reel/Df8G4u5K67b`*
+*Recherche du 21 novembre 2026. Reel de référence : `instagram.com/reel/Df8G4u5K67b`, analysé à partir du fichier vidéo envoyé.*
 
-> **Limite importante.** L'environnement cloud de cette session bloque instagram.com (et la plupart des sites).
-> Je n'ai donc **pas pu voir la vidéo**. Ce document couvre toutes les options pour les styles de reels IA
-> narratifs les plus courants. Pour passer au **clone exact** (même découpage, mêmes plans, même voix),
-> voir la section 10 : il me faut le fichier vidéo ou une description.
+- **Partie A** : ce que montre vraiment la vidéo, et la recette exacte pour refaire pareil.
+- **Partie B** : la voie « IA générative » (recherche faite avant d'avoir la vidéo), utile comme alternative ou en complément.
 
 ---
+
+# Partie A : analyse du reel et recette exacte
+
+## A1. Verdict : ce n'est pas de l'IA générative, c'est de l'animation 3D « Roblox »
+
+Les personnages sont des **avatars Roblox R6**, en blocs, avec les visages Roblox classiques. Le décor est une petite ville au bord d'un lac, avec des maisons victoriennes colorées, un ponton et une église blanche. Plusieurs indices excluent un modèle vidéo IA :
+
+- **Accessoires identiques d'un plan à l'autre** : la pancarte « HI ME! » puis « BYE ME », le chronomètre de Grandpa, les mêmes maisons. Une IA les déformerait au fil des 128 plans.
+- **Les visages changent d'expression d'un coup** (sourire, inquiet, pleurs, cri) : on change l'autocollant du visage (*decal*), sans transition progressive.
+- **Membres rigides**, cycle de marche Roblox standard, eau transparente type « Terrain » Roblox où l'on voit les personnages sous l'eau.
+
+**Fabrication la plus probable** : décor et avatars dans **Roblox Studio**, animation avec le plugin **Moon Animator 2**. Le rendu est fait soit directement dans Studio (éclairage « Future »), soit après export vers **Blender**. Je ne peux pas trancher entre ces deux rendus, car les deux donnent ce look.
+
+Donc les « modèles » à reproduire sont **des avatars Roblox**, pas un modèle d'IA.
+
+## A2. Fiche technique mesurée sur la vidéo
+
+| Élément | Mesure |
+|---|---|
+| Durée | **2 min 50** (170 s) |
+| Format | 720×1280 (vertical 9:16), 30 images/s |
+| Nombre de plans | **128 plans**, soit **1,3 s par plan** en moyenne (de 0,6 s à environ 5 s) |
+| Transitions | presque uniquement des **coupes sèches** : nouvelle image à chaque morceau de phrase |
+| Plans « jumelles » | environ **1 plan sur 5** : vue subjective à travers des jumelles (cache noir à deux cercles aux bords flous) |
+| Narration | une seule voix, à la 1re personne (le garçon blond), **≈ 450–500 mots**, soit **≈ 165 mots/min** : débit soutenu, ton posé |
+| Voix (estimation automatique) | voix plutôt claire / jeune (hauteur moyenne estimée vers 190 Hz). Je n'ai pas d'écoute ici, donc **je ne peux pas dire si c'est une voix humaine ou de synthèse** |
+| Musique | **nappe continue** sous la voix (jamais de vrai silence), à volume bas |
+| Sous-titres | **un mot à la fois**, centré à ~70 % de la hauteur, gras blanc avec contour noir et ombre. Quelques mots en couleur (jaune, bleu, rose) |
+
+## A3. La grammaire des plans
+
+- **Ouverture** : le narrateur de dos face au lac (plan par-dessus l'épaule). Le monde est posé en une image.
+- **Plans d'ensemble** : vue aérienne du lac, rangées de maisons, ponton, église. Ils servent à rappeler le lieu.
+- **Plans moyens face caméra** : les personnages regardent l'objectif, avec une petite action (salut, marche vers la caméra, pancarte brandie).
+- **Gros plans sur les visages** pour les émotions. Le visage change au moment où la voix le dit.
+- **Vue à travers les jumelles** : c'est le point de vue central de l'histoire. Souvent précédée d'un plan où quelqu'un lève les jumelles.
+- **L'image illustre le mot prononcé** : « trébuche » montre quelqu'un qui trébuche, « chronomètre » un gros plan sur le chrono, « Noël » des guirlandes.
+- **Le temps passe par la lumière et les saisons** : jour, crépuscule, nuit, neige.
+- **Intérieurs chaleureux** (cuisine, salon avec cheminée) pour les scènes de famille.
+- **Caméra simple** : fixe, ou léger travelling avant / dérive lente. Pas de mouvements compliqués.
+- **Fin** : plans sous l'eau, pancarte qui flotte, jumelles abandonnées sur le ponton.
+
+## A4. La structure du récit (à garder avec ta nouvelle histoire)
+
+| Temps | Rôle dans l'histoire |
+|---|---|
+| 0–9 s | **Accroche** : la règle étrange du monde, en une phrase |
+| 9–23 s | Trois exemples rapides et drôles de la règle |
+| 23–33 s | Exemple personnel + **objet récurrent** introduit (la pancarte « HI ME! ») |
+| 33–38 s | Premier détail qui cloche |
+| 38–55 s | Le vieux qui sait (Grandpa) + **objet compteur** (chronomètre) : l'écart se réduit (un an → une semaine → un jour) |
+| 55–75 s | **Escalade** : heures → minutes → secondes |
+| 75–90 s | La ville réagit (le maire, rideaux fermés, Grandpa ne dort plus, phrase énigmatique) |
+| 90–104 s | **Climax** : le chrono s'arrête, effet miroir à la même seconde |
+| 104–117 s | **Retournement** qui change le sens de toute l'histoire |
+| 117–135 s | Moment d'émotion en famille. L'objet récurrent revient, transformé (« BYE ME ») |
+| 135–167 s | Fin sombre qui s'accélère |
+| 167–170 s | **Image finale sans personnage** : l'objet récurrent seul (la pancarte qui flotte) |
+
+**La formule** : une règle simple, un compteur qui descend, un objet qui ouvre et ferme l'histoire, un retournement, une image finale muette.
+
+## A5. La recette exacte pour refaire pareil
+
+### Étape 1 : script et découpage (Claude)
+- Script d'environ **450 mots**, à la 1re personne, phrases courtes, sur la structure A4.
+- **Shot list d'environ 125 plans** : un plan pour 2 à 4 mots, avec décor, personnages, expression du visage, cadrage, et les plans à faire « en jumelles ».
+
+### Étape 2 : personnages et décor
+- **Roblox Studio** (gratuit, PC/Mac).
+- **Avatars R6** : un avatar par personnage (vêtements du catalogue ou de la Toolbox). Prévoir **plusieurs visages par personnage** (content, inquiet, pleure, crie) pour les changer pendant l'animation.
+- **Décor** : une map de ville ou de quartier dans la Creator Store / Toolbox (recherches : « lake town », « suburban town », « victorian houses »), à adapter à ton histoire.
+- **Accessoires** : jumelles, pancarte avec texte (SurfaceGui ou decal), chronomètre, selon ton histoire.
+- **Lumière** : `Lighting.Technology = Future`, ombres douces. Change `ClockTime` pour le crépuscule et la nuit.
+
+### Étape 3 : animation et caméra
+- **Option courante** : **Moon Animator 2**, plugin Roblox Studio (environ 30 $ en achat unique selon des sources secondaires, à vérifier). Une timeline pour animer personnages, accessoires, caméra et changements de visage.
+- **Option rendu plus beau** : export des avatars vers **Blender** (rigs R6 communautaires) et rendu Eevee/Cycles. Plus long à faire.
+- **Caméra** : fixe ou lent travelling avant, champ de vision moyen (50–70°).
+- **Capture** : fenêtre Studio en vertical + OBS, ou rendu image par image dans Blender.
+
+### Étape 4 : voix
+- Une seule voix de narrateur, calme et claire, à environ 165 mots/min. Ta propre voix ou une voix de synthèse.
+- **ElevenLabs** : chercher dans la bibliothèque « young male narrator calm storytelling », ou créer une voix avec Voice Design à partir d'une description.
+- **Astuce** : la synthèse ElevenLabs « avec horodatage » donne le temps de chaque mot. On en tire des sous-titres mot à mot parfaits et un découpage calé automatiquement sur la voix.
+
+### Étape 5 : montage (CapCut, ou automatisé par Claude)
+- **Coupe sèche** à chaque morceau de phrase (~1,3 s par plan).
+- **Effet jumelles** : poser le cache fourni dans `recherche/assets/` (`jumelles_720x1280.png` ou `jumelles_1080x1920.png`, mesuré sur le reel) par-dessus le plan. Dans CapCut : superposition. Avec ffmpeg :
+  ```
+  ffmpeg -i plan.mp4 -i jumelles_1080x1920.png -filter_complex "[0:v]scale=1080:1920,setsar=1[v];[v][1:v]overlay=0:0" -c:a copy plan_jumelles.mp4
+  ```
+- **Sous-titres mot à mot** : CapCut → Sous-titres automatiques → style « un mot à la fois ». Police grasse blanche, contour noir, placée vers 70 % de la hauteur. Colore quelques mots-clés.
+- **Musique** : nappe d'ambiance douce (piano, pads) qui devient inquiétante, nettement plus basse que la voix.
+- **Export** : 1080×1920, 30 images/s.
+
+### Étape 6 : ce que Claude peut piloter directement
+Ces outils tournent sur **ton ordinateur** (Claude Code ou Claude Desktop), pas dans cette session cloud.
+
+| Outil | Ce que Claude peut faire |
+|---|---|
+| **Roblox Studio : serveur MCP officiel intégré** (Assistant → menu « … » → Manage MCP Servers → « Enable Studio as MCP server ». Connexion rapide prévue pour Claude Code et Claude Desktop) | Construire et placer décor, personnages, accessoires et lumière. Écrire les scripts Luau (caméra de cinématique, changements de visage) |
+| **Blender MCP** (communautaire `ahujasid/blender-mcp`. Un serveur officiel « Blender Lab » est annoncé pour Blender 5.1+, à vérifier) | Monter la scène, la caméra et lancer les rendus |
+| **ElevenLabs** (MCP hébergé, voir Partie B) | Voix off + horodatage des mots |
+| **Remotion** (plugin) ou **ffmpeg** | Montage automatique : coupes, cache jumelles, sous-titres mot à mot calés sur la voix |
+
+> ⚠️ **Règles Roblox** : vérifie les conditions de Roblox si tu veux monétiser des vidéos faites avec ses avatars et ses assets.
+
+## A6. Et la voie IA ?
+
+C'est possible, mais déconseillé pour ce style : 128 plans avec les mêmes personnages, les mêmes accessoires lisibles et le même décor, c'est exactement là où l'IA dérive. La 3D Roblox est plus fiable, quasi gratuite, et c'est ce qu'utilise l'original. L'IA reste utile **en complément** : la voix, ou quelques plans difficiles à animer (une foule, par exemple). La Partie B détaille les outils.
+
+---
+
+# Partie B : la voie IA générative (recherche initiale)
+
+*Cette partie a été écrite avant d'avoir la vidéo. Elle reste valable si tu veux un rendu IA plutôt que Roblox, ou pour la voix.*
 
 ## 1. La méthode en 6 étapes
 
@@ -187,22 +301,17 @@ En Claude Code : `claude mcp add --transport http --scope user fal https://mcp.f
 
 ---
 
-## 10. Prochaine étape : passer au clone exact
+## 10. Prochaines étapes
 
-Pour reproduire **exactement** les plans, transitions et voix de ce reel, j'ai besoin de la vidéo :
-
-1. **Le plus simple** : télécharge le reel sur ton téléphone et envoie-le-moi dans le chat. J'en tire :
-   - le découpage exact (durée de chaque plan, coupes, transitions) ;
-   - une analyse image par image (style, cadrage, mouvements, lumière) ;
-   - le profil de la voix (timbre, débit, émotion) et une recherche de voix équivalente ;
-   - **une shot list complète avec les prompts prêts à coller**, pour l'outil que tu choisis, avec ta nouvelle histoire.
-2. **Sinon** : décris-moi la vidéo (sujet, style visuel, voix, durée), ou donne-moi le compte qui l'a publiée.
-3. **Option technique** : autoriser instagram.com dans le réseau de cet environnement. C'est peu fiable : Instagram exige souvent une connexion pour télécharger.
+1. **Donne-moi l'idée de ta nouvelle histoire**, même en deux lignes. J'écris le script d'environ 450 mots sur la structure A4 et la shot list d'environ 125 plans au même rythme, avec les plans « jumelles », les visages et les décors.
+2. **Si tu as Roblox Studio sur ton ordinateur** : active son serveur MCP et connecte Claude Code ou Claude Desktop. Claude peut alors construire la scène et les plans avec toi.
+3. **Montage** : avec la voix et les plans enregistrés, je peux automatiser les coupes, le cache jumelles et les sous-titres mot à mot (Remotion ou ffmpeg).
 
 ---
 
 ## Sources
 
+- Roblox / animation 3D : [Roblox Studio MCP (doc officielle)](https://create.roblox.com/docs/studio/mcp) · [annonce DevForum](https://devforum.roblox.com/t/studio-mcp-server-updates-and-external-llm-support-for-assistant/4415631) · [Moon Animator : prix](https://thetoolstrunk.com/how-much-is-moon-animator/) · [rig R6 IK/FK pour Blender](https://devforum.roblox.com/t/r6-ik-fk-blender-rig-v222/3586405) · [importer un avatar Roblox dans Blender](https://www.katsbits.com/codex/?p=10600) · [Blender MCP](https://github.com/ahujasid/blender-mcp) · [guide Blender MCP (Meshy)](https://www.meshy.ai/tutorials/blender-mcp-guide)
 - Modèles et classements : [MarkTechPost, nov. 2026](https://www.marktechpost.com/2026/11/13/best-ai-video-generation-models-2026/) · [teamday.ai](https://www.teamday.ai/blog/best-ai-video-models-2026) · [llm-stats](https://llm-stats.com/leaderboards/best-ai-for-video-creation) · [videogen.io](https://videogen.io/best-ai-video-models)
 - Kling 3.0 : [guide officiel Kling](https://kling.ai/blog/kling-video-3-0-ai-director-features-guide) · [Kling 3.0 Omni user guide](https://kling.ai/quickstart/klingai-video-3-omni-model-user-guide) · [CineD](https://www.cined.com/kling-3-0-ai-video-model-introduced-native-4k-)
 - Seedance 2.5 : [blog ByteDance Seed](https://seed.bytedance.com/en/blog/one-take-creation-flexible-referencing-introducing-seedance-2-5) · [Replicate](https://replicate.com/bytedance/seedance-2.5) · [Together AI](https://docs.together.ai/docs/seedance2.5-quickstart)
