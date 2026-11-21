@@ -59,8 +59,9 @@ function tile(files, cols, out, scaleW) {
     const W = 260, H = 280; const files = [];
     await withPage(W, H, async (page) => {
       for (const f of FACES) {
-        const spec = f === 'angry' ? { ...CAST.grandpa, accessories: [] } : f === 'grin' ? CAST.brother : f === 'cry' ? CAST.argyle : f === 'scream' ? CAST.toby : f === 'talk' ? CAST.mayor : f === 'worried' ? CAST.mom : CAST.toby;
-        await page.evaluate((c) => window.test.setup(c), { items: [{ spec, face: f, label: f, labelY: 3.55 }], camera: { pos: [0, 4.75, 4.4], target: [0, 4.5, 0], fov: 32 } });
+        let spec = f === 'angry' ? { ...CAST.grandpa, accessories: [] } : f === 'grin' ? CAST.brother : f === 'cry' ? CAST.argyle : f === 'scream' ? CAST.toby : f === 'talk' ? CAST.mayor : f === 'worried' ? CAST.mom : CAST.toby;
+        spec = { ...spec, build: spec.build === 'kid' ? 'adult' : spec.build };
+        await page.evaluate((c) => window.test.setup(c), { items: [{ spec, face: f, label: f, labelY: 3.62 }], camera: { pos: [0, 4.75, 4.4], target: [0, 4.5, 0], fov: 32 } });
         const r = await page.evaluate((t) => window.test.render(t), T);
         const fn = path.join(tmp, `f_${f}.jpg`); save(r.url, fn); files.push(fn);
       }
@@ -71,8 +72,8 @@ function tile(files, cols, out, scaleW) {
     const who = args.who || 'toby';
     await withPage(W, H, async (page) => {
       for (const p of POSES) {
-        const item = { spec: CAST[who], pose: p, label: p, labelY: -0.1, yaw: p === 'lie' || p === 'fall' ? 70 : 25, prop: POSE_PROP[p] || null, face: p === 'cry' ? 'cry' : p === 'fall' ? 'scared' : p === 'talk' ? 'talk' : undefined, poseOptions: p === 'sit' ? { seat: 1.5 } : {} };
-        if (p === 'lie' || p === 'fall') item.x = -1.2;
+        const item = { spec: CAST[who], pose: p, label: p, labelY: -0.1, yaw: p === 'lie' ? 90 : p === 'fall' ? 70 : 25, prop: POSE_PROP[p] || null, face: p === 'cry' ? 'cry' : p === 'fall' ? 'scared' : p === 'talk' ? 'talk' : undefined, poseOptions: p === 'sit' ? { seat: 1.5 } : {} };
+        if (p === 'lie') { item.x = 2.6; item.z = 1; } if (p === 'fall') item.x = -1.2;
         await page.evaluate((c) => window.test.setup(c), { items: [item], camera: { pos: [2.5, 5.5, 13.5], target: [0, 2.3, 0], fov: 34 } });
         const r = await page.evaluate((t) => window.test.render(t), p === 'fall' ? 0.3 : T);
         const fn = path.join(tmp, `p_${p}.jpg`); save(r.url, fn); files.push(fn);

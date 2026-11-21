@@ -543,12 +543,10 @@ export function signTexture(ctx, text, opts = {}) {
         for (const ch of word) {
           const cw = g.measureText(ch).width;
           g.save(); g.translate(x + cw / 2, y + (rng() - 0.5) * size * 0.08); g.rotate((rng() - 0.5) * 0.14);
-          g.fillStyle = (ch === '!' || ch === '?') && !opts.color ? MARKER_COLORS[(wordIdx + 2) % MARKER_COLORS.length] : color;
+          g.fillStyle = (ch === '!' || ch === '?') && !opts.color ? MARKER_COLORS[2] : color;
           g.strokeStyle = g.fillStyle; g.lineWidth = size * 0.11;
           g.textAlign = 'center';
           g.strokeText(ch, 0, 0); g.fillText(ch, 0, 0);
-          // marker streak highlight
-          g.globalAlpha = 0.18; g.strokeStyle = '#ffffff'; g.lineWidth = size * 0.025; g.strokeText(ch, -size * 0.02, -size * 0.02); g.globalAlpha = 1;
           g.restore();
           x += cw + spacing;
         }

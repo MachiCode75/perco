@@ -11,7 +11,7 @@ const ease = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
 /** arm direction from a forward swing angle a (rad, + = forward) and outward lean */
 const swing = (a, out = 0.06) => [out, -C(a), S(a)];
 /** direction from shoulder (side s=+1 left/-1 right) toward a body-space point */
-function toward(s, x, y, z) { return [x * s - 1.5 * s, y - 3.5, z]; }
+function toward(s, x, y, z) { return [x - 1.5 * s, y - 3.5, z]; }
 
 export function basePose() {
   return {
@@ -76,8 +76,8 @@ export const POSE_FN = {
   },
   binoculars(J, t) {
     breathe(J, t, 0.5);
-    J.armL = toward(1, 0.36, 4.72, 1.15); J.armR = toward(-1, -0.36, 4.72, 1.15);
-    J.twistL = -0.3; J.twistR = 0.3;
+    J.armL = toward(1, 0.78, 4.62, 1.2); J.armR = toward(-1, -0.78, 4.62, 1.2);
+    J.twistL = -0.15; J.twistR = 0.15;
     J.neck.rx = -0.04 + 0.015 * S(TAU * t / 2.7); J.neck.ry = 0.05 * S(TAU * t / 4.1);
   },
   hold_sign(J, t) {

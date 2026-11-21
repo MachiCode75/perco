@@ -551,6 +551,7 @@ window.engine = {
   info() {
     if (!state) return null;
     const c = ctx.camera;
-    return { ...state.info, warnings: state.warnings, stats: state.lastStats || null, cameraNow: { pos: c.position.toArray().map((x) => +x.toFixed(3)), fov: +c.fov.toFixed(2) }, options: { ...options } };
+    const ri = ctx.renderer.info.render;
+    return { ...state.info, warnings: state.warnings, stats: state.lastStats || null, draw: { calls: ri.calls, triangles: ri.triangles }, cameraNow: { pos: c.position.toArray().map((x) => +x.toFixed(3)), fov: +c.fov.toFixed(2) }, options: { ...options } };
   },
 };

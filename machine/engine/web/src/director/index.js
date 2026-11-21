@@ -36,10 +36,10 @@ export const MOVE_ALIASES = {
 export const FRAMING_SPECS = {
   extreme_wide: { frameH: 9.0, eyeY: 0.60, el: 8, fov: 50 },
   wide: { frameH: 3.3, eyeY: 0.50, el: 4, fov: 50 },
-  medium: { frameH: 1.3, eyeY: 0.40, el: -3, fov: 42 },
-  medium_close: { frameH: 0.95, eyeY: 0.40, el: -3, fov: 40 },
-  close_up: { frameH: 0.62, eyeY: 0.41, el: -2, fov: 36 },
-  extreme_close_up: { frameH: 0.34, eyeY: 0.45, el: -1, fov: 32 },
+  medium: { frameH: 1.45, eyeY: 0.40, el: -3, fov: 42 },
+  medium_close: { frameH: 1.0, eyeY: 0.40, el: -3, fov: 40 },
+  close_up: { frameH: 0.72, eyeY: 0.41, el: -2, fov: 36 },
+  extreme_close_up: { frameH: 0.4, eyeY: 0.45, el: -1, fov: 32 },
   two_shot: { frameH: 1.35, eyeY: 0.41, el: -3, fov: 44 },
   low_angle: { frameH: 1.4, eyeY: 0.36, el: -24, fov: 46 },
   high_angle: { frameH: 1.45, eyeY: 0.44, el: 30, fov: 46 },
@@ -111,7 +111,9 @@ export function charGeom(THREE, ch) {
   fwd.normalize();
   // pivot: head column (x,z) at eye height — keeps leaning/sitting subjects centred.
   const pivot = new THREE.Vector3(head.x, eyes.y, head.z);
-  return { H, base, feet, eyes, head, chest, hands, fwd, yaw: Math.atan2(fwd.x, fwd.z), pivot, headTop: Math.max(head.y, eyes.y) + 0.13 * H };
+  const handR = ok(a.handR) ? a.handR.clone() : null;
+  const headTop = ok(a.top) ? a.top.y : Math.max(head.y, eyes.y) + 0.13 * H;
+  return { H, base, feet, eyes, head, chest, hands, handR, fwd, yaw: Math.atan2(fwd.x, fwd.z), pivot, headTop };
 }
 
 function dirFromYaw(THREE, yaw) { return new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)); }
@@ -346,7 +348,18 @@ export function frameShot(ctx, opts = {}) {
       if (bino) {
         const fh = sp.frameH / (BINO_BAND[1] - BINO_BAND[0]);
         const dist = eye.distanceTo(pivot);
-        if (!fovOverride) fov = clamp(2 * Math.atan(fh * tg.H / (2 * dist)) / DEG, 3, 45);
+        if (!fovOverride) {
+          fov = 2 * Math.atan(fh * tg.H / (2 * dist)) / DEG;
+          if (fov > 30) { // target too close for a long lens: step back along the sight line (keeps the look)
+            const need = fh * tg.H / (2 * Math.tan(15 * DEG));
+            const back = eye.clone().sub(pivot).normalize();
+            const cand = pivot.clone().addScaledVector(back, need);
+            const free = segFree(pivot, cand);
+            eye.copy(pivot).addScaledVector(back, Math.min(need, free === Infinity ? need : Math.max(dist, free - 0.5)));
+            fov = clamp(2 * Math.atan(fh * tg.H / (2 * eye.distanceTo(pivot))) / DEG, 3, 45);
+          }
+          fov = Math.max(3, fov);
+        }
         v = 1 - 2 * (BINO_BAND[0] + sp.eyeY * (BINO_BAND[1] - BINO_BAND[0]));
       } else v = 1 - 2 * 0.42;
     } else if (targetPoint) { pivot = targetPoint.clone(); v = bino ? 1 - 2 * ((BINO_BAND[0] + BINO_BAND[1]) / 2) : 0; }
@@ -362,18 +375,19 @@ export function frameShot(ctx, opts = {}) {
     const sgn = camOpt.side === 'left' ? -1 : 1; // +1: over the right shoulder → subject on the left of frame
     const right = rightOf(THREE, fwd);
     const H = g.H;
-    let back = 0.62 * H * num(camOpt.distance, 1), side = 0.17 * H, rise = 0.2 * H + num(camOpt.height, 0);
+    let back = 1.7 * H * num(camOpt.distance, 1), side = 0.16 * H, rise = 0.3 * H + num(camOpt.height, 0);
     const fov = fovOverride || (bino ? BINO_FOV : spec.fov);
-    const vT = 1 - 2 * 0.40, uT = 0.12 * sgn;
+    const vT = 1 - 2 * 0.40, uT = 0.1 * sgn;
     const mk = () => constrainY(g.eyes.clone().addScaledVector(fwd, -back).addScaledVector(right, side * sgn).add(new THREE.Vector3(0, rise, 0)));
     let pos = mk();
-    // refine so the subject's head sits in the lower third, on its side, but inside the frame
-    for (let i = 0; i < 8; i++) {
+    // refine: subject's head in the lower third (y ≈ 0.62–0.75 from top), off-centre on its side, inside the frame
+    for (let i = 0; i < 10; i++) {
       setCam(camera, pos, aimAngles(pos, T, uT, vT, fov, aspect), 0, fov, aspect);
       const hp = g.head.clone().project(camera);
       let changed = false;
-      if (Math.abs(hp.x) > 0.8) { side *= 0.72; changed = true; }
-      if (hp.y < -0.8) { rise *= 0.7; changed = true; } else if (hp.y > -0.2) { rise = rise * 1.25 + 0.1; changed = true; }
+      const ax = Math.abs(hp.x);
+      if (ax > 0.6) { side *= 0.75; changed = true; } else if (ax < 0.15 && side < 0.4 * H) { side += 0.05 * H; changed = true; }
+      if (hp.y < -0.55) { rise *= 0.8; changed = true; } else if (hp.y > -0.25) { rise += 0.06 * H; changed = true; }
       if (!changed) break;
       pos = mk();
     }
@@ -420,7 +434,8 @@ export function frameShot(ctx, opts = {}) {
     const pt = String(opts.subjectProp?.type || opts.subjectProp || '').toLowerCase();
     const sp = { ...FRAMING_SPECS.insert, frameH: INSERT_SIZE[pt] || FRAMING_SPECS.insert.frameH };
     if (pt === 'sign') sp.el = 6;
-    const pivot = g.hands.clone();
+    const twoHands = ['sign', 'binoculars', 'book', ''].includes(pt);
+    const pivot = (!twoHands && g.handR ? g.handR : g.hands).clone();
     const az0 = lockAz != null ? lockAz : g.yaw + (typeof camOpt.azimuth === 'number' ? camOpt.azimuth * DEG : 0);
     base = unblock((a) => { const p = subjectPose(g, sp, a, { pivot }); p.v = 1 - 2 * sp.eyeY; return p; }, az0, (p) => p.pivot);
   } else {

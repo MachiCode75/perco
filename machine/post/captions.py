@@ -45,7 +45,7 @@ STYLE = {
     "size": 134.0,          # ASS Fontsize (libass scales em = size * upem / (winAscent+winDescent))
     "bold": True,
     "color": "#FFFFFF",
-    "outline": 6.4,         # border width, px @1080
+    "outline": 5.8,         # border width, px @1080
     "outline_color": "#000000",
     "outline_opacity": 0.9,
     "edge_blur": 0.6,       # libass \blur on the main layer (anti-aliasing of the border edge)

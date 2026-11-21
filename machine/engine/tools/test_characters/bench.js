@@ -54,7 +54,7 @@ window.test = {
     if (labels && state.list.some(e => e.it.label)) {
       const c = document.createElement('canvas'); c.width = ctx.width; c.height = ctx.height;
       const g = c.getContext('2d'); g.drawImage(ctx.renderer.domElement, 0, 0);
-      g.font = `700 ${Math.round(ctx.height / 55)}px Inter, sans-serif`; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#000'; g.fillStyle = '#fff';
+      g.font = `700 ${Math.max(15, Math.round(ctx.height / 50))}px Inter, sans-serif`; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#000'; g.fillStyle = '#fff';
       for (const e of state.list) {
         if (!e.it.label) continue;
         const p = new THREE.Vector3(e.ch.root.position.x, (e.it.labelY ?? -0.6), e.ch.root.position.z).project(ctx.camera);

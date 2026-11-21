@@ -93,7 +93,7 @@ const HAIR_BUILD = {
     b.rbox(0.62, 0.2, 0.2, 0.06, -0.3, 0.42, FR + 0.02, 0.1, 0, 0.18);
     b.rbox(0.55, 0.2, 0.2, 0.06, 0.12, 0.44, FR + 0.03, 0.12, 0, 0.1);
     b.rbox(0.4, 0.17, 0.2, 0.06, 0.45, 0.47, FR + 0.0, 0.1, 0, -0.05);
-    b.rbox(0.5, 0.18, 0.5, 0.06, 0.15, TOP + 0.13, 0.05, 0.1, 0.3, 0.1);
+    b.rbox(HEAD_W + 0.02, 0.2, HEAD_D + 0.02, 0.1, 0.02, TOP + 0.08, -0.02, 0.06, 0, 0.04);
   },
   spiky(b) {
     cap(b, { y: 0.47, h: 0.4, w: HEAD_W + 0.1, d: HEAD_D + 0.12 });
@@ -117,8 +117,8 @@ const HAIR_BUILD = {
       b.spike(base, dir, 0.45 + r() * 0.25, 0.17 + r() * 0.05, r() * 3);
     }
     // fringe spikes falling over the forehead
-    const fr = [[-0.42, 0.25], [-0.16, 0.3], [0.1, 0.2], [0.36, 0.28], [0.52, 0.18]];
-    for (const [x, tilt] of fr) b.spike(V(x, 0.52, FR - 0.02), V(x * 0.4 + (r() - 0.5) * 0.3, -1, 0.35 + tilt), 0.4 + r() * 0.12, 0.17 + r() * 0.03, r() * 3);
+    const fr = [[-0.45, 0.9], [-0.2, 0.7], [0.12, 0.8], [0.4, 0.65]];
+    for (const [x, tilt] of fr) b.spike(V(x, 0.56, FR - 0.04), V(x * 0.5 + (r() - 0.5) * 0.3, -1, tilt), 0.34 + r() * 0.08, 0.16, r() * 3);
   },
   bowl(b) {
     b.rbox(HEAD_W + 0.14, 0.5, HEAD_D + 0.14, 0.22, 0, 0.47, 0);
@@ -141,7 +141,7 @@ const HAIR_BUILD = {
     b.rbox(HEAD_W + 0.12, 0.22, 0.22, 0.07, 0, 0.42, FR + 0.02, 0.1, 0, 0);
     for (const s of [-1, 1]) b.rbox(0.18, 0.55, 0.22, 0.05, s * (SIDE - 0.02), 0.2, FR - 0.08);
     b.rbox(0.3, 0.22, 0.3, 0.06, 0, 0.5, -FR - 0.12); // tie
-    b.add(new THREE.CylinderGeometry(0.2, 0.08, 1.3, 6), M(0, -0.1, -FR - 0.32, -0.35, 0, 0));
+    b.add(new THREE.CylinderGeometry(0.3, 0.14, 1.35, 6), M(0, -0.12, -FR - 0.36, -0.32, 0, 0));
   },
   bun(b) {
     cap(b, { y: 0.46, h: 0.4 });
@@ -209,18 +209,18 @@ export const EYE_Y = HEAD_H / 2 - 0.445 * HEAD_H; // head-local y of the eye lin
 export function glassesGeometry(ctx) {
   return cached(ctx, 'chr:geo:acc:glasses', () => {
     const b = new Builder();
-    const shape = rimShape(0.4, 0.29, 0.055, 0.06);
+    const shape = rimShape(0.44, 0.31, 0.06, 0.07);
     const ex = new THREE.ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: false, curveSegments: 3 });
-    for (const s of [-1, 1]) b.add(ex, M(s * 0.215, EYE_Y + 0.01, FR + 0.005));
+    for (const s of [-1, 1]) b.add(ex, M(s * 0.235, EYE_Y + 0.01, FR + 0.005));
     b.box(0.1, 0.05, 0.04, 0, EYE_Y + 0.06, FR + 0.025);
-    for (const s of [-1, 1]) b.box(0.04, 0.05, 0.62, s * (SIDE - 0.0), EYE_Y + 0.08, FR - 0.27);
+    for (const s of [-1, 1]) b.box(0.05, 0.05, 0.3, s * 0.49, EYE_Y + 0.1, FR - 0.12);
     return b.build();
   });
 }
 export function lensGeometry(ctx) {
   return cached(ctx, 'chr:geo:acc:lens', () => {
     const b = new Builder();
-    for (const s of [-1, 1]) b.rbox(0.36, 0.25, 0.02, 0.009, s * 0.215, EYE_Y + 0.01, FR + 0.02);
+    for (const s of [-1, 1]) b.rbox(0.38, 0.26, 0.02, 0.009, s * 0.235, EYE_Y + 0.01, FR + 0.02);
     return b.build();
   });
 }
