@@ -1,0 +1,978 @@
+{
+ "version": 1,
+ "id": "the-13th-bell",
+ "title": "The 13th Bell",
+ "language": "en",
+ "voice": {
+  "provider": "kokoro",
+  "voice": "young_storyteller"
+ },
+ "music": {
+  "mood": "calm_to_eerie",
+  "seed": 7
+ },
+ "captions": {
+  "highlight": [
+   {
+    "text": "Count with me",
+    "color": "#F7DE72"
+   },
+   {
+    "text": "If you stop counting, it counts you.",
+    "color": "#F7DE72"
+   }
+  ]
+ },
+ "cast": {
+  "me": {
+   "name": "Me",
+   "build": "kid",
+   "skin": "#f2c8a0",
+   "hair": {
+    "style": "messy",
+    "color": "#5a3a22"
+   },
+   "shirt": {
+    "pattern": "hoodie",
+    "colors": [
+     "#3f8f5a",
+     "#2f6e45"
+    ]
+   },
+   "pants": {
+    "style": "pants",
+    "color": "#2d3b55"
+   },
+   "face": "neutral"
+  },
+  "lily": {
+   "name": "Lily",
+   "build": "kid",
+   "skin": "#f2c8a0",
+   "hair": {
+    "style": "ponytail",
+    "color": "#b5482e"
+   },
+   "shirt": {
+    "pattern": "polka",
+    "colors": [
+     "#f6a6c4",
+     "#ffffff"
+    ]
+   },
+   "pants": {
+    "style": "skirt",
+    "color": "#f6a6c4"
+   },
+   "face": "smile"
+  },
+  "grandpa": {
+   "name": "Grandpa",
+   "build": "elder",
+   "skin": "#eec39a",
+   "hair": {
+    "style": "bald",
+    "color": "#dddddd"
+   },
+   "shirt": {
+    "pattern": "cardigan",
+    "colors": [
+     "#8a5a3c",
+     "#f2efe6"
+    ]
+   },
+   "pants": {
+    "style": "pants",
+    "color": "#6b6b6b"
+   },
+   "accessories": [
+    "glasses",
+    "beard"
+   ],
+   "face": "neutral"
+  },
+  "mayor": {
+   "name": "Mayor",
+   "build": "adult",
+   "skin": "#f2c8a0",
+   "hair": {
+    "style": "short",
+    "color": "#2a2a2a"
+   },
+   "shirt": {
+    "pattern": "suit",
+    "colors": [
+     "#1f2f5c",
+     "#ffffff"
+    ]
+   },
+   "pants": {
+    "style": "pants",
+    "color": "#1f2f5c"
+   },
+   "accessories": [
+    "tie",
+    "mayor_chain"
+   ],
+   "face": "smile"
+  }
+ },
+ "shots": [
+  {
+   "id": "001",
+   "say": "In our town, the church",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "002",
+   "say": "bell rings 13 times at midnight.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "poi:steeple",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "003",
+   "say": "Not 12. 13.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "static",
+   "subject": "me",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "surprised"
+    }
+   ]
+  },
+  {
+   "id": "004",
+   "say": "Everybody counts.",
+   "set": "street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "set",
+   "binoculars": false,
+   "actors": [],
+   "crowd": {
+    "count": 10,
+    "pose": "stand",
+    "face": "neutral",
+    "facing": "poi:church",
+    "area": "crowd"
+   }
+  },
+  {
+   "id": "005",
+   "say": "Nobody asks why.",
+   "set": "house_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "subject": "extra:1",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:1",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "neutral"
+    },
+    {
+     "id": "extra:2",
+     "mark": "B",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "neutral"
+    }
+   ]
+  },
+  {
+   "id": "006",
+   "say": "Same bell. Same tower.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "poi:steeple",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "007",
+   "say": "Same 13.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "smile"
+    }
+   ]
+  },
+  {
+   "id": "008",
+   "say": "Grandpa watches the tower every night",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "poi:window",
+     "pose": "binoculars",
+     "face": "neutral",
+     "prop": {
+      "type": "binoculars"
+     }
+    }
+   ]
+  },
+  {
+   "id": "009",
+   "say": "through his old binoculars.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "poi:steeple",
+   "binoculars": true,
+   "actors": []
+  },
+  {
+   "id": "010",
+   "say": "He says the 13th ring is",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "talk"
+    }
+   ]
+  },
+  {
+   "id": "011",
+   "say": "for whoever didn't make it home.",
+   "set": "road_night",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "drift",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "012",
+   "say": "My little sister Lily",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "wave",
+     "face": "grin"
+    }
+   ]
+  },
+  {
+   "id": "013",
+   "say": "counts from her bedroom window.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "poi:window",
+     "pose": "stand",
+     "face": "neutral"
+    }
+   ],
+   "target": "poi:window"
+  },
+  {
+   "id": "014",
+   "say": "When the bell stops, she blinks",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "carry",
+     "face": "smile",
+     "prop": {
+      "type": "flashlight"
+     }
+    }
+   ]
+  },
+  {
+   "id": "015",
+   "say": "her flashlight 13 times back at the tower.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "poi:across",
+     "pose": "carry",
+     "prop": {
+      "type": "flashlight"
+     }
+    }
+   ],
+   "target": "poi:across"
+  },
+  {
+   "id": "016",
+   "say": "Like a goodnight.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "happy"
+    }
+   ]
+  },
+  {
+   "id": "017",
+   "say": "One night, the bell rang 14 times.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "shake",
+   "subject": "poi:steeple",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "018",
+   "say": "Lily blinked 14 times.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "carry",
+     "face": "worried",
+     "prop": {
+      "type": "flashlight"
+     }
+    }
+   ]
+  },
+  {
+   "id": "019",
+   "say": "Grandpa lowered his binoculars",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "look_down",
+     "face": "worried",
+     "prop": {
+      "type": "binoculars"
+     }
+    }
+   ]
+  },
+  {
+   "id": "020",
+   "say": "and didn't say a word.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "sad"
+    }
+   ]
+  },
+  {
+   "id": "021",
+   "say": "The next morning, Mr Hale's house",
+   "set": "house_front",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "022",
+   "say": "was empty.",
+   "set": "house_front",
+   "time": "day",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "poi:door",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "023",
+   "say": "Nobody saw him leave.",
+   "set": "street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "set",
+   "binoculars": false,
+   "actors": [],
+   "crowd": {
+    "count": 8,
+    "pose": "stand",
+    "face": "worried",
+    "facing": "poi:house",
+    "area": "crowd"
+   }
+  },
+  {
+   "id": "024",
+   "say": "The mayor said",
+   "set": "street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "mayor",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "talk",
+     "face": "smile"
+    }
+   ]
+  },
+  {
+   "id": "025",
+   "say": "Mr Hale moved away.",
+   "set": "street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "mayor",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "smirk"
+    }
+   ]
+  },
+  {
+   "id": "026",
+   "say": "Nobody asked where.",
+   "set": "street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "set",
+   "binoculars": false,
+   "actors": [],
+   "crowd": {
+    "count": 10,
+    "pose": "look_down",
+    "face": "sad",
+    "area": "crowd"
+   }
+  },
+  {
+   "id": "027",
+   "say": "The next night, 15 rings.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "028",
+   "say": "The baker was gone.",
+   "set": "kitchen",
+   "time": "day",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "drift",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "029",
+   "say": "Then 16.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "shake",
+   "subject": "poi:steeple",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "030",
+   "say": "The whole Miller family.",
+   "set": "park",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "drift",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "031",
+   "say": "People stopped counting.",
+   "set": "street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "set",
+   "binoculars": false,
+   "actors": [],
+   "crowd": {
+    "count": 10,
+    "pose": "stand",
+    "face": "scared",
+    "area": "crowd"
+   }
+  },
+  {
+   "id": "032",
+   "say": "They shut their curtains before midnight.",
+   "set": "road_night",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "set",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "033",
+   "say": "Grandpa didn't.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "angry"
+    }
+   ]
+  },
+  {
+   "id": "034",
+   "say": "He sat by the fire with his stopwatch.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "armchair",
+     "facing": "camera",
+     "pose": "sit",
+     "face": "neutral",
+     "prop": {
+      "type": "stopwatch"
+     }
+    }
+   ]
+  },
+  {
+   "id": "035",
+   "say": "\"Count with me,\" he whispered.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "actor:me",
+     "pose": "stand",
+     "face": "talk"
+    },
+    {
+     "id": "me",
+     "mark": "B",
+     "facing": "actor:grandpa",
+     "pose": "stand",
+     "face": "worried"
+    }
+   ]
+  },
+  {
+   "id": "036",
+   "say": "\"If you stop counting, it counts you.\"",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "grandpa",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "grandpa",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "scared"
+    }
+   ]
+  },
+  {
+   "id": "037",
+   "say": "Last night, the bell rang",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "shake",
+   "subject": "poi:steeple",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "038",
+   "say": "30 times.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "me",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "scared"
+    }
+   ]
+  },
+  {
+   "id": "039",
+   "say": "I counted every single one.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "subject": "me",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "mark": "bed",
+     "facing": "camera",
+     "pose": "sit",
+     "face": "worried"
+    }
+   ]
+  },
+  {
+   "id": "040",
+   "say": "Grandpa's chair is empty now.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "poi:armchair",
+   "binoculars": false,
+   "actors": []
+  },
+  {
+   "id": "041",
+   "say": "Lily has his binoculars.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "binoculars",
+     "face": "neutral",
+     "prop": {
+      "type": "binoculars"
+     }
+    }
+   ]
+  },
+  {
+   "id": "042",
+   "say": "She still sits at her window every night.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "poi:window",
+     "pose": "binoculars",
+     "prop": {
+      "type": "binoculars"
+     }
+    }
+   ],
+   "target": "poi:window"
+  },
+  {
+   "id": "043",
+   "say": "But she doesn't watch the tower anymore.",
+   "set": "church_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "subject": "poi:steeple",
+   "binoculars": true,
+   "actors": []
+  },
+  {
+   "id": "044",
+   "say": "She watches me.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "lily",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "lily",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "binoculars",
+     "face": "neutral",
+     "prop": {
+      "type": "binoculars"
+     }
+    }
+   ]
+  },
+  {
+   "id": "045",
+   "say": "And she's counting.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "subject": "me",
+   "binoculars": true,
+   "actors": [
+    {
+     "id": "me",
+     "mark": "A",
+     "facing": "camera",
+     "pose": "stand",
+     "face": "scared"
+    }
+   ]
+  }
+ ],
+ "ending": {
+  "hold": 0.8
+ }
+}

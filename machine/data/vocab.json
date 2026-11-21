@@ -1,51 +1,720 @@
 {
- "generated": "2026-11-21T03:58:40.330Z",
+ "generated": "2026-11-21T14:21:58.890Z",
  "FACES": [
   "neutral",
-  "smile"
+  "smile",
+  "happy",
+  "grin",
+  "worried",
+  "sad",
+  "cry",
+  "scream",
+  "angry",
+  "surprised",
+  "scared",
+  "sleep",
+  "smirk",
+  "talk",
+  "wink"
  ],
  "POSES": [
-  "stand"
+  "stand",
+  "idle",
+  "wave",
+  "walk",
+  "run",
+  "sit",
+  "binoculars",
+  "hold_sign",
+  "point",
+  "arms_up",
+  "hug",
+  "cry",
+  "shrug",
+  "look_down",
+  "lie",
+  "fall",
+  "jump",
+  "talk",
+  "wade",
+  "carry"
  ],
  "HAIR_STYLES": [
-  "short"
+  "spiky",
+  "short",
+  "bowl",
+  "long",
+  "ponytail",
+  "bun",
+  "bald",
+  "cap",
+  "messy",
+  "curly"
  ],
  "SHIRT_PATTERNS": [
-  "solid"
+  "solid",
+  "stripes_h",
+  "stripes_v",
+  "plaid",
+  "polka",
+  "argyle_vest",
+  "suit",
+  "overalls",
+  "hoodie",
+  "dress",
+  "pajamas_stars",
+  "tee_logo",
+  "vest",
+  "cardigan"
  ],
- "PROPS_HELD": [],
- "PROPS": [],
+ "PROPS_HELD": [
+  "binoculars",
+  "sign",
+  "stopwatch",
+  "phone",
+  "flashlight",
+  "book",
+  "cup",
+  "letter",
+  "umbrella",
+  "bag"
+ ],
+ "PROPS": [
+  "house_victorian",
+  "church",
+  "tree_pine",
+  "tree_round",
+  "bush",
+  "hedge",
+  "flowerbed",
+  "planter",
+  "potted_plant",
+  "rock",
+  "reeds",
+  "seaweed",
+  "hill",
+  "bench",
+  "picnic_table",
+  "lamp_post",
+  "lifebuoy",
+  "mailbox",
+  "fence",
+  "rail_fence",
+  "dock_section",
+  "car",
+  "boat",
+  "gazebo",
+  "street_sign",
+  "hydrant",
+  "trash_can",
+  "flower_arch",
+  "road_segment",
+  "crosswalk",
+  "sidewalk",
+  "table",
+  "chair",
+  "sofa",
+  "armchair",
+  "fireplace",
+  "bed",
+  "nightstand",
+  "window",
+  "door",
+  "bookshelf",
+  "kitchen_counter",
+  "fridge",
+  "stove",
+  "rug",
+  "picture_frame",
+  "tv",
+  "lamp",
+  "pendant_lamp",
+  "ceiling_light",
+  "cabinet",
+  "desk",
+  "chalkboard",
+  "clock",
+  "sign_board",
+  "curtain",
+  "stairs",
+  "pier_post"
+ ],
  "FRAMINGS": [
-  "medium"
+  "extreme_wide",
+  "wide",
+  "aerial",
+  "establishing",
+  "medium",
+  "medium_close",
+  "close_up",
+  "extreme_close_up",
+  "over_shoulder",
+  "pov",
+  "two_shot",
+  "insert",
+  "low_angle",
+  "high_angle",
+  "back"
  ],
  "MOVES": [
   "static",
-  "push_in"
+  "push_in",
+  "pull_out",
+  "pan_left",
+  "pan_right",
+  "drift",
+  "orbit",
+  "tilt_up",
+  "tilt_down",
+  "follow",
+  "shake"
  ],
  "SETS": {
   "lake_dock": {
+   "interior": false,
+   "water": -1.5,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "bench1",
+    "bench2",
+    "shore1",
+    "shore2",
+    "road"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 33
+    },
+    {
+     "area": "far",
+     "slots": 23
+    },
+    {
+     "area": "shore",
+     "slots": 33
+    }
+   ],
+   "pois": [
+    "lake",
+    "across",
+    "far_dock",
+    "dock",
+    "dock_end",
+    "shore",
+    "road",
+    "house",
+    "door",
+    "window",
+    "church",
+    "water",
+    "bench",
+    "lifebuoy"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "across",
+    "reverse",
+    "low"
+   ]
+  },
+  "lake_far_shore": {
+   "interior": false,
+   "water": -1.5,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "bench1",
+    "bench2",
+    "shore1",
+    "shore2",
+    "road"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 33
+    },
+    {
+     "area": "far",
+     "slots": 23
+    },
+    {
+     "area": "shore",
+     "slots": 33
+    }
+   ],
+   "pois": [
+    "lake",
+    "across",
+    "far_dock",
+    "dock",
+    "dock_end",
+    "shore",
+    "road",
+    "house",
+    "door",
+    "window",
+    "church",
+    "water",
+    "bench",
+    "lifebuoy",
+    "viewer"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "binoculars",
+    "across"
+   ]
+  },
+  "lake_aerial": {
+   "interior": false,
+   "water": -1.5,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "bench1",
+    "bench2",
+    "shore1",
+    "shore2",
+    "road"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 33
+    },
+    {
+     "area": "far",
+     "slots": 23
+    },
+    {
+     "area": "shore",
+     "slots": 33
+    }
+   ],
+   "pois": [
+    "lake",
+    "across",
+    "far_dock",
+    "dock",
+    "dock_end",
+    "shore",
+    "road",
+    "house",
+    "door",
+    "window",
+    "church",
+    "water",
+    "bench",
+    "lifebuoy"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "top"
+   ]
+  },
+  "street": {
+   "interior": false,
+   "water": -1.5,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "crossing",
+    "lake_side"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 35
+    }
+   ],
+   "pois": [
+    "road",
+    "crosswalk",
+    "house",
+    "door",
+    "church",
+    "lake",
+    "across",
+    "dock"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "along",
+    "from_house"
+   ]
+  },
+  "house_front": {
    "interior": false,
    "water": null,
    "marks": [
     "A",
     "B",
     "C",
-    "D"
+    "D",
+    "porch",
+    "steps",
+    "sidewalk"
    ],
    "crowds": [
     {
      "area": "crowd",
-     "slots": 12
+     "slots": 24
     }
    ],
    "pois": [
-    "lake",
-    "across"
+    "house",
+    "door",
+    "porch",
+    "window",
+    "mailbox",
+    "road",
+    "garden"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "porch"
+   ]
+  },
+  "church_front": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "steps"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 24
+    }
+   ],
+   "pois": [
+    "church",
+    "door",
+    "steeple",
+    "road",
+    "bench"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "low"
+   ]
+  },
+  "park": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "gazebo",
+    "bench1",
+    "bench2"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 34
+    }
+   ],
+   "pois": [
+    "gazebo",
+    "path",
+    "bench",
+    "trees",
+    "lamp"
    ],
    "cameraHints": [
     "establishing",
     "aerial",
     "wide"
+   ]
+  },
+  "forest_edge": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "path"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 40
+    }
+   ],
+   "pois": [
+    "forest",
+    "path",
+    "sign",
+    "trees"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide"
+   ]
+  },
+  "road_night": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "sidewalk"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 30
+    }
+   ],
+   "pois": [
+    "road",
+    "horizon",
+    "house",
+    "lamp",
+    "door"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "sidewalk"
+   ]
+  },
+  "shore_water": {
+   "interior": false,
+   "water": -1.5,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "deep",
+    "beach1",
+    "beach2"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 39
+    },
+    {
+     "area": "beach",
+     "slots": 28
+    }
+   ],
+   "pois": [
+    "lake",
+    "across",
+    "shore",
+    "house",
+    "road"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "low"
+   ]
+  },
+  "underwater": {
+   "interior": false,
+   "water": 0,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "surface"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 40
+    }
+   ],
+   "pois": [
+    "surface",
+    "bed",
+    "dock",
+    "shore"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "up"
+   ]
+  },
+  "kitchen": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "seat1",
+    "seat2",
+    "stove"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 33
+    }
+   ],
+   "pois": [
+    "table",
+    "counter",
+    "stove",
+    "fridge",
+    "window",
+    "door",
+    "lamp"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "table"
+   ]
+  },
+  "living_room": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "armchair",
+    "sofa",
+    "fire"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 36
+    }
+   ],
+   "pois": [
+    "fireplace",
+    "armchair",
+    "sofa",
+    "tv",
+    "window",
+    "picture",
+    "table"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "fireplace"
+   ]
+  },
+  "bedroom": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "bed",
+    "desk"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 34
+    }
+   ],
+   "pois": [
+    "window",
+    "across",
+    "bed",
+    "desk",
+    "door",
+    "lamp"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "window"
+   ]
+  },
+  "classroom": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "teacher"
+   ],
+   "crowds": [
+    {
+     "area": "seats",
+     "slots": 12
+    },
+    {
+     "area": "crowd",
+     "slots": 46
+    }
+   ],
+   "pois": [
+    "board",
+    "desk",
+    "window",
+    "students",
+    "door"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "students"
    ]
   }
  }

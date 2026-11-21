@@ -233,7 +233,7 @@ const SET_BUILDERS = {
     for (let k = 0; k < 6; k++) { b.lod = 'far'; b.push(-110 + k * 44, 0, 40, Math.PI); lot(b, housePlan(r, k + 2), { yard: 10 }); b.pop(); b.lod = 'near'; }
     for (let k = 0; k < 14; k++) treeAt(b, range(r, -160, 160), -60 - r() * 40, { kind: 'tree_pine' });
     backdropHills(b, 0, 0, 430);
-    const crowd = [...rowSlots(-24, 24, 3, 3.5, 0, 0.35, (x) => Math.abs(x) < 4), ...rowSlots(-15, 15, 3.3, 27, Math.PI, 0.35)];
+    const crowd = [...rowSlots(-24, 24, 3, 3.5, 0, 0.35, (x) => Math.abs(x) < 4), ...rowSlots(-30, -16, 3.5, -1, 0), ...rowSlots(16, 30, 3.5, -1, 0), ...rowSlots(-15, 15, 3.3, 27, Math.PI, 0.35)];
     return { waterLevel: null,
       marks: { A: M(0, 0, -2), B: M(3.4, 0, -2.6), C: M(-3.4, 0, -2.6), D: M(0, 0, -6.5), porch: M(-6, 1.3, -14.5), steps: M(0, 0, -9.6), sidewalk: M(6, 0.35, 3.5), crowd },
       pois: { house: V(0, 14, -32), door: V(0, 4, -18), porch: V(-6, 3, -15), window: V(-8, 15, -22.5), mailbox: V(8, 4, 0.9), road: V(0, 0, 15), garden: V(10, 1, -3.5) },
@@ -251,7 +251,7 @@ const SET_BUILDERS = {
     for (let k = 0; k < 12; k++) treeAt(b, range(r, -120, 120), -80 - r() * 40, { kind: 'tree_pine' });
     at(b, 0, 0, 30, Math.PI, P.sidewalk, { length: 300, width: 5 });
     backdropHills(b, 0, 0, 430);
-    const crowd = gridSlots(-14, 14, -10, 4, 36, 0, 0, (x) => Math.abs(x) < 4.5);
+    const crowd = gridSlots(-18, 18, -10, 4, 48, 0, 0, (x) => Math.abs(x) < 4.5);
     return { waterLevel: null,
       marks: { A: M(0, 0, 1), B: M(3.4, 0, 0.3), C: M(-3.4, 0, 0.3), D: M(0, 0, -4), steps: M(0, 1.4, -13.5), crowd },
       pois: { church: V(0, 20, -40), door: V(0, 4, -15.5), steeple: V(0, 45, -20), road: V(0, 0, 19), bench: V(12, 1, 2) },
