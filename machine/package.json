@@ -1,0 +1,8 @@
+{
+  "name": "video-machine",
+  "private": true,
+  "description": "Story -> Roblox-style narrated vertical video",
+  "dependencies": {
+    "three": "0.170.0"
+  }
+}
