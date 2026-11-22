@@ -1,42 +1,221 @@
+# 06 §9 — adaptation
+# RULE: power goes out at 3:00 every night, 11 minutes. Refrain: "Lights out, eyes in."
+# COPING: 3 curtains per window (Pike's sells 900/yr) · bakery opens 3:11 · mayor's NOT LOOKING masks (wears 2)
+# HERO: me, 10, now closes Bea's curtains (twice, like Dad). LOVED ONE: Bea, 6, leaves a cookie "for the one who turns the lights off".
+# TABOO: looking outside. SEEDS: cookie gone (window locked) · fur high on the pole · 23 footprints, one per house ·
+#        1994 newspaper "9 gone, all lights on" · it taps each window once per person (counting).
+# ESCALATION: note "You looked." → lights out at 2:59 → knock on the roof → Bea turns her flashlight on.
+# TWIST: "The giant was never hunting us. It was hiding us." That's why: lights out / checks windows / counts / cookies.
+# PAYOFF: it takes Bea's cookie with 2 fingers, new note. STING (callback to the counting): 5 taps, "There are only 4 of us."
 title: The 3AM Neighbor
 id: the-3am-neighbor
 lang: en
-voice: young_storyteller
+voice: narrator_c2
 
 cast:
 me    kid spiky #f2d232 | stripes_h #e7c43f #151515 | pants #151515
+bea   kid ponytail #6b3f22 | pajamas_stars #7fb2ee #ffffff | bow
 mom   adult bun #2a1d17 | cardigan #f0a6b8 #fff3f6 | pants #3b4a6b
 dad   adult short #4a3426 | plaid #3a6ea5 #1d2b45 | pants #555555 | glasses
+mayor adult short #2a2a2a | suit #1f2f5c #ffffff | pants #1f2f5c | tie mayor_chain mustache
 beast creature furry_giant
+eyes  creature shadow_eyes
 
 == card night
-On our street, the power goes out at 3:00 every night. | card:clock text=3:00 title=AM push
+In this town, the power goes out | card:clock text=3:00 title=AM push
 == suburban_street night
-Exactly 3:00. | est push
-== kitchen day
-Mom says it's the old wires. | med mom:talk
-Dad says don't look outside. | cu dad:worried push q:dad
+at 3:00 every night. | est push
+For exactly 11 minutes. | aer drift
+== house_front night
+Nobody looks outside. | est push
 == bedroom night
-So of course, I looked. | med me:wide_eyes>window
-Through my window, | ots me >across pov:vignette
-== rooftops_sky night
-I saw something taller than the power poles. | est beast@giant:loom
-Black fur. | cu beast:loom push
-A grin full of teeth. | xcu beast push
+Lights out, eyes in. | cu me:neutral push
+That's the rule. | med me:shrug
+== bedroom day
+Every window in town has 3 curtains. | ins >window push
+== card day
+Mr. Pike's hardware store | card:sign_metal title="PIKE'S HARDWARE" text="CURTAINS 3 FOR $20"
+== city_street day
+sells 900 of them a year. | med extra:carry:smile@sidewalk
+== card day
+The bakery opens at 3:11. | card:sign_wood title="BAKERY" text="OPEN 3:11 AM" push
+== town_square day
+Never 3:00. | med extra2:shrug
+Our mayor gave every family | med mayor:talk@plaque
+a sleep mask that says | cu mayor:smirk push
+NOT LOOKING. | med mayor:sign=NOT_LOOKING:grin push
+He wears 2. | cu mayor:wink push
+== town_square dusk
+Every night, the whole town says it. | est crowd:16:talk>statue
+"Lights out, eyes in." | med extra:talk q:town
+== kitchen night
+Like goodnight. | two mom:smile dad:smile
+== bedroom night
+My little sister Bea is 6. | med bea:wave:grin
+And she's not scared of anything. | cu bea:smirk push
+Every night, she leaves a cookie | mcu bea:reach:smile>window
+on her windowsill. | ots bea:reach >window
+"For the one who turns the lights off." | cu bea:talk:happy q:bea push
+== living_room night
+Dad checks all 7 curtains twice. | med dad:look_down>window
+1, 2, 3, 4, 5, 6, 7. | ots dad >window
+== kitchen night
+Mom hums the same song for 11 minutes. | mcu mom:sit:smile@seat1
+In the dark. | wide mom:sit:smile@seat1 bea:sit:sleep@seat2
+== bedroom night
+And this year, I'm 10. | med me:grin
+So I close Bea's curtains now. | two me:reach:smile bea:smile
+Twice. Like Dad. | cu me:smirk push
+== bedroom day
+Then I started noticing things. | cu me:worried push
+Every morning, Bea's cookie was gone. | ins >window push
+== kitchen day
+Mom said birds. | med mom:shrug
+== bedroom day
+The window was locked. | cu me:worried push
+== suburban_street day
+There was black fur on the power pole. | low s:poi:pole tiltu
+Way up. Higher than our roof. | med me:point>pole
+In the mud, there were footprints | wide >road push
+as long as Dad's car. | med dad:surprised@driveway>road
+One in front of every house. | aer panr
+== card day
+23 houses. 23 footprints. | card:notebook title="MY NOTES" text="23 houses. 23 footprints." push
+== classroom day
+At the library, I found a newspaper from 1994. | med me:look_down:book
+== card day
+9 people gone in one winter. | card:newspaper title="ELM DAILY - 1994" text="9 GONE IN ONE WINTER"
+All from houses with the lights on. | card:newspaper title="ELM DAILY - 1994" text="All 9 houses had their lights on." push
+== road_night night
+The blackouts started the next year. | est drift
+== bedroom night
+Bea asked me who turns the lights off. | two bea:talk me:neutral
+I said nobody. | med me:shrug
+She said, "Then who eats the cookies?" | cu bea:talk:smirk q:bea push
+So that night, at 3:00, | cu me:wide_eyes push
+I opened my curtain. 1 inch. | ots me:reach >window
 == suburban_street night
-It walked down the street, | wide beast:walk@road
-checking every house. | est beast:lean@road push
-Like counting. | cu me:scared push
+Something was walking down our street. | est beast:walk@road pov:vignette
+== rooftops_sky night
+Taller than the power poles. | low beast:walk@giant push
+Black fur. | cu beast:loom push
+A grin as wide as a car. | xcu beast push
+== suburban_street night
+It stopped at the Millers' house, | wide beast:lean@road
+== rooftops_sky night
+leaned down, and tapped their window. | cu beast:reach push
+== house_front night
+Tap. Tap. Tap. | ins >window shake
+== living_room night
+3 Millers. | med extra:scared extra2:scared extra3:scared
+== bedroom night
+Then the mayor's house. Tap. | med mayor:lie:sleep@bed
+He lives alone. With his masks. | cu mayor:sleep push
+== rooftops_sky night
+Then it stopped at our house. | low beast:lean@giant push
+== bedroom night
+Tap. Tap. Tap. Tap. | ins >window shake
+4. | cu me:wide_eyes push
+== living_room night
+Mom, Dad, Bea, me. | med mom:scared dad:scared bea:sleep
+== rooftops_sky night
+It was counting us. | xcu beast push
+Then it turned to my window. | low beast:lean@giant
+And it smiled. | xcu beast push
 == house_front day
 The next morning, | est push
-there was a note on our door. | card:note title="DEAR NEIGHBOR" text="You looked." push
+there was a note on our door. | med me:surprised@porch>door
+== card day
+"You looked." | card:note text="You looked." push
+== kitchen day
 Mom read it twice. | med mom:worried:letter
-Then she taped the window shut. | mcu mom:look_down
+== bedroom day
+Dad nailed my curtain shut. | med dad:reach>window
+"Lights out, eyes in," he said. | cu dad:angry q:dad push
 == card night
-Tonight, the lights went out at 2:59. | card:clock text=2:59 title=AM push
+The next night, the lights went out at 2:59. | card:clock text=2:59 title=AM push
 == bedroom night
 One minute early. | cu me:wide_eyes push
-And something is knocking. | wide me:scared>door shake
+Then something knocked. | wide me:scared>door shake
 Not on the door. | cu me:scared push
 == rooftops_sky night
 On the roof. | low beast:reach@giant push
+== bedroom night
+Then I heard Bea's window open. | med bea:reach>window
+She had her flashlight. | mcu bea:carry:smile:flashlight
+And a cookie. | cu bea:happy push
+Click. | ots bea:carry:flashlight >across
+== suburban_street night
+The only light in the whole town. | aer drift
+== forest_edge night
+At the end of the street, in the trees, | est push
+something opened its eyes. | cu eyes push
+Lots of eyes. | xcu eyes push
+And they started coming toward the light. | low eyes@A push
+== bedroom night
+I ran down the hall, into her room, | med me:run:scared
+and grabbed the flashlight. | mcu me:scared:flashlight
+Click. Dark. | cu me:scared push
+== forest_edge night
+But the eyes kept coming. | cu eyes push
+Closer. | xcu eyes push
+== house_front night
+Then the ground shook. | est shake
+== rooftops_sky night
+Thud. | low beast:walk@giant shake
+Thud. | cu beast:walk shake
+== suburban_street night
+Thud. | wide beast:walk@road shake
+== rooftops_sky night
+The giant stepped over our house | low beast:loom@giant push
+== forest_edge night
+and stood between us and the trees. | low beast:loom@A pull
+== rooftops_sky night
+It spread its arms wide. | low beast:reach@giant push
+== forest_edge night
+The eyes stopped. | cu eyes
+Then, one by one, they closed. | wide eyes@path pull
+== rooftops_sky night
+The giant was never hunting us. | low beast:lean@giant push
+== bedroom night
+It was hiding us. | two me:surprised bea:smile
+== suburban_street night
+That's why the lights go out at 3:00. | aer drift
+== forest_edge night
+The things in the trees can only find us by our light. | med eyes@A push
+== rooftops_sky night
+That's why it checks every window. | cu beast:lean push
+== bedroom night
+One light is enough. | ins >window
+== suburban_street night
+That's why it counts us, every house, every night. | est beast:walk@road panr
+== card day
+Nobody's gone missing since 1994. | card:newspaper title="ELM DAILY - 1994" text="9 GONE IN ONE WINTER" pull
+== bedroom night
+And that's why the cookies were gone. | cu bea:grin push
+Bea held out her cookie. | med bea:reach:smile>window
+== rooftops_sky night
+The giant bent down, all the way down, | low beast:lean@giant push
+and took it with 2 fingers. | cu beast:reach push
+Very, very carefully. | xcu beast push
+== bedroom night
+Then it tapped her window. Once. | ins >window
+Bea tapped back. | ots bea:reach:happy >window
+== house_front day
+The next morning, there was a new note. | est push
+== card day
+"Thank you for the cookie." | card:note text="Thank you for the cookie." push
+"Lights out, eyes in." | card:note text="Thank you for the cookie. Lights out, eyes in." push
+== card night
+Last night, the power went out at 3:00. | card:clock text=3:00 title=AM push
+== house_front night
+Like always. | est drift
+== rooftops_sky night
+The giant walked down our street, | low beast:walk@giant push
+== suburban_street night
+checking every house. | wide beast:lean@road
+== rooftops_sky night
+It stopped at ours. | cu beast:lean push
+== bedroom night
+Tap. Tap. Tap. Tap. Tap. | ins >window shake
+There are only 4 of us. | cu me:wide_eyes push

@@ -316,3 +316,6 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
   models/cbx, installed on first use by audio/install_chatterbox.sh) conditioned on
   assets/voice/narrator_prompt.wav, sentence groups ≤ 22 words, played ×1.114 faster; word timings from
   offline ASR alignment (audio/tts_chatterbox.py). Kokoro stays available (`provider: kokoro`).
+- v3.1 runtime: the face fill (main.js) is a SpotLight aimed at the subject, cone sized to the subject
+  height (two-shots wider), instead of a point light near the camera — low-angle night shots no longer
+  burn the foreground grass into a white-green band. Creatures stay dark silhouettes (grin unlit).

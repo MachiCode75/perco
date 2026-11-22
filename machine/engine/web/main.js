@@ -517,9 +517,15 @@ window.engine = {
     if (ff > 0 && subjEntry && framing !== 'pov' && camCtl.info.kind !== 'hint' && dist < 40) {
       const dark = time === 'night' || time === 'dusk' || interior;
       const E = (dark ? 1.1 : 0.45) * ff;
-      const L = new THREE.PointLight('#fff4e6', E * dist * dist, dist * 2.2, 2);
+      // Spot cone sized to the subject (not a point light): with the camera near the ground (low angle)
+      // a point light 3 m above the grass burned the foreground into a white-green band.
       const cp = camCtl.basePosition.clone(); const toS = camCtl.pivot.clone().sub(cp);
-      L.position.copy(cp).addScaledVector(toS, 0.15).add(new THREE.Vector3(0, 0.6, 0));
+      const lp = cp.clone().addScaledVector(toS, 0.15).add(new THREE.Vector3(0, 0.6, 0));
+      const subjH = subjEntry.character?.height || 4;
+      const R = Math.max(subjH * 0.6, framing === 'two_shot' ? 5 : 3.2);
+      const outer = Math.min(Math.PI / 2.6, Math.atan(R / Math.max(0.5, lp.distanceTo(camCtl.pivot))) * 1.35);
+      const L = new THREE.SpotLight('#fff4e6', E * dist * dist, dist * 2.2, outer, 0.3, 2);
+      L.position.copy(lp); L.target.position.copy(camCtl.pivot); scene.add(L.target);
       L.castShadow = false; L.userData.faceFill = true; scene.add(L);
     }
 

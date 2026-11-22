@@ -9,7 +9,24 @@
  },
  "music": null,
  "captions": {
-  "highlight": []
+  "highlight": [
+   {
+    "text": "Lights out, eyes in.",
+    "color": "#F7DE72"
+   },
+   {
+    "text": "For the one who turns the lights off.",
+    "color": "#74CAF8"
+   },
+   {
+    "text": "Then who eats the cookies?",
+    "color": "#74CAF8"
+   },
+   {
+    "text": "Lights out, eyes in,",
+    "color": "#F7A5C0"
+   }
+  ]
  },
  "cast": {
   "me": {
@@ -30,6 +47,24 @@
     "style": "pants",
     "color": "#151515"
    }
+  },
+  "bea": {
+   "name": "Bea",
+   "build": "kid",
+   "hair": {
+    "style": "ponytail",
+    "color": "#6b3f22"
+   },
+   "shirt": {
+    "pattern": "pajamas_stars",
+    "colors": [
+     "#7fb2ee",
+     "#ffffff"
+    ]
+   },
+   "accessories": [
+    "bow"
+   ]
   },
   "mom": {
    "name": "Mom",
@@ -72,15 +107,43 @@
     "glasses"
    ]
   },
+  "mayor": {
+   "name": "Mayor",
+   "build": "adult",
+   "hair": {
+    "style": "short",
+    "color": "#2a2a2a"
+   },
+   "shirt": {
+    "pattern": "suit",
+    "colors": [
+     "#1f2f5c",
+     "#ffffff"
+    ]
+   },
+   "pants": {
+    "style": "pants",
+    "color": "#1f2f5c"
+   },
+   "accessories": [
+    "tie",
+    "mayor_chain",
+    "mustache"
+   ]
+  },
   "beast": {
    "name": "Beast",
    "creature": "furry_giant"
+  },
+  "eyes": {
+   "name": "Eyes",
+   "creature": "shadow_eyes"
   }
  },
  "shots": [
   {
    "id": "001",
-   "say": "On our street, the power goes out at 3:00 every night.",
+   "say": "In this town, the power goes out",
    "set": "card",
    "time": "night",
    "weather": "clear",
@@ -98,7 +161,7 @@
   },
   {
    "id": "002",
-   "say": "Exactly 3:00.",
+   "say": "at 3:00 every night.",
    "set": "suburban_street",
    "time": "night",
    "weather": "clear",
@@ -111,7 +174,623 @@
   },
   {
    "id": "003",
-   "say": "Mom says it's the old wires.",
+   "say": "For exactly 11 minutes.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "aerial",
+   "angle": "eye",
+   "move": "drift",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "004",
+   "say": "Nobody looks outside.",
+   "set": "house_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "005",
+   "say": "Lights out, eyes in.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "neutral",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "006",
+   "say": "That's the rule.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "pose": "shrug",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "007",
+   "say": "Every window in town has 3 curtains.",
+   "set": "bedroom",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "008",
+   "say": "Mr. Pike's hardware store",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "sign_metal",
+    "title": "PIKE'S HARDWARE",
+    "text": "CURTAINS 3 FOR $20"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "009",
+   "say": "sells 900 of them a year.",
+   "set": "city_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:1",
+     "pose": "carry",
+     "face": "smile",
+     "mark": "sidewalk",
+     "facing": "camera"
+    }
+   ],
+   "subject": "extra:1"
+  },
+  {
+   "id": "010",
+   "say": "The bakery opens at 3:11.",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "sign_wood",
+    "title": "BAKERY",
+    "text": "OPEN 3:11 AM"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "011",
+   "say": "Never 3:00.",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:2",
+     "pose": "shrug",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "extra:2"
+  },
+  {
+   "id": "012",
+   "say": "Our mayor gave every family",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "pose": "talk",
+     "face": "talk",
+     "mark": "plaque",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "013",
+   "say": "a sleep mask that says",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "face": "smirk",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "014",
+   "say": "NOT LOOKING.",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "prop": {
+      "type": "sign",
+      "text": "NOT LOOKING"
+     },
+     "pose": "hold_sign",
+     "face": "grin",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "015",
+   "say": "He wears 2.",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "face": "wink",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "016",
+   "say": "Every night, the whole town says it.",
+   "set": "town_square",
+   "time": "dusk",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "crowd": {
+    "count": 16,
+    "pose": "talk",
+    "area": "crowd",
+    "facing": "poi:statue"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "017",
+   "say": "\"Lights out, eyes in.\"",
+   "set": "town_square",
+   "time": "dusk",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:1",
+     "pose": "talk",
+     "face": "talk",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "extra:1"
+  },
+  {
+   "id": "018",
+   "say": "Like goodnight.",
+   "set": "kitchen",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mom",
+     "face": "smile",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "dad",
+     "face": "smile",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mom",
+   "target": "dad"
+  },
+  {
+   "id": "019",
+   "say": "My little sister Bea is 6.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "wave",
+     "face": "grin",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "020",
+   "say": "And she's not scared of anything.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "face": "smirk",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "021",
+   "say": "Every night, she leaves a cookie",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "reach",
+     "face": "smile",
+     "facing": "poi:window",
+     "mark": "A"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "022",
+   "say": "on her windowsill.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "reach",
+     "mark": "A",
+     "facing": "poi:window"
+    }
+   ],
+   "target": "poi:window",
+   "subject": "bea"
+  },
+  {
+   "id": "023",
+   "say": "\"For the one who turns the lights off.\"",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "talk",
+     "face": "happy",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "024",
+   "say": "Dad checks all 7 curtains twice.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "dad",
+     "pose": "look_down",
+     "facing": "poi:window",
+     "mark": "A"
+    }
+   ],
+   "subject": "dad"
+  },
+  {
+   "id": "025",
+   "say": "1, 2, 3, 4, 5, 6, 7.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "dad",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "poi:window"
+    }
+   ],
+   "target": "poi:window",
+   "subject": "dad"
+  },
+  {
+   "id": "026",
+   "say": "Mom hums the same song for 11 minutes.",
+   "set": "kitchen",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mom",
+     "pose": "sit",
+     "face": "smile",
+     "mark": "seat1",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mom"
+  },
+  {
+   "id": "027",
+   "say": "In the dark.",
+   "set": "kitchen",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mom",
+     "pose": "sit",
+     "face": "smile",
+     "mark": "seat1",
+     "facing": "camera"
+    },
+    {
+     "id": "bea",
+     "pose": "sit",
+     "face": "sleep",
+     "mark": "seat2",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mom"
+  },
+  {
+   "id": "028",
+   "say": "And this year, I'm 10.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "grin",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "029",
+   "say": "So I close Bea's curtains now.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "pose": "reach",
+     "face": "smile",
+     "mark": "A",
+     "facing": "camera"
+    },
+    {
+     "id": "bea",
+     "face": "smile",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me",
+   "target": "bea"
+  },
+  {
+   "id": "030",
+   "say": "Twice. Like Dad.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "smirk",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "031",
+   "say": "Then I started noticing things.",
+   "set": "bedroom",
+   "time": "day",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "worried",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "032",
+   "say": "Every morning, Bea's cookie was gone.",
+   "set": "bedroom",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "033",
+   "say": "Mom said birds.",
    "set": "kitchen",
    "time": "day",
    "weather": "clear",
@@ -122,8 +801,7 @@
    "actors": [
     {
      "id": "mom",
-     "pose": "talk",
-     "face": "talk",
+     "pose": "shrug",
      "mark": "A",
      "facing": "camera"
     }
@@ -131,9 +809,9 @@
    "subject": "mom"
   },
   {
-   "id": "004",
-   "say": "Dad says don't look outside.",
-   "set": "kitchen",
+   "id": "034",
+   "say": "The window was locked.",
+   "set": "bedroom",
    "time": "day",
    "weather": "clear",
    "framing": "close_up",
@@ -142,18 +820,218 @@
    "binoculars": false,
    "actors": [
     {
-     "id": "dad",
+     "id": "me",
      "face": "worried",
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
+   "subject": "me"
+  },
+  {
+   "id": "035",
+   "say": "There was black fur on the power pole.",
+   "set": "suburban_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "tilt_up",
+   "binoculars": false,
+   "actors": [],
+   "subject": "poi:pole"
+  },
+  {
+   "id": "036",
+   "say": "Way up. Higher than our roof.",
+   "set": "suburban_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "pose": "point",
+     "facing": "poi:pole",
+     "mark": "A"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "037",
+   "say": "In the mud, there were footprints",
+   "set": "suburban_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:road",
+   "subject": "set"
+  },
+  {
+   "id": "038",
+   "say": "as long as Dad's car.",
+   "set": "suburban_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "dad",
+     "face": "surprised",
+     "mark": "driveway",
+     "facing": "poi:road",
+     "pose": "stand"
+    }
+   ],
    "subject": "dad"
   },
   {
-   "id": "005",
-   "say": "So of course, I looked.",
+   "id": "039",
+   "say": "One in front of every house.",
+   "set": "suburban_street",
+   "time": "day",
+   "weather": "clear",
+   "framing": "aerial",
+   "angle": "eye",
+   "move": "pan_right",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "040",
+   "say": "23 houses. 23 footprints.",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "notebook",
+    "title": "MY NOTES",
+    "text": "23 houses. 23 footprints."
+   },
+   "subject": "set"
+  },
+  {
+   "id": "041",
+   "say": "At the library, I found a newspaper from 1994.",
+   "set": "classroom",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "pose": "look_down",
+     "prop": {
+      "type": "book"
+     },
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "042",
+   "say": "9 people gone in one winter.",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "newspaper",
+    "title": "ELM DAILY - 1994",
+    "text": "9 GONE IN ONE WINTER"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "043",
+   "say": "All from houses with the lights on.",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "newspaper",
+    "title": "ELM DAILY - 1994",
+    "text": "All 9 houses had their lights on."
+   },
+   "subject": "set"
+  },
+  {
+   "id": "044",
+   "say": "The blackouts started the next year.",
+   "set": "road_night",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "drift",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "045",
+   "say": "Bea asked me who turns the lights off.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "talk",
+     "face": "talk",
+     "mark": "A",
+     "facing": "camera"
+    },
+    {
+     "id": "me",
+     "face": "neutral",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea",
+   "target": "me"
+  },
+  {
+   "id": "046",
+   "say": "I said nobody.",
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
@@ -164,17 +1042,58 @@
    "actors": [
     {
      "id": "me",
-     "face": "wide_eyes",
-     "facing": "poi:window",
+     "pose": "shrug",
      "mark": "A",
-     "pose": "stand"
+     "facing": "camera"
     }
    ],
    "subject": "me"
   },
   {
-   "id": "006",
-   "say": "Through my window,",
+   "id": "047",
+   "say": "She said, \"Then who eats the cookies?\"",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "talk",
+     "face": "smirk",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "048",
+   "say": "So that night, at 3:00,",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "wide_eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "049",
+   "say": "I opened my curtain. 1 inch.",
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
@@ -185,19 +1104,18 @@
    "actors": [
     {
      "id": "me",
+     "pose": "reach",
      "mark": "A",
-     "pose": "stand",
-     "facing": "poi:across"
+     "facing": "poi:window"
     }
    ],
-   "target": "poi:across",
-   "pov": "vignette",
+   "target": "poi:window",
    "subject": "me"
   },
   {
-   "id": "007",
-   "say": "I saw something taller than the power poles.",
-   "set": "rooftops_sky",
+   "id": "050",
+   "say": "Something was walking down our street.",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
@@ -207,15 +1125,36 @@
    "actors": [
     {
      "id": "beast",
-     "mark": "giant",
-     "pose": "loom",
+     "pose": "walk",
+     "mark": "road",
      "facing": "camera"
     }
    ],
+   "pov": "vignette",
    "subject": "set"
   },
   {
-   "id": "008",
+   "id": "051",
+   "say": "Taller than the power poles.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "052",
    "say": "Black fur.",
    "set": "rooftops_sky",
    "time": "night",
@@ -235,8 +1174,8 @@
    "subject": "beast"
   },
   {
-   "id": "009",
-   "say": "A grin full of teeth.",
+   "id": "053",
+   "say": "A grin as wide as a car.",
    "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
@@ -255,8 +1194,8 @@
    "subject": "beast"
   },
   {
-   "id": "010",
-   "say": "It walked down the street,",
+   "id": "054",
+   "say": "It stopped at the Millers' house,",
    "set": "suburban_street",
    "time": "night",
    "weather": "clear",
@@ -267,7 +1206,7 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "walk",
+     "pose": "lean",
      "mark": "road",
      "facing": "camera"
     }
@@ -275,12 +1214,123 @@
    "subject": "beast"
   },
   {
-   "id": "011",
-   "say": "checking every house.",
-   "set": "suburban_street",
+   "id": "055",
+   "say": "leaned down, and tapped their window.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "reach",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "056",
+   "say": "Tap. Tap. Tap.",
+   "set": "house_front",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "057",
+   "say": "3 Millers.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:1",
+     "face": "scared",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "extra:2",
+     "face": "scared",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "extra:3",
+     "face": "scared",
+     "mark": "C",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "extra:1"
+  },
+  {
+   "id": "058",
+   "say": "Then the mayor's house. Tap.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "pose": "lie",
+     "face": "sleep",
+     "mark": "bed",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "059",
+   "say": "He lives alone. With his masks.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mayor",
+     "face": "sleep",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mayor"
+  },
+  {
+   "id": "060",
+   "say": "Then it stopped at our house.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
@@ -288,16 +1338,30 @@
     {
      "id": "beast",
      "pose": "lean",
-     "mark": "road",
+     "mark": "giant",
      "facing": "camera"
     }
    ],
+   "subject": "beast"
+  },
+  {
+   "id": "061",
+   "say": "Tap. Tap. Tap. Tap.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
    "subject": "set"
   },
   {
-   "id": "012",
-   "say": "Like counting.",
-   "set": "suburban_street",
+   "id": "062",
+   "say": "4.",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
    "framing": "close_up",
@@ -307,7 +1371,7 @@
    "actors": [
     {
      "id": "me",
-     "face": "scared",
+     "face": "wide_eyes",
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
@@ -316,7 +1380,102 @@
    "subject": "me"
   },
   {
-   "id": "013",
+   "id": "063",
+   "say": "Mom, Dad, Bea, me.",
+   "set": "living_room",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mom",
+     "face": "scared",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "dad",
+     "face": "scared",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "bea",
+     "face": "sleep",
+     "mark": "C",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "mom"
+  },
+  {
+   "id": "064",
+   "say": "It was counting us.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "065",
+   "say": "Then it turned to my window.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "066",
+   "say": "And it smiled.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "067",
    "say": "The next morning,",
    "set": "house_front",
    "time": "day",
@@ -329,8 +1488,29 @@
    "subject": "set"
   },
   {
-   "id": "014",
+   "id": "068",
    "say": "there was a note on our door.",
+   "set": "house_front",
+   "time": "day",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "surprised",
+     "mark": "porch",
+     "facing": "poi:door",
+     "pose": "stand"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "069",
+   "say": "\"You looked.\"",
    "set": "card",
    "time": "day",
    "weather": "clear",
@@ -341,15 +1521,14 @@
    "actors": [],
    "setOptions": {
     "style": "note",
-    "title": "DEAR NEIGHBOR",
     "text": "You looked."
    },
    "subject": "set"
   },
   {
-   "id": "015",
+   "id": "070",
    "say": "Mom read it twice.",
-   "set": "house_front",
+   "set": "kitchen",
    "time": "day",
    "weather": "clear",
    "framing": "medium",
@@ -371,28 +1550,49 @@
    "subject": "mom"
   },
   {
-   "id": "016",
-   "say": "Then she taped the window shut.",
-   "set": "house_front",
+   "id": "071",
+   "say": "Dad nailed my curtain shut.",
+   "set": "bedroom",
    "time": "day",
    "weather": "clear",
-   "framing": "medium_close",
+   "framing": "medium",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
-     "id": "mom",
-     "pose": "look_down",
+     "id": "dad",
+     "pose": "reach",
+     "facing": "poi:window",
+     "mark": "A"
+    }
+   ],
+   "subject": "dad"
+  },
+  {
+   "id": "072",
+   "say": "\"Lights out, eyes in,\" he said.",
+   "set": "bedroom",
+   "time": "day",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "dad",
+     "face": "angry",
      "mark": "A",
+     "pose": "stand",
      "facing": "camera"
     }
    ],
-   "subject": "mom"
+   "subject": "dad"
   },
   {
-   "id": "017",
-   "say": "Tonight, the lights went out at 2:59.",
+   "id": "073",
+   "say": "The next night, the lights went out at 2:59.",
    "set": "card",
    "time": "night",
    "weather": "clear",
@@ -409,7 +1609,7 @@
    "subject": "set"
   },
   {
-   "id": "018",
+   "id": "074",
    "say": "One minute early.",
    "set": "bedroom",
    "time": "night",
@@ -430,8 +1630,8 @@
    "subject": "me"
   },
   {
-   "id": "019",
-   "say": "And something is knocking.",
+   "id": "075",
+   "say": "Then something knocked.",
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
@@ -451,7 +1651,7 @@
    "subject": "me"
   },
   {
-   "id": "020",
+   "id": "076",
    "say": "Not on the door.",
    "set": "bedroom",
    "time": "night",
@@ -472,7 +1672,7 @@
    "subject": "me"
   },
   {
-   "id": "021",
+   "id": "077",
    "say": "On the roof.",
    "set": "rooftops_sky",
    "time": "night",
@@ -490,6 +1690,925 @@
     }
    ],
    "subject": "beast"
+  },
+  {
+   "id": "078",
+   "say": "Then I heard Bea's window open.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "reach",
+     "facing": "poi:window",
+     "mark": "A"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "079",
+   "say": "She had her flashlight.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "carry",
+     "face": "smile",
+     "prop": {
+      "type": "flashlight"
+     },
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "080",
+   "say": "And a cookie.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "face": "happy",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "081",
+   "say": "Click.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "carry",
+     "prop": {
+      "type": "flashlight"
+     },
+     "mark": "A",
+     "facing": "poi:across"
+    }
+   ],
+   "target": "poi:across",
+   "subject": "bea"
+  },
+  {
+   "id": "082",
+   "say": "The only light in the whole town.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "aerial",
+   "angle": "eye",
+   "move": "drift",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "083",
+   "say": "At the end of the street, in the trees,",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "084",
+   "say": "something opened its eyes.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "085",
+   "say": "Lots of eyes.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "086",
+   "say": "And they started coming toward the light.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "087",
+   "say": "I ran down the hall, into her room,",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "pose": "run",
+     "face": "scared",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "088",
+   "say": "and grabbed the flashlight.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "scared",
+     "prop": {
+      "type": "flashlight"
+     },
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "089",
+   "say": "Click. Dark.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "scared",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
+  },
+  {
+   "id": "090",
+   "say": "But the eyes kept coming.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "091",
+   "say": "Closer.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "092",
+   "say": "Then the ground shook.",
+   "set": "house_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "093",
+   "say": "Thud.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "094",
+   "say": "Thud.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "095",
+   "say": "Thud.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "road",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "096",
+   "say": "The giant stepped over our house",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "loom",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "097",
+   "say": "and stood between us and the trees.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "pull_out",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "loom",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "098",
+   "say": "It spread its arms wide.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "reach",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "099",
+   "say": "The eyes stopped.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "100",
+   "say": "Then, one by one, they closed.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "pull_out",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "path",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "101",
+   "say": "The giant was never hunting us.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "102",
+   "say": "It was hiding us.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "two_shot",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "surprised",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    },
+    {
+     "id": "bea",
+     "face": "smile",
+     "mark": "B",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me",
+   "target": "bea"
+  },
+  {
+   "id": "103",
+   "say": "That's why the lights go out at 3:00.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "aerial",
+   "angle": "eye",
+   "move": "drift",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "104",
+   "say": "The things in the trees can only find us by our light.",
+   "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "eyes"
+  },
+  {
+   "id": "105",
+   "say": "That's why it checks every window.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "106",
+   "say": "One light is enough.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "107",
+   "say": "That's why it counts us, every house, every night.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "pan_right",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "road",
+     "facing": "camera"
+    }
+   ],
+   "subject": "set"
+  },
+  {
+   "id": "108",
+   "say": "Nobody's gone missing since 1994.",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "pull_out",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "newspaper",
+    "title": "ELM DAILY - 1994",
+    "text": "9 GONE IN ONE WINTER"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "109",
+   "say": "And that's why the cookies were gone.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "face": "grin",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "110",
+   "say": "Bea held out her cookie.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "reach",
+     "face": "smile",
+     "facing": "poi:window",
+     "mark": "A"
+    }
+   ],
+   "subject": "bea"
+  },
+  {
+   "id": "111",
+   "say": "The giant bent down, all the way down,",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "112",
+   "say": "and took it with 2 fingers.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "reach",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "113",
+   "say": "Very, very carefully.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "114",
+   "say": "Then it tapped her window. Once.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "115",
+   "say": "Bea tapped back.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "reach",
+     "face": "happy",
+     "mark": "A",
+     "facing": "poi:window"
+    }
+   ],
+   "target": "poi:window",
+   "subject": "bea"
+  },
+  {
+   "id": "116",
+   "say": "The next morning, there was a new note.",
+   "set": "house_front",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "117",
+   "say": "\"Thank you for the cookie.\"",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "note",
+    "text": "Thank you for the cookie."
+   },
+   "subject": "set"
+  },
+  {
+   "id": "118",
+   "say": "\"Lights out, eyes in.\"",
+   "set": "card",
+   "time": "day",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "note",
+    "text": "Thank you for the cookie. Lights out, eyes in."
+   },
+   "subject": "set"
+  },
+  {
+   "id": "119",
+   "say": "Last night, the power went out at 3:00.",
+   "set": "card",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "style": "clock",
+    "text": "3:00",
+    "title": "AM"
+   },
+   "subject": "set"
+  },
+  {
+   "id": "120",
+   "say": "Like always.",
+   "set": "house_front",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "drift",
+   "binoculars": false,
+   "actors": [],
+   "subject": "set"
+  },
+  {
+   "id": "121",
+   "say": "The giant walked down our street,",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "low_angle",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "walk",
+     "mark": "giant",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "122",
+   "say": "checking every house.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "road",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "123",
+   "say": "It stopped at ours.",
+   "set": "rooftops_sky",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "lean",
+     "mark": "A",
+     "facing": "camera"
+    }
+   ],
+   "subject": "beast"
+  },
+  {
+   "id": "124",
+   "say": "Tap. Tap. Tap. Tap. Tap.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [],
+   "target": "poi:window",
+   "subject": "set"
+  },
+  {
+   "id": "125",
+   "say": "There are only 4 of us.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "me",
+     "face": "wide_eyes",
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "me"
   }
  ],
  "ending": {
