@@ -245,6 +245,41 @@ const GEN = {
     g.fillStyle = '#4caf50'; g.fillRect(0, 56, 128, 24); g.fillStyle = '#ffeb3b'; g.beginPath(); g.arc(100, 20, 10, 0, 7); g.fill();
     return finish(ctx, 'screen', c, { clamp: true });
   },
+  // ---------------------------------------------------------------- v2 surfaces
+  stucco(ctx) { // grey-white detail, 6x6 units
+    const S = 128, c = canvas(S, S); const r = mulberry32(201);
+    pixels(c, (x, y) => clamp255(236 + (fbm(203, x / S, y / S, 4, 8) - 0.5) * 26 + (r() - 0.5) * 14));
+    return finish(ctx, 'stucco', c, { repeat: [1 / 6, 1 / 6] });
+  },
+  corrugated(ctx) { // vertical ridges (metal shed walls), 4x4
+    const S = 128, c = canvas(S, S);
+    pixels(c, (x, y) => clamp255(205 + 40 * Math.sin((x / S) * Math.PI * 2 * 10) + (fbm(211, x / S, y / S, 3, 4) - 0.5) * 30));
+    return finish(ctx, 'corrugated', c, { repeat: [0.25, 0.25] });
+  },
+  rollerdoor(ctx) { // horizontal slats, unit uv
+    const c = canvas(128, 256);
+    pixels(c, (x, y) => { const t = (y % 16) / 16; let v = 222 - 60 * Math.abs(t - 0.5); if (y % 16 < 1.5) v = 120; return clamp255(v + (fbm(213, x / 128, y / 256, 3, 4) - 0.5) * 20); });
+    return finish(ctx, 'rollerdoor', c, { clamp: true });
+  },
+  cobble(ctx) { // colour baked (grey-beige setts), 6x6
+    const S = 256, c = canvas(S, S); const g = c.getContext('2d'); const r = mulberry32(221);
+    g.fillStyle = '#6d6a66'; g.fillRect(0, 0, S, S); const n = 8, cs = S / n;
+    for (let j = 0; j < n; j++) for (let i = -1; i <= n; i++) { const x = i * cs + (j % 2) * cs / 2, v = 150 + r() * 60; g.fillStyle = `rgb(${v},${v * 0.97},${v * 0.92})`; g.beginPath(); g.roundRect ? g.roundRect(x + 2, j * cs + 2, cs - 4, cs - 4, 7) : g.rect(x + 2, j * cs + 2, cs - 4, cs - 4); g.fill(); }
+    pixels(c, (x, y, R, G, B) => { const k = (fbm(223, x / S, y / S, 3, 8) - 0.5) * 24; return [clamp255(R + k), clamp255(G + k), clamp255(B + k)]; });
+    return finish(ctx, 'cobble', c, { repeat: [1 / 6, 1 / 6] });
+  },
+  tileroof(ctx) { // barrel tiles (terracotta) grey detail, 4x4
+    const S = 128, c = canvas(S, S);
+    pixels(c, (x, y) => { const u = (x / S) * 8, v = (y / S) * 8; const ridge = Math.abs(Math.sin(u * Math.PI)); let k = 170 + 70 * ridge; if ((v % 1) > 0.88) k *= 0.6; return clamp255(k + (fbm(231, x / S, y / S, 3, 8) - 0.5) * 20); });
+    return finish(ctx, 'tileroof', c, { repeat: [0.25, 0.25] });
+  },
+  granite(ctx) { // speckled stone detail, 4x4
+    const S = 128, c = canvas(S, S); const r = mulberry32(241);
+    pixels(c, (x, y) => clamp255(205 + (fbm(243, x / S, y / S, 4, 8) - 0.5) * 40 + (r() < 0.15 ? (r() - 0.5) * 90 : 0)));
+    return finish(ctx, 'granite', c, { repeat: [0.25, 0.25] });
+  },
+  tower_day(ctx) { return towerTex(ctx, false); },
+  tower_glow(ctx) { return towerTex(ctx, true); },
   // ---------------------------------------------------------------- fx
   ripple(ctx) {
     const S = 128, c = canvas(S, S);
@@ -316,6 +351,16 @@ function windowAtlas(ctx, glow) {
   // 7 plain
   [x, y] = tiles[7]; glass(x + P, y + P, T - 2 * P, T - 2 * P); mull(x + P, y + P, T - 2 * P, T - 2 * P, 1, 2);
   return finish(ctx, glow ? 'window_glow' : 'window_day', c, { clamp: true });
+}
+// skyscraper facade (window grid), 16x16 units per tile; glow version for night
+function towerTex(ctx, glow) {
+  const S = 128, c = canvas(S, S); const g = c.getContext('2d'); const r = mulberry32(251);
+  g.fillStyle = glow ? '#000000' : '#d8dde3'; g.fillRect(0, 0, S, S);
+  for (let j = 0; j < 8; j++) for (let i = 0; i < 6; i++) {
+    const lit = r() < 0.45; g.fillStyle = glow ? (lit ? `rgb(255,${200 + r() * 40},${120 + r() * 60})` : '#000') : (r() < 0.5 ? '#5f7488' : '#7a8ea2');
+    g.fillRect(i * 21 + 4, j * 16 + 3, 14, 10);
+  }
+  return finish(ctx, glow ? 'tower_glow' : 'tower_day', c, { repeat: [1 / 16, 1 / 16] });
 }
 /** uvRect of a window atlas variant (0..7) */
 export function windowRect(k) { const cI = k % 4, r = Math.floor(k / 4) % 2; return [cI / 4 + 0.004, 1 - (r + 1) / 2 + 0.008, (cI + 1) / 4 - 0.004, 1 - r / 2 - 0.008]; }

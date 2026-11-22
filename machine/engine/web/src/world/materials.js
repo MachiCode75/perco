@@ -40,7 +40,15 @@ const DEFS = {
   books: { tex: 'books', rough: 0.8, unit: true, interior: true },
   chalkboard: { tex: 'chalkboard', rough: 0.9, unit: true, interior: true },
   screen: { tex: 'screen', rough: 0.3, unit: true, screen: true },
-  sign: { rough: 0.7, unit: true },   // per-text map assigned by signMaterial()
+  sign: { rough: 0.7, unit: true },
+  stucco: { tex: 'stucco', rough: 0.9, lambert: true },
+  corrugated: { tex: 'corrugated', rough: 0.5, metal: 0.2 },
+  rollerdoor: { tex: 'rollerdoor', rough: 0.55, unit: true },
+  cobble: { tex: 'cobble', rough: 0.9, lambert: true, order: 1 },
+  tileroof: { tex: 'tileroof', rough: 0.85, lambert: true },
+  granite: { tex: 'granite', rough: 0.7 },
+  bronze: { rough: 0.38, metal: 0.55 },
+  tower: { tex: 'tower_day', glow: 'tower_glow', rough: 0.4, lambert: true },   // per-text map assigned by signMaterial()
 };
 
 function patch(mat, U) {

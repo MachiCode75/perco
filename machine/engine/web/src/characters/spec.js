@@ -2,9 +2,20 @@
 import { col, noPureBlack } from './util.js';
 
 export const FACES = ['neutral', 'smile', 'happy', 'grin', 'worried', 'sad', 'cry', 'scream', 'angry',
-  'surprised', 'scared', 'sleep', 'smirk', 'talk', 'wink'];
+  'surprised', 'scared', 'sleep', 'smirk', 'talk', 'wink', 'creepy_grin', 'wide_eyes', 'hollow', 'teeth', 'blank'];
 export const POSES = ['stand', 'idle', 'wave', 'walk', 'run', 'sit', 'binoculars', 'hold_sign', 'point',
-  'arms_up', 'hug', 'cry', 'shrug', 'look_down', 'lie', 'fall', 'jump', 'talk', 'wade', 'carry'];
+  'arms_up', 'hug', 'cry', 'shrug', 'look_down', 'lie', 'fall', 'jump', 'talk', 'wade', 'carry', 'reach', 'loom', 'lean'];
+export const CREATURES = ['furry_giant', 'sky_face', 'shadow_eyes', 'tall_thin', 'stretched', 'doll', 'scarecrow'];
+export const EYE_MODES = ['normal', 'glow', 'hollow', 'many'];
+const CREATURE_ALIAS = { furry: 'furry_giant', yeti: 'furry_giant', bigfoot: 'furry_giant', giant: 'furry_giant', moon: 'sky_face', moon_face: 'sky_face',
+  face_in_sky: 'sky_face', shadow: 'shadow_eyes', many_eyes: 'shadow_eyes', eyes: 'shadow_eyes', slender: 'tall_thin', thin: 'tall_thin', tall: 'tall_thin',
+  stretch: 'stretched', long: 'stretched', puppet: 'doll', straw: 'scarecrow' };
+export function normCreature(id) {
+  if (!id) return null;
+  const s = String(id).toLowerCase().trim();
+  if (CREATURES.includes(s)) return s;
+  return CREATURE_ALIAS[s] || null;
+}
 export const HAIR_STYLES = ['spiky', 'short', 'bowl', 'long', 'ponytail', 'bun', 'bald', 'cap', 'messy', 'curly'];
 export const SHIRT_PATTERNS = ['solid', 'stripes_h', 'stripes_v', 'plaid', 'polka', 'argyle_vest', 'suit',
   'overalls', 'hoodie', 'dress', 'pajamas_stars', 'tee_logo', 'vest', 'cardigan'];
@@ -17,7 +28,8 @@ export const LOGOS = ['dino', 'star', 'heart', 'smiley', 'none'];
 
 const FACE_ALIAS = { happy_closed: 'happy', laugh: 'happy', joy: 'happy', crying: 'cry', tears: 'cry', yell: 'scream', shout: 'scream',
   shock: 'surprised', shocked: 'surprised', fear: 'scared', afraid: 'scared', mad: 'angry', asleep: 'sleep', sleeping: 'sleep',
-  speak: 'talk', speaking: 'talk', frown: 'sad', concerned: 'worried', nervous: 'worried', default: 'smile', calm: 'neutral' };
+  speak: 'talk', speaking: 'talk', frown: 'sad', concerned: 'worried', nervous: 'worried', default: 'smile', calm: 'neutral',
+  creepy: 'creepy_grin', evil: 'creepy_grin', grin_creepy: 'creepy_grin', wide: 'wide_eyes', stare: 'wide_eyes', empty: 'hollow', toothy: 'teeth', none: 'blank', faceless: 'blank' };
 export function normFace(id) {
   const s = String(id || '').toLowerCase().trim();
   if (FACES.includes(s)) return s;
@@ -26,7 +38,8 @@ export function normFace(id) {
 }
 const POSE_ALIAS = { idle_stand: 'idle', standing: 'stand', walking: 'walk', running: 'run', sitting: 'sit', seated: 'sit',
   sign: 'hold_sign', holding_sign: 'hold_sign', look: 'binoculars', cheer: 'arms_up', celebrate: 'arms_up', hands_up: 'arms_up',
-  crying: 'cry', lying: 'lie', lay: 'lie', falling: 'fall', jumping: 'jump', talking: 'talk', speak: 'talk', wading: 'wade', hold: 'carry' };
+  crying: 'cry', lying: 'lie', lay: 'lie', falling: 'fall', jumping: 'jump', talking: 'talk', speak: 'talk', wading: 'wade', hold: 'carry',
+  reaching: 'reach', grab: 'reach', looming: 'loom', loom_over: 'loom', peek: 'lean', leaning: 'lean', tilt: 'lean' };
 export function normPose(id) {
   const s = String(id || '').toLowerCase().trim();
   if (POSES.includes(s)) return s;
@@ -102,7 +115,12 @@ export function normalizeSpec(spec) {
     if (!type || !ACCESSORIES.includes(type)) continue;
     acc.push({ type, color: a && a.color ? col(a.color) : null });
   }
-  return { name: s.name || '', build, skin, hair, shirt, pants, accessories: acc, face: normFace(s.face || 'smile') };
+  const num = (v, d, lo, hi) => (typeof v === 'number' && isFinite(v)) ? Math.max(lo, Math.min(hi, v)) : (typeof v === 'string' && isFinite(+v) && v.trim() !== '' ? Math.max(lo, Math.min(hi, +v)) : d);
+  const st = (s.stretch && typeof s.stretch === 'object') ? s.stretch : (typeof s.stretch === 'number' ? { arms: s.stretch, legs: s.stretch, torso: 1 + (s.stretch - 1) * 0.4, neck: (s.stretch - 1) * 0.4 } : {});
+  const stretch = { arms: num(st.arms, 1, 0.3, 6), legs: num(st.legs, 1, 0.3, 6), torso: num(st.torso, 1, 0.3, 4), neck: num(st.neck, 0, -0.6, 5) };
+  const eyes = EYE_MODES.includes(s.eyes) ? s.eyes : 'normal';
+  return { name: s.name || '', build, skin, hair, shirt, pants, accessories: acc, face: normFace(s.face || 'smile'),
+    scale: num(s.scale, 1, 0.05, 60), stretch, eyes, glowColor: col(s.glowColor, '#ffd84a'), creature: normCreature(s.creature) };
 }
 
 // ---------------------------------------------------------------- random townsperson

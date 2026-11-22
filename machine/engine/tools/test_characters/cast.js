@@ -13,3 +13,12 @@ module.exports = {
   overalls: { name: 'Overalls', build: 'adult', skin: '#f2c8a0', hair: { style: 'messy', color: '#6b4226' }, shirt: { pattern: 'overalls', colors: ['#d9302c', '#3d63b8', '#f4f4f4'] }, face: 'happy' },
   dad: { name: 'Dad', build: 'adult', skin: '#f2c8a0', hair: { style: 'short', color: '#4a2c1a' }, shirt: { pattern: 'solid', colors: ['#f1efe8'] }, pants: { style: 'pants', color: '#5d7fb0' }, face: 'happy' },
 };
+module.exports.creatures = {
+  furry: { creature: 'furry_giant' },
+  moon: { creature: 'sky_face' },
+  shadow: { creature: 'shadow_eyes' },
+  slender: { creature: 'tall_thin' },
+  stretchedMom: { creature: 'stretched', build: 'adult', skin: '#f2c8a0', hair: { style: 'ponytail', color: '#3b2416' }, shirt: { pattern: 'polka', colors: ['#c9b7e6', '#e8e0f6'] }, pants: { style: 'pants', color: '#c9b7e6', pattern: 'polka', colors: ['#c9b7e6', '#e8e0f6'] } },
+  doll: { creature: 'doll' },
+  scarecrow: { creature: 'scarecrow', eyes: 'glow', glowColor: '#ff8a1a' },
+};

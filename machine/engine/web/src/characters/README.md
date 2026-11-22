@@ -75,12 +75,15 @@ Any accessory can carry its own colour: `{ "type": "scarf", "color": "#2a6" }`.
 ## FACES
 Decals on the front of the head, with thick black strokes:
 `neutral, smile, happy (^^), grin (open white mouth), worried, sad, cry (> < with blue tears), scream (red open mouth),
-angry (V brows), surprised, scared, sleep, smirk, talk, wink`. With `talk`, the mouth opens and closes
+angry (V brows), surprised, scared, sleep, smirk, talk, wink` and the v2 scary faces
+`creepy_grin` (hollow eyes with white pin-pupils and a huge jagged grin, like the stretched Mom in ref3),
+`wide_eyes`, `hollow` (black empty eyes), `teeth` (a wide grin full of teeth) and `blank` (no face). With `talk`, the mouth opens and closes
 automatically in `update(t)`. `setFace()` swaps the decal instantly.
 
 ## POSES
 `stand, idle, wave, walk, run, sit, binoculars, hold_sign, point, arms_up, hug, cry, shrug, look_down, lie, fall,
-jump, talk, wade, carry`. The arms are rigid blocks that rotate at the shoulder, and the legs rotate at the hip.
+jump, talk, wade, carry`, plus the v2 poses `reach` (both arms out toward the camera), `loom` (leaning forward with the head
+up) and `lean` (tilted sideways, peeking; takes `side: 'left'`). The arms are rigid blocks that rotate at the shoulder, and the legs rotate at the hip.
 `update(t)` adds breathing, sway, walk and run cycles (in place), waving, sobbing, the talk head-bob, jump hops and so on.
 All of this is deterministic: the only random value is a per-character phase, drawn once from `ctx.rng` at creation.
 
@@ -123,3 +126,48 @@ node engine/tools/test_characters/render.js --scene custom --config cfg.json [--
 node engine/tools/preview.js --spec engine/tools/test_scenes/characters_sign.json --out x.png   # through the real runtime
 ```
 Preview sheets: `docs/img/characters_lineup.jpg`, `docs/img/characters_faces.jpg` and `docs/img/characters_poses.jpg`.
+
+## v2: modifiers and creatures (ARCHITECTURE v2)
+
+### Modifiers (any CharacterSpec)
+| field | effect |
+|---|---|
+| `scale` (number, default 1) | uniform size multiplier on top of the build (`kid` is 0.82). `height` and `anchors()` follow it. |
+| `stretch` `{arms, legs, torso, neck}` | elongates the limbs, torso and neck for a creepy, too-tall version of a normal character. The defaults are 1, 1, 1 and 0; `neck` is an extra length in studs. A plain number such as `"stretch": 1.8` stretches the arms and legs and lengthens the torso and neck a little. |
+| `eyes`: `normal`, `glow`, `hollow` or `many` | `glow` adds emissive eye discs with a halo, coloured by `glowColor` (default `#ffd84a`), that read in night scenes. `hollow` gives big black empty eyes, and `many` gives about 9 eyes all over the face. All of them work with any face id. |
+
+```json
+{ "build": "adult", "hair": {"style": "ponytail", "color": "#3b2416"}, "shirt": {"pattern": "cardigan"},
+  "stretch": {"arms": 2.1, "legs": 1.9, "torso": 1.3, "neck": 0.55}, "face": "creepy_grin" }
+{ "build": "kid", "eyes": "glow", "glowColor": "#ff3b3b", "face": "neutral", "scale": 1.0 }
+```
+
+### Creatures: `"creature": "<id>"` (exported `CREATURES`)
+All the other spec fields still apply where they make sense: clothes for the humanoid creatures, plus `scale`, `face` and `eyes`.
+| id | look | default size | poses |
+|---|---|---|---|
+| `furry_giant` | huge black shaggy fur creature, small head, tiny white eyes, wide white grid grin (ref5); optional `furColor` | `scale` 2.3, about 12 units tall (taller than a 2-storey house eave) | idle (gorilla sway), walk/run (lumbering), loom, reach, sit, lie, fall; the rest map to idle |
+| `sky_face` | giant moon with craters, glowing yellow and red eyes, angry brows and crooked teeth (ref3); `glowColor` sets the iris colour | radius 2.6 × `scale` (default 5, so 26 units across). The origin is the bottom of the sphere, so place it with a mark `y` high in the sky. | idle (slow wobble), loom (tilts down and closer), walk (drift); `setFace` and `setProp` do nothing |
+| `shadow_eyes` | tall dark purple silhouette covered in about 70 blinking white eyes, spiky head, white eyes and a zigzag mouth (ref6) | `scale` 1.45, about 10 units tall | every humanoid pose; idle is a creepy sway; optional `bodyColor` |
+| `tall_thin` | slender, faceless figure in a black suit with long limbs and a white blank head | about 9 units tall | every humanoid pose (idle: creep) |
+| `stretched` | the given spec, elongated, with the `creepy_grin` face by default (the too-tall "Mom") | from `stretch` | every humanoid pose |
+| `doll` | porcelain doll with black glossy eyes, lashes, rosy cheeks, a crack line, a pink dress and a bow | kid | every humanoid pose |
+| `scarecrow` | burlap head with a stitched mouth, straw hat, straw tufts and a plaid shirt; looks best with `"eyes": "glow"` | adult | idle = arms out on a post; the other poses work too |
+
+Unknown poses fall back to the creature's idle. Unknown creature ids give a normal character with the modifiers applied.
+Aliases are accepted, for example `moon` becomes `sky_face`, `furry` becomes `furry_giant` and `slender` becomes `tall_thin`.
+
+```json
+{ "id": "g", "mark": {"x": 5, "z": -16}, "facing": "camera", "pose": "loom", "face": "teeth", "spec": {"creature": "furry_giant"} }
+{ "id": "moon", "mark": {"x": -4, "y": 14, "z": -70}, "facing": "camera", "pose": "loom", "spec": {"creature": "sky_face", "scale": 6} }
+{ "id": "it", "mark": "B", "pose": "reach", "spec": {"creature": "shadow_eyes"} }
+```
+For a close-up, frame `anchors().eyes` or `.head`. The furry face, moon and shadow head are built to fill a 720×1280 frame.
+At a distance, they are sized to loom over 2-storey houses.
+
+Previews: `docs/img/characters_creatures.jpg` (bench) and `docs/img/characters_creatures_loom.jpg`. The second one is a
+night scene from the real runtime: `node engine/tools/preview.js --spec engine/tools/test_scenes/characters_loom.json`.
+To rebuild the bench sheet, run `node engine/tools/test_characters/render.js --scene creatures`.
+
+Performance: 3 creatures (`furry_giant`, `shadow_eyes`, `sky_face`) plus 5 characters render at 720×1280 in about
+150–170 ms per frame, after a first frame of about 1 s. One furry giant is about 10k triangles in 15 draw calls.

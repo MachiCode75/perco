@@ -1,0 +1,5 @@
+{"set":"lake_dock","time":"night","framing":"wide","subject":"m","seed":11,
+ "actors":[
+  {"id":"m","mark":{"x":0,"z":0},"facing":"camera","pose":"stand","face":"scared","spec":{"build":"kid","hair":{"style":"spiky","color":"#f6dc3c"},"shirt":{"pattern":"stripes_h","colors":["#f2c511","#151515"]},"pants":{"style":"pants","color":"#151515"}}},
+  {"id":"g","mark":{"x":5,"z":-16},"facing":"camera","pose":"loom","face":"teeth","spec":{"creature":"furry_giant"}},
+  {"id":"s","mark":{"x":-4,"y":14,"z":-70},"facing":"camera","pose":"loom","spec":{"creature":"sky_face","scale":6}}]}

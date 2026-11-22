@@ -8,37 +8,37 @@ import { P } from './props.js';
 import { HOUSE_COLORS, SHUTTER_COLORS, DOOR_COLORS } from './house.js';
 import { createWaterSurface, createRipples } from './water.js';
 
-const V = (x, y, z) => ({ x, y, z });
-const M = (x, y, z, yaw = 0) => ({ x, y, z, yaw });
-const H = (pos, target, fov) => ({ pos, target, fov });
+export const V = (x, y, z) => ({ x, y, z });
+export const M = (x, y, z, yaw = 0) => ({ x, y, z, yaw });
+export const H = (pos, target, fov) => ({ pos, target, fov });
 
 // ------------------------------------------------------------------ shared layout pieces
-function ground(b, x0, x1, z0, z1, mat = 'grass', color = '#ffffff', y = 0) {
+export function ground(b, x0, x1, z0, z1, mat = 'grass', color = '#ffffff', y = 0) {
   b.boxB(x1 - x0, 1, z1 - z0, (x0 + x1) / 2, y - 1, (z0 + z1) / 2, mat, color, { cast: false });
 }
-function at(b, x, y, z, ry, fn, o) { b.push(x, y, z, ry); const r = fn(b, o || {}); b.pop(); return r; }
-function backdropHills(b, cx, cz, r0 = 430, n = 22, o = {}) {
+export function at(b, x, y, z, ry, fn, o) { b.push(x, y, z, ry); const r = fn(b, o || {}); b.pop(); return r; }
+export function backdropHills(b, cx, cz, r0 = 430, n = 22, o = {}) {
   // two rings: green wooded hills, then hazy blue-grey mountains (far shore look of the reference)
   const r = b.rng; const keepChunk = b.chunk, keepCast = b.cast, keepRecv = b.receive; b.chunk = 'bg'; b.cast = false; b.receive = false;
   for (let i = 0; i < n; i++) {
     const a = (i / n) * Math.PI * 2 + r() * 0.2; if (o.skip && o.skip(a)) continue;
     const R = r0 - 60 + r() * 60;
-    b.prim('ico1', cx + Math.sin(a) * R, -10, cz + Math.cos(a) * R, range(r, 60, 100), range(r, 22, 42), range(r, 40, 70), 'foliage', pick(r, ['#4d7a45', '#557f4a', '#4a7050']), { ry: r() * 6 });
+    b.prim('ico1', cx + Math.sin(a) * R, -10, cz + Math.cos(a) * R, range(r, 60, 100), range(r, 22, 42), range(r, 40, 70), 'foliage', pick(r, o.near || ['#4d7a45', '#557f4a', '#4a7050']), { ry: r() * 6 });
     const R2 = r0 + 160 + r() * 140; const a2 = a + 0.13;
-    b.prim('ico1', cx + Math.sin(a2) * R2, -20, cz + Math.cos(a2) * R2, range(r, 90, 150), range(r, 50, 95), range(r, 60, 100), 'foliage', pick(r, ['#62788a', '#6a7a8c', '#5e7286']), { ry: r() * 6 });
+    b.prim('ico1', cx + Math.sin(a2) * R2, -20, cz + Math.cos(a2) * R2, range(r, 90, 150), range(r, 50, 95), range(r, 60, 100), 'foliage', pick(r, o.far || ['#62788a', '#6a7a8c', '#5e7286']), { ry: r() * 6 });
   }
   b.chunk = keepChunk; b.cast = keepCast; b.receive = keepRecv;
 }
-function treeAt(b, x, z, o = {}) { const k = o.kind || (b.rng() < 0.55 ? 'tree_pine' : 'tree_round'); at(b, x, o.y || 0, z, b.rng() * 6, P[k], o); }
+export function treeAt(b, x, z, o = {}) { const k = o.kind || (b.rng() < 0.55 ? 'tree_pine' : 'tree_round'); at(b, x, o.y || 0, z, b.rng() * 6, P[k], o); }
 
 /** plan the houses of a row so the front (porch steps) lands on zFront */
-function housePlan(r, i) {
+export function housePlan(r, i) {
   const style = pick(r, ['side', 'front', 'tower', 'side', 'front']);
   const W = style === 'side' ? range(r, 30, 33) : range(r, 25, 28); const D = style === 'side' ? range(r, 22, 24) : range(r, 26, 29);
   return { style, width: W, depth: D, color: HOUSE_COLORS[(i * 5 + Math.floor(r() * 3)) % HOUSE_COLORS.length], shutter: pick(r, SHUTTER_COLORS), door: pick(r, DOOR_COLORS), doorX: style === 'side' ? 0 : (W / 2 - 6.5) * (r() < 0.5 ? -1 : 1), floors: r() < 0.12 ? 3 : 2 };
 }
 /** a house + its front yard (path, bushes, fence, mailbox); front steps at local z=0 facing +Z */
-function lot(b, plan, o = {}) {
+export function lot(b, plan, o = {}) {
   const r = b.rng; const frontZ = plan.depth / 2 + 7.5 + 3.2;
   b.push(0, 0, -frontZ, 0); const info = P.house_victorian(b, plan); b.pop();
   const yard = o.yard ?? 8; const dx = plan.doorX;
@@ -57,7 +57,7 @@ function lot(b, plan, o = {}) {
  * One side of the lakeside town in a local frame: water edge at z=0, land toward −z, houses face +z.
  * Strips: lawn (0..-7) | sidewalk (-7..-11) | road (-11..-27) | sidewalk (-27..-31) | yards | houses (front at -39).
  */
-function shoreSide(b, o) {
+export function shoreSide(b, o) {
   const r = b.rng; const half = o.half || 200; const docks = o.docks || [0]; const pitch = o.pitch || 44;
   const lodFor = o.lodFor || (() => b.lod);
   ground(b, -half - 40, half + 40, -230, 0);
@@ -141,9 +141,9 @@ function lakeTown(b, ctx, o = {}) {
   return { near, far, water, waterLevel: wl, W };
 }
 
-function slots(list) { return list.map(([x, y, z, yaw]) => M(x, y, z, yaw || 0)); }
-function rowSlots(x0, x1, step, z, yaw = 0, y = 0, skip = () => false) { const out = []; for (let x = x0; x <= x1 + 1e-6; x += step) if (!skip(x)) out.push(M(+x.toFixed(2), y, z, yaw)); return out; }
-function gridSlots(x0, x1, z0, z1, n, yaw = 0, y = 0, skip = () => false) {
+export function slots(list) { return list.map(([x, y, z, yaw]) => M(x, y, z, yaw || 0)); }
+export function rowSlots(x0, x1, step, z, yaw = 0, y = 0, skip = () => false) { const out = []; for (let x = x0; x <= x1 + 1e-6; x += step) if (!skip(x)) out.push(M(+x.toFixed(2), y, z, yaw)); return out; }
+export function gridSlots(x0, x1, z0, z1, n, yaw = 0, y = 0, skip = () => false) {
   const out = []; const cols = Math.ceil(Math.sqrt(n * (x1 - x0) / (z1 - z0)));
   const rows = Math.ceil(n / cols);
   for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const x = x0 + (i + 0.5) * (x1 - x0) / cols, z = z0 + (j + 0.5) * (z1 - z0) / rows; if (!skip(x, z)) out.push(M(+x.toFixed(2), y, +z.toFixed(2), yaw)); }
@@ -173,7 +173,7 @@ function lakeCommon(ctx, b, id, o) {
   };
 }
 
-const SET_BUILDERS = {
+export const SET_BUILDERS = {
   lake_dock(ctx, b) {
     const c = lakeCommon(ctx, b, 'lake_dock', {});
     return { ...c, waterLevel: c.wl, extra: [c.town.water],
@@ -463,7 +463,7 @@ const SET_BUILDERS = {
 
 // ------------------------------------------------------------------ interior helpers
 /** room box with wall openings. Walls/ceiling do not cast shadows (window light enters). */
-function room(b, o) {
+export function room(b, o) {
   const { w, d, h } = o; const T = 1; const keepCast = b.cast; b.cast = false;
   b.boxB(w + 2, 0.6, d + 2, 0, -0.6, 0, o.floor || 'floorwood', o.floorColor || '#9a6a40', { cast: false });
   b.boxB(w + 2, 0.6, d + 2, 0, h, 0, 'plain', o.ceilColor || '#f4efe4', { cast: false });
@@ -482,7 +482,7 @@ function room(b, o) {
   b.cast = keepCast;
 }
 /** a cheap exterior seen through a room's windows (ground, hedge, trees, neighbour house) */
-function outsideView(b, side, w, d) {
+export function outsideView(b, side, w, d) {
   const keep = b.chunk; b.chunk = 'out'; b.cast = false; const lod = b.lod; b.lod = 'far';
   const rot = side === 'back' ? 0 : side === 'left' ? -Math.PI / 2 : Math.PI / 2; const off = side === 'back' ? d / 2 : w / 2;
   b.push(0, 0, 0, rot); b.push(0, 0, -off, 0);
@@ -494,7 +494,7 @@ function outsideView(b, side, w, d) {
 }
 
 export const SET_IDS = Object.keys(SET_BUILDERS);
-const INTERIORS = new Set(['kitchen', 'living_room', 'bedroom', 'classroom']);
+export const INTERIORS = new Set(['kitchen', 'living_room', 'bedroom', 'classroom']);
 const RECV_OUTDOOR = new Set(['grass', 'asphalt', 'concrete', 'sand', 'dirt', 'planks', 'stone']);
 
 export function buildSet(ctx, id, opts = {}) {
@@ -516,7 +516,7 @@ export function buildSet(ctx, id, opts = {}) {
   const inst = {
     id: rid, group, interior: !!def.interior, waterLevel: def.waterLevel ?? null,
     marks: def.marks, pois: def.pois, cameraHints: def.cameraHints,
-    shadow: def.shadow, lightFocus: def.lightFocus, windowLight: def.windowLight, _lamps: b.lamps,
+    shadow: def.shadow, lightFocus: def.lightFocus, windowLight: def.windowLight, env: def.env || null, _lamps: b.lamps,
     update(t, camera) {
       if (ctx.worldSet !== inst) return;
       if (ripples) ripples.update(t, group);

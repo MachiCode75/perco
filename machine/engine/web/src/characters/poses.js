@@ -165,6 +165,44 @@ export const POSE_FN = {
     J.armL = [-0.02, -0.42, 0.92]; J.armR = [0.02, -0.42, 0.92];
     J.upper.rx = -0.04;
   },
+  // ---- v2: creepy / creature poses (work for every humanoid)
+  reach(J, t, o) {
+    const w = 0.06 * S(TAU * 0.45 * t);
+    J.armL = [0.12, 0.12 + w, 1]; J.armR = [-0.12, 0.12 - w, 1];
+    J.upper.rx = 0.12; J.neck.rz = 0.12 * S(TAU * 0.2 * t); J.neck.rx = -0.05;
+    J.upper.y = 0.02 * S(TAU * t / 3);
+  },
+  loom(J, t, o) {
+    J.upper.rx = 0.42 + 0.03 * S(TAU * t / 3.2); J.neck.rx = -0.28;
+    J.armL = [0.18, -1, 0.55 + 0.05 * S(TAU * t / 2.6)]; J.armR = [-0.18, -1, 0.55 + 0.05 * S(TAU * t / 2.6 + 1)];
+    J.hips.rz = 0.03 * S(TAU * t / 4);
+  },
+  lean(J, t, o) {
+    const s = o.side === 'left' ? -1 : 1;
+    J.upper.rz = s * (0.28 + 0.02 * S(TAU * t / 3)); J.neck.rz = s * 0.35; J.hips.rz = s * 0.04;
+    J.armL = [0.05 + s * 0.25, -1, 0.02]; J.armR = [-0.05 + s * 0.25, -1, 0.02];
+  },
+  hunch(J, t) { // furry giant idle: gorilla sway
+    const k = S(TAU * t / 3.4);
+    J.upper.rx = 0.22; J.neck.rx = -0.18; J.hips.rz = 0.04 * k; J.upper.rz = -0.05 * k;
+    J.armL = [0.16, -1, 0.22 + 0.06 * S(TAU * t / 2.7)]; J.armR = [-0.16, -1, 0.22 + 0.06 * S(TAU * t / 2.7 + 1.4)];
+    J.upper.y = 0.04 * S(TAU * t / 3.4 + 0.8); J.neck.ry = 0.1 * S(TAU * t / 6.5);
+  },
+  lumber(J, t, o) { // heavy slow walk with side rocking
+    const ph = TAU * 0.85 * (o.speed || 1) * t, A = 0.38;
+    J.legL.rx = -A * S(ph); J.legR.rx = A * S(ph);
+    J.armL = swing(-0.35 * S(ph) + 0.18, 0.16); J.armR = swing(0.35 * S(ph) + 0.18, -0.16);
+    J.hips.rz = 0.07 * S(ph); J.upper.rz = -0.04 * S(ph); J.upper.rx = 0.24; J.neck.rx = -0.2;
+    J.hips.y = 2 + 0.08 * Math.abs(C(ph));
+  },
+  arms_out(J, t) { // scarecrow on a post
+    J.armL = [1, -0.12, 0.02]; J.armR = [-1, -0.12, 0.02];
+    J.neck.rz = 0.32 + 0.03 * S(TAU * t / 5); J.neck.rx = 0.12; J.legL.rz = 0.02; J.legR.rz = -0.02;
+  },
+  creep(J, t) { // tall thin idle: slow unnatural sway
+    J.upper.rz = 0.05 * S(TAU * t / 5.5); J.neck.rz = 0.22 * S(TAU * t / 7) + 0.1; J.neck.rx = 0.06;
+    J.armL = [0.05, -1, 0.04 + 0.03 * S(TAU * t / 4)]; J.armR = [-0.05, -1, 0.04 + 0.03 * S(TAU * t / 4 + 2)];
+  },
 };
 
 export function computePose(id, t, opts = {}, elder = false) {

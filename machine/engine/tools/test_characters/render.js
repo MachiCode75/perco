@@ -131,6 +131,33 @@ function tile(files, cols, out, scaleW) {
       console.log('render ms per frame:', times.map(x => x.toFixed(0)).join(' '));
       console.log('wrote', OUT);
     });
+  } else if (SCENE === 'creatures') {
+    // one tile per creature (full body next to a normal kid for scale) + close-ups
+    const C = CAST.creatures; const files = [];
+    const W = 360, H = 560;
+    const tiles = [
+      ['furry_giant', C.furry, { fit: true }, 't'],
+      ['furry_giant close', C.furry, { anchor: 'head', dist: 9, up: 0.6, lookUp: -0.2 }, ''],
+      ['sky_face', C.moon, { anchor: 'head', dist: 52, up: -6 }, ''],
+      ['shadow_eyes', C.shadow, { fit: true }, 't'],
+      ['shadow close', C.shadow, { anchor: 'eyes', dist: 4.5, up: 0.1, lookUp: -0.2 }, ''],
+      ['tall_thin', C.slender, { fit: true }, 't'],
+      ['stretched', C.stretchedMom, { fit: true }, 't'],
+      ['stretched close', C.stretchedMom, { anchor: 'eyes', dist: 3.4, up: 0.1, lookUp: -0.25 }, ''],
+      ['doll', C.doll, { fit: true }, ''],
+      ['scarecrow', C.scarecrow, { fit: true }, ''],
+    ];
+    await withPage(W, H, async (page) => {
+      for (const [label, spec, cam, kid] of tiles) {
+        const items = [{ spec, label, labelY: -0.2, pose: args.pose || undefined }];
+        if (kid) items.push({ spec: CAST.toby, x: -4.5, z: 2, yaw: 30 });
+        const info = await page.evaluate((c) => window.test.setup(c), { background: args.night ? '#0b1630' : undefined, items, camera: cam });
+        const r = await page.evaluate((t) => window.test.render(t), T);
+        const fn = path.join(tmp, `c_${files.length}.jpg`); save(r.url, fn); files.push(fn);
+        console.log(label, 'build', info.buildMs.toFixed(0), 'render', r.renderMs.toFixed(0), 'calls', r.calls, 'tris', r.tris);
+      }
+    });
+    tile(files, 5, OUT, args.scaleW || 1500); console.log('wrote', OUT);
   } else if (SCENE === 'custom') {
     const cfg = JSON.parse(fs.readFileSync(args.config, 'utf8'));
     const W = cfg.width || 720, H = cfg.height || 1280;

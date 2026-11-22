@@ -6,7 +6,24 @@ const TAU = Math.PI * 2;
 
 // =====================================================================================  FACES
 // Canvas = the whole front face of the head (u,v in 0..1, y down). Features stay in the flat centre.
+let EYE_MODE = 'normal', EYES_DONE = false;
+const MANY_EYES = [[0.36, 0.44, 0.05], [0.64, 0.44, 0.05], [0.5, 0.3, 0.04], [0.27, 0.29, 0.034], [0.73, 0.29, 0.034], [0.24, 0.56, 0.03], [0.76, 0.56, 0.03], [0.41, 0.19, 0.028], [0.59, 0.19, 0.028]];
+function modeEyes(g) {
+  if (EYES_DONE) return true;
+  if (EYE_MODE === 'normal') return false;
+  EYES_DONE = true;
+  if (EYE_MODE === 'hollow') { g.fillStyle = '#050505'; for (const s of [-1, 1]) { g.beginPath(); g.ellipse(0.5 + s * 0.15, 0.43, 0.075, 0.1, 0, 0, TAU); g.fill(); } }
+  else if (EYE_MODE === 'many') {
+    for (const [x, y, r] of MANY_EYES) {
+      g.beginPath(); g.ellipse(x, y, r * 1.25, r, 0, 0, TAU); g.fillStyle = '#ffffff'; g.fill(); g.strokeStyle = INK; g.lineWidth = r * 0.35; g.stroke();
+      g.beginPath(); g.arc(x, y, r * 0.48, 0, TAU); g.fillStyle = INK; g.fill();
+    }
+  }
+  // 'glow': eyes are 3D emissive discs added by the rig; decal stays empty
+  return true;
+}
 function eyes(g, { dx = 0.14, y = 0.445, rx = 0.044, ry = 0.074 } = {}) {
+  if (modeEyes(g)) return;
   g.fillStyle = INK;
   for (const s of [-1, 1]) { g.beginPath(); g.ellipse(0.5 + s * dx, y, rx, ry, 0, 0, TAU); g.fill(); }
 }
@@ -27,12 +44,15 @@ function frownArc(g, { cx = 0.5, cy = 0.76, r = 0.13, w = 0.034 } = {}) {
   g.beginPath(); g.arc(cx, cy, r, 1.2 * Math.PI, 1.8 * Math.PI); stroke(g, w);
 }
 function closedUp(g, y = 0.46, dx = 0.14, r = 0.058) { // ^ ^  (happy)
+  if (modeEyes(g)) return;
   for (const s of [-1, 1]) { g.beginPath(); g.arc(0.5 + s * dx, y + r * 0.35, r, 1.12 * Math.PI, 1.88 * Math.PI); stroke(g, 0.034); }
 }
 function closedDown(g, y = 0.43, dx = 0.14, r = 0.058) { // ‿ ‿ (sleep)
+  if (modeEyes(g)) return;
   for (const s of [-1, 1]) { g.beginPath(); g.arc(0.5 + s * dx, y - r * 0.35, r, 0.15 * Math.PI, 0.85 * Math.PI); stroke(g, 0.032); }
 }
 function squeezed(g, y = 0.44, dx = 0.14) { // > <
+  if (modeEyes(g)) return;
   for (const s of [-1, 1]) {
     const x = 0.5 + s * dx;
     g.beginPath();
@@ -56,6 +76,37 @@ function tears(g, y0 = 0.5, dx = 0.14) {
     g.strokeStyle = '#6cc6ff'; g.lineWidth = 0.045; g.stroke();
     g.strokeStyle = '#d8f2ff'; g.lineWidth = 0.012; g.beginPath(); g.moveTo(x - s * 0.01, y0 + 0.03); g.lineTo(x - s * 0.008, y0 + 0.14); g.stroke();
   }
+}
+
+function creepyMouth(g, x0, x1, y0, y1) {
+  // wide black crescent with jagged white teeth (top & bottom rows)
+  const cx = (x0 + x1) / 2, w = x1 - x0;
+  const path = () => { g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(cx, y0 + (y1 - y0) * 0.35, x1, y0); g.quadraticCurveTo(cx, y1 + (y1 - y0) * 0.25, x0, y0); g.closePath(); };
+  g.save(); path(); g.clip();
+  g.fillStyle = '#060606'; g.fillRect(0, 0, 1, 1);
+  g.fillStyle = '#f6f2e6';
+  const n = 9;
+  for (let i = 0; i < n; i++) {
+    const a = x0 + w * (i + 0.5) / n, tw = w / n * 0.48;
+    const top = y0 + (y1 - y0) * 0.35 * (1 - Math.pow((a - cx) / (w / 2), 2)) * 0.5;
+    g.beginPath(); g.moveTo(a - tw, top - 0.05); g.lineTo(a + tw, top - 0.05); g.lineTo(a, top + 0.09); g.closePath(); g.fill();
+    const bot = y0 + (y1 - y0) * 1.1 * (1 - Math.pow((a - cx) / (w / 2), 2)) * 0.75;
+    g.beginPath(); g.moveTo(a - tw, bot + 0.1); g.lineTo(a + tw, bot + 0.1); g.lineTo(a + w / n * 0.25, bot - 0.06); g.closePath(); g.fill();
+  }
+  g.restore();
+  path(); stroke(g, 0.02);
+}
+function teethGrin(g, x0, x1, y0, y1, { outline = INK, fill = '#fbfbf4', lw = 0.024 } = {}) {
+  const cx = (x0 + x1) / 2, h = y1 - y0;
+  const path = () => { g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(cx, y0 + h * 0.3, x1, y0); g.quadraticCurveTo(x1 + 0.01, y1 - h * 0.1, cx, y1); g.quadraticCurveTo(x0 - 0.01, y1 - h * 0.1, x0, y0); g.closePath(); };
+  g.save(); path(); g.clip();
+  g.fillStyle = fill; g.fillRect(0, 0, 1, 1);
+  g.strokeStyle = outline; g.lineWidth = lw * 0.55;
+  const mid = y0 + h * 0.55;
+  g.beginPath(); g.moveTo(x0, mid); g.quadraticCurveTo(cx, mid + h * 0.12, x1, mid); g.stroke();
+  for (let i = 1; i < 10; i++) { const x = x0 + (x1 - x0) * i / 10; g.beginPath(); g.moveTo(x, y0 - 0.1); g.lineTo(x, y1 + 0.1); g.stroke(); }
+  g.restore();
+  g.strokeStyle = outline; g.lineWidth = lw; g.lineJoin = 'round'; path(); g.stroke();
 }
 
 const FACE_DRAW = {
@@ -117,6 +168,60 @@ const FACE_DRAW = {
     openMouth(g, path, { fill: '#4a1212', teeth: 0.63, tongue: [0.5, 0.69, 0.05, '#e0605a'] });
   },
   talk_closed(g) { eyes(g); smileArc(g, { cy: 0.52, r: 0.12, a0: 0.2, a1: 0.8 }); },
+  creepy_grin(g) {
+    if (!modeEyes(g)) for (const s of [-1, 1]) {
+      g.fillStyle = '#060606'; g.beginPath(); g.ellipse(0.5 + s * 0.15, 0.39, 0.07, 0.085, 0, 0, TAU); g.fill();
+      g.fillStyle = '#ffffff'; g.beginPath(); g.arc(0.5 + s * 0.15, 0.39, 0.017, 0, TAU); g.fill();
+    }
+    creepyMouth(g, 0.17, 0.83, 0.53, 0.86);
+  },
+  wide_eyes(g) {
+    if (!modeEyes(g)) for (const s of [-1, 1]) {
+      g.beginPath(); g.arc(0.5 + s * 0.15, 0.42, 0.09, 0, TAU); g.fillStyle = '#ffffff'; g.fill(); stroke(g, 0.024);
+      g.beginPath(); g.arc(0.5 + s * 0.15, 0.42, 0.022, 0, TAU); g.fillStyle = INK; g.fill();
+    }
+    g.beginPath(); g.moveTo(0.45, 0.68); g.lineTo(0.55, 0.68); stroke(g, 0.026);
+  },
+  hollow(g) {
+    if (!modeEyes(g)) { g.fillStyle = '#050505'; for (const s of [-1, 1]) { g.beginPath(); g.ellipse(0.5 + s * 0.15, 0.42, 0.08, 0.11, 0, 0, TAU); g.fill(); } }
+    g.fillStyle = '#050505'; g.beginPath(); g.ellipse(0.5, 0.7, 0.06, 0.08, 0, 0, TAU); g.fill();
+  },
+  teeth(g) {
+    eyes(g, { rx: 0.028, ry: 0.04, y: 0.4, dx: 0.12 });
+    teethGrin(g, 0.22, 0.78, 0.53, 0.74);
+  },
+  blank() { },
+  // ---- internal creature faces
+  doll(g) {
+    if (!modeEyes(g)) for (const s of [-1, 1]) {
+      g.fillStyle = '#0a0a0a'; g.beginPath(); g.arc(0.5 + s * 0.15, 0.43, 0.07, 0, TAU); g.fill();
+      g.fillStyle = '#ffffff'; g.beginPath(); g.arc(0.5 + s * 0.15 - 0.02, 0.41, 0.014, 0, TAU); g.fill();
+      g.strokeStyle = INK; g.lineWidth = 0.012; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(0.5 + s * 0.15 + i * 0.025, 0.36); g.lineTo(0.5 + s * 0.15 + i * 0.035, 0.32); g.stroke(); }
+    }
+    g.fillStyle = 'rgba(230,90,110,0.35)'; for (const s of [-1, 1]) { g.beginPath(); g.arc(0.5 + s * 0.24, 0.58, 0.055, 0, TAU); g.fill(); }
+    g.fillStyle = '#b3172b'; g.beginPath(); g.ellipse(0.5, 0.65, 0.035, 0.025, 0, 0, TAU); g.fill();
+    g.strokeStyle = '#4a3a3a'; g.lineWidth = 0.008; g.beginPath(); g.moveTo(0.66, 0.12); g.lineTo(0.62, 0.24); g.lineTo(0.67, 0.3); g.lineTo(0.63, 0.38); g.moveTo(0.62, 0.24); g.lineTo(0.57, 0.27); g.stroke();
+  },
+  scarecrow(g) {
+    // burlap weave
+    g.globalAlpha = 0.18; g.strokeStyle = '#5a3f1c'; g.lineWidth = 0.004;
+    for (let i = 0; i < 1; i += 0.018) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 1); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(1, i); g.stroke(); }
+    g.globalAlpha = 1;
+    if (!modeEyes(g)) { g.fillStyle = '#1a120a'; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(0.5 + s * 0.08, 0.48); g.lineTo(0.5 + s * 0.24, 0.48); g.lineTo(0.5 + s * 0.16, 0.34); g.closePath(); g.fill(); } }
+    g.strokeStyle = '#2a1a0a'; g.lineWidth = 0.02; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(0.3, 0.66); g.quadraticCurveTo(0.5, 0.74, 0.7, 0.64); g.stroke();
+    g.lineWidth = 0.012; for (let i = 0; i < 7; i++) { const x = 0.33 + i * 0.058, y = 0.665 + Math.sin((i / 6) * Math.PI) * 0.035; g.beginPath(); g.moveTo(x - 0.018, y - 0.035); g.lineTo(x + 0.018, y + 0.035); g.moveTo(x + 0.018, y - 0.035); g.lineTo(x - 0.018, y + 0.035); g.stroke(); }
+    g.strokeStyle = '#6b4a22'; g.lineWidth = 0.008; g.setLineDash([0.02, 0.015]); g.beginPath(); g.moveTo(0.05, 0.9); g.lineTo(0.95, 0.9); g.stroke(); g.setLineDash([]);
+  },
+  shadow(g) {
+    if (!modeEyes(g)) for (const s of [-1, 1]) {
+      g.save(); g.translate(0.5 + s * 0.16, 0.42); g.rotate(s * 0.18);
+      g.beginPath(); g.ellipse(0, 0, 0.1, 0.06, 0, 0, TAU); g.fillStyle = '#f4f0ff'; g.fill();
+      g.beginPath(); g.arc(s * -0.01, 0, 0.03, 0, TAU); g.fillStyle = '#0a0410'; g.fill(); g.restore();
+    }
+    g.strokeStyle = '#f4f0ff'; g.lineWidth = 0.022; g.lineJoin = 'miter';
+    g.beginPath(); g.moveTo(0.28, 0.66); for (let i = 1; i <= 8; i++) g.lineTo(0.28 + i * 0.055, i % 2 ? 0.74 : 0.64); g.stroke();
+  },
   wink(g) {
     g.fillStyle = INK; g.beginPath(); g.ellipse(0.36, 0.445, 0.044, 0.074, 0, 0, TAU); g.fill();
     g.beginPath(); g.arc(0.64, 0.47, 0.058, 1.12 * Math.PI, 1.88 * Math.PI); stroke(g);
@@ -124,13 +229,14 @@ const FACE_DRAW = {
   },
 };
 
-export function faceTexture(ctx, face, skin) {
+export function faceTexture(ctx, face, skin, eyeMode = 'normal') {
   const S = ctx.quality === 'preview' ? 128 : 256;
-  return cached(ctx, `chr:tex:face:${face}:${skin}:${S}`, () => {
+  return cached(ctx, `chr:tex:face:${face}:${skin}:${eyeMode}:${S}`, () => {
     const c = makeCanvas(S, S); const g = c.getContext('2d');
     g.fillStyle = skin; g.fillRect(0, 0, S, S);
     g.save(); g.scale(S, S);
-    (FACE_DRAW[face] || FACE_DRAW.smile)(g);
+    EYE_MODE = eyeMode || 'normal'; EYES_DONE = false;
+    try { (FACE_DRAW[face] || FACE_DRAW.smile)(g); } finally { EYE_MODE = 'normal'; EYES_DONE = false; }
     g.restore();
     return canvasTexture(c);
   });
@@ -607,6 +713,86 @@ export function screenTexture(ctx) {
     g.fillStyle = 'rgba(255,255,255,0.85)';
     for (let i = 0; i < 4; i++) for (let j = 0; j < 5; j++) { g.beginPath(); g.roundRect(6 + i * 14, 14 + j * 20, 10, 10, 3); g.fill(); }
     return canvasTexture(c);
+  });
+}
+
+// =====================================================================================  CREATURES
+/** Transparent decal for the furry giant: tiny eyes + huge white teeth grin. */
+export function furryFaceTexture(ctx, face = 'teeth') {
+  const S = ctx.quality === 'preview' ? 256 : 512;
+  return cached(ctx, `chr:tex:furface:${face}:${S}`, () => {
+    const c = makeCanvas(S, S), g = c.getContext('2d');
+    g.save(); g.scale(S, S);
+    // dark face patch (soft edges so it blends into the fur)
+    const gr = g.createRadialGradient(0.5, 0.52, 0.05, 0.5, 0.52, 0.47); gr.addColorStop(0, 'rgba(14,14,14,0.95)'); gr.addColorStop(0.6, 'rgba(16,16,16,0.75)'); gr.addColorStop(1, 'rgba(18,18,18,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 1, 1);
+    const eye = (x, y, r) => { g.fillStyle = '#e8e8e8'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); };
+    if (face === 'hollow' || face === 'blank') { if (face === 'hollow') { eye(0.36, 0.33, 0.035); eye(0.64, 0.33, 0.035); } }
+    else { eye(0.37, 0.31, 0.03); eye(0.63, 0.31, 0.03); }
+    if (face === 'scream') { g.beginPath(); g.ellipse(0.5, 0.63, 0.2, 0.2, 0, 0, TAU); g.fillStyle = '#5a0b0b'; g.fill(); teethGrin(g, 0.31, 0.69, 0.45, 0.6, { outline: '#111', lw: 0.012 }); }
+    else if (face === 'creepy_grin') creepyMouth(g, 0.1, 0.9, 0.48, 0.86);
+    else if (face !== 'blank') teethGrin(g, 0.12, 0.88, 0.46, 0.78, { outline: '#0b0b0b', lw: 0.014 });
+    g.restore();
+    return canvasTexture(c);
+  });
+}
+/** Moon surface (equirect): blue-grey rock, craters, face shading centred at u=0.25 (front, +Z). */
+export function moonTexture(ctx) {
+  const W = ctx.quality === 'preview' ? 1024 : 2048, H = W / 2;
+  return cached(ctx, `chr:tex:moon:${W}`, () => {
+    const c = makeCanvas(W, H), g = c.getContext('2d');
+    g.fillStyle = '#8e97ab'; g.fillRect(0, 0, W, H);
+    const r = mulberry(99);
+    for (let i = 0; i < 2600; i++) { g.fillStyle = r() < 0.5 ? 'rgba(60,66,84,0.07)' : 'rgba(215,222,236,0.07)'; g.beginPath(); g.arc(r() * W, r() * H, (3 + r() * 22) * W / 2048, 0, TAU); g.fill(); }
+    const crater = (x, y, rad) => {
+      g.fillStyle = 'rgba(55,60,78,0.55)'; g.beginPath(); g.ellipse(x, y, rad, rad * 0.9, 0, 0, TAU); g.fill();
+      g.strokeStyle = 'rgba(205,212,228,0.35)'; g.lineWidth = rad * 0.22; g.beginPath(); g.arc(x + rad * 0.05, y + rad * 0.05, rad * 0.95, -0.2, Math.PI * 0.8); g.stroke();
+    };
+    for (let i = 0; i < 140; i++) crater(r() * W, H * 0.08 + r() * H * 0.84, (6 + Math.pow(r(), 2.2) * 70) * W / 2048);
+    // face shading (front centre at u=0.25, v=0.5); az/el in degrees → px
+    const P = (az, el) => [W * (0.25 + az / 360), H * (0.5 - el / 180)];
+    const soft = (az, el, rx, ry, col) => { const [x, y] = P(az, el); const gr = g.createRadialGradient(x, y, 0, x, y, rx * W / 360); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.save(); g.translate(x, y); g.scale(1, ry / rx); g.translate(-x, -y); g.fillStyle = gr; g.beginPath(); g.arc(x, y, rx * W / 360, 0, TAU); g.fill(); g.restore(); };
+    for (const s of [-1, 1]) { soft(s * 24, 11, 22, 17, 'rgba(20,22,34,0.75)'); soft(s * 30, -12, 18, 12, 'rgba(235,240,250,0.25)'); }
+    soft(0, -27, 46, 18, 'rgba(10,10,16,0.55)');
+    // mouth cavity
+    const [mx, my] = P(0, -26);
+    g.fillStyle = '#120c10'; g.beginPath(); g.ellipse(mx, my, W * 40 / 360, H * 8.5 / 180, 0, 0, TAU); g.fill();
+    // wrinkles / furrows
+    g.strokeStyle = 'rgba(25,28,40,0.6)'; g.lineWidth = W / 600;
+    for (const s of [-1, 1]) { const [a, b] = P(s * 10, 26), [c2, d] = P(s * 3, 18); g.beginPath(); g.moveTo(a, b); g.lineTo(c2, d); g.stroke(); const [e, f] = P(s * 16, -6), [h1, h2] = P(s * 30, -30); g.beginPath(); g.moveTo(e, f); g.quadraticCurveTo(...P(s * 32, -14), h1, h2); g.stroke(); }
+    return canvasTexture(c);
+  });
+}
+/** Glowing iris disc (yellow-orange, red ring, black pupil) with alpha. */
+export function irisTexture(ctx, color = '#ffc21a') {
+  return cached(ctx, `chr:tex:iris:${color}`, () => {
+    const S = 256, c = makeCanvas(S, S), g = c.getContext('2d');
+    g.translate(S / 2, S / 2);
+    g.fillStyle = '#b8200f'; g.beginPath(); g.arc(0, 0, S * 0.5, 0, TAU); g.fill();
+    const gr = g.createRadialGradient(0, 0, S * 0.05, 0, 0, S * 0.42); gr.addColorStop(0, '#fff3a8'); gr.addColorStop(0.45, color); gr.addColorStop(1, shade(color, -0.3));
+    g.fillStyle = gr; g.beginPath(); g.arc(0, 0, S * 0.42, 0, TAU); g.fill();
+    g.fillStyle = '#0a0606'; g.beginPath(); g.arc(0, 0, S * 0.12, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,255,255,0.8)'; g.beginPath(); g.arc(-S * 0.13, -S * 0.14, S * 0.05, 0, TAU); g.fill();
+    return canvasTexture(c);
+  });
+}
+/** Single eye (white almond + black pupil) with alpha, for the many-eyed shadow. */
+export function eyeTexture(ctx) {
+  return cached(ctx, 'chr:tex:eye1', () => {
+    const S = 128, c = makeCanvas(S, S), g = c.getContext('2d');
+    g.translate(S / 2, S / 2);
+    g.fillStyle = '#f2eeff'; g.beginPath(); g.ellipse(0, 0, S * 0.48, S * 0.3, 0, 0, TAU); g.fill();
+    g.fillStyle = '#0a0410'; g.beginPath(); g.arc(0, 0, S * 0.15, 0, TAU); g.fill();
+    return canvasTexture(c);
+  });
+}
+/** Soft radial halo (additive) for glowing eyes. */
+export function haloTexture(ctx) {
+  return cached(ctx, 'chr:tex:halo', () => {
+    const S = 64, c = makeCanvas(S, S), g = c.getContext('2d');
+    const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,0.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, S, S);
+    return canvasTexture(c, { mipmaps: false });
   });
 }
 

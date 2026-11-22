@@ -24,6 +24,11 @@
 - Hero of the channel (use unless the story says otherwise): `me kid spiky #f2d232 | stripes_h #e7c43f #151515 | pants #151515`.
 - The **creature/anomaly is the star**: show it big (low angle, looming over houses, `rooftops_sky`),
   plus close-ups of its face; reveal gradually (silhouette/far → closer → face).
+- Creatures (`<key> creature <id>`): `furry_giant` (≈12 tall, wide grin), `sky_face` (moon face, place
+  on a high mark/`rooftops_sky`, `scale` 4–8), `shadow_eyes` (many glowing eyes), `tall_thin`, `stretched`
+  (elongated version of a cast look, creepy_grin), `doll`, `scarecrow`. Poses `loom reach lean walk`.
+  Scary faces for anyone: `creepy_grin wide_eyes hollow teeth blank`; `eyes glow|hollow|many`.
+  Stage giants BEHIND the subject (never between subject and camera).
 - Framing mix: med ~40 % · wide/est ~20 % · mcu ~13 % · cu ~10 % · ots/two/low/ins/aer the rest.
   ~3/4 of character shots face camera. Faces change on the emotional word.
 - POV masks 5–15 % when someone watches/peeks/remembers: `bino`, `pov:vignette`, `pov:keyhole`, `pov:peephole`.

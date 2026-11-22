@@ -22,8 +22,8 @@ P.church = (b, o = {}) => buildChurch(b, o);
 // ------------------------------------------------------------------ vegetation
 P.tree_pine = (b, o = {}) => {
   const r = b.rng; const h = o.height || range(r, 15, 22); const c = o.color || pick(r, PINE); const s = h / 18;
-  b.cylf(0.55 * s, 3.2 * s, 0, 0, 0, 'plain', '#6a4a32', 6);
-  const tiers = 3; let y = 2.2 * s;
+  const tk = o.trunk || 1; b.cylf(0.55 * s * Math.sqrt(tk), 3.2 * s * tk, 0, 0, 0, 'plain', '#6a4a32', 6);
+  const tiers = 3; let y = 2.2 * s * tk;
   for (let i = 0; i < tiers; i++) {
     const rr = (4.4 - i * 1.1) * s * (o.wide || 1); const hh = (7.6 - i * 1.0) * s;
     b.cone(rr, hh, 0, y, 0, 'foliage', i % 2 ? shade(c, 0.03) : c, 7, true, { ry: i * 0.6 });

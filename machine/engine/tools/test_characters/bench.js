@@ -38,7 +38,9 @@ window.test = {
       scene.add(ch.root); list.push({ it, ch });
     }
     const buildMs = performance.now() - t0;
-    const cam = cfg.camera || { pos: [0, 4, 18], target: [0, 2.6, 0], fov: 40 };
+    let cam = cfg.camera || { pos: [0, 4, 18], target: [0, 2.6, 0], fov: 40 };
+    if (cam.anchor && list[0]) { for (const e of list) e.ch.update(0); const a = list[0].ch.anchors()[cam.anchor]; cam = { pos: [a.x + (cam.side || 0), a.y + (cam.up || 0), a.z + (cam.dist || 5)], target: [a.x, a.y + (cam.lookUp || 0), a.z], fov: cam.fov || 34 }; }
+    else if (cam.fit && list[0]) { const h = list[0].ch.height; cam = { pos: [h * 0.22, h * 0.6, h * 1.75 + 5], target: [0, h * 0.48, 0], fov: cam.fov || 34 }; }
     ctx.camera.fov = cam.fov || 40; ctx.camera.aspect = ctx.width / ctx.height; ctx.camera.updateProjectionMatrix();
     ctx.camera.position.fromArray(cam.pos); ctx.camera.lookAt(new THREE.Vector3().fromArray(cam.target));
     state = { list, cfg };

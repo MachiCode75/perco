@@ -101,7 +101,11 @@ function makeRain(ctx, n = 1600) {
 export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interior = false } = {}) {
   const scene = ctx.scene; const set = ctx.worldSet && ctx.worldSet.__scene === scene ? ctx.worldSet : ctx.worldSet;
   if (ctx.worldEnv?.group?.parent) ctx.worldEnv.group.parent.remove(ctx.worldEnv.group);
-  const p = preset(time, weather); const group = new THREE.Group(); group.name = 'world-env'; group.userData.worldEnv = true;
+  const p = preset(time, weather);
+  // per-set look overrides, e.g. { day: { hor, mid, top, fog, hemiGnd } } (only with clear weather)
+  const ov = set?.env && weather !== 'snow' && weather !== 'rain' && weather !== 'fog' ? (set.env[p.time] || set.env.all) : null;
+  if (ov) Object.assign(p, ov);
+  const group = new THREE.Group(); group.name = 'world-env'; group.userData.worldEnv = true;
   const U = worldUniforms(ctx);
   U.snow.value = interior ? 0 : p.snow; U.wet.value = interior ? 0 : p.wet;
 
@@ -129,7 +133,7 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
 
   // material reactions
   const glow = interior ? Math.max(p.glow, 0.15) : p.glow;
-  const win = getMat(ctx, 'win'); win.emissive.set(glow > 0 ? '#ffd48a' : '#000000'); win.emissiveIntensity = glow;
+  for (const m of [getMat(ctx, 'win'), ...[...(ctx.worldMats?.values() || [])].filter((q) => q.userData?.def?.glow && q.name !== 'win')]) { m.emissive.set(glow > 0 ? '#ffd48a' : '#000000'); m.emissiveIntensity = glow; }
   const lg = getMat(ctx, 'lampglass'); lg.emissive.set(p.lamps > 0 ? '#ffd890' : '#000000'); lg.emissiveIntensity = p.lamps * 1.4;
   const bulb = getMat(ctx, 'bulb'); bulb.emissive.set('#ffe2a8'); bulb.emissiveIntensity = interior ? (p.time === 'night' || p.time === 'dusk' ? 1.4 : 0.6) : 0.8;
   const wm = waterMaterial(ctx); const wu = wm.uniforms;
