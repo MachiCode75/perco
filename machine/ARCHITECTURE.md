@@ -319,3 +319,10 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
 - v3.1 runtime: the face fill (main.js) is a SpotLight aimed at the subject, cone sized to the subject
   height (two-shots wider), instead of a point light near the camera — low-angle night shots no longer
   burn the foreground grass into a white-green band. Creatures stay dark silhouettes (grin unlit).
+- v4 coherence ("show what is said"): screenplay places/home/dark/props(+)/walk(^)/wear(:+)/opt:/cam:/exp:/speak;
+  data/visual_lexicon.json coherence WARNs; runtime per-shot prop group + prop pois + userData.update(t),
+  power passed to applyEnvironment, per-shot `wear` merged into the cast spec (browser.resolveShot),
+  director `camera.hint`; characters: action poses, cookie/hammer/candle/note props, flashlight beam,
+  sleep_mask with text; world: blackout, our-house identity, room variants + curtains/sill/boarded/
+  windowOpen, story props (fur_tuft, footprints, giant_hand, window_face, glowing_eyes, note_paper…),
+  library, shop_front. Voice: captions keep "3:00", Chatterbox reads "3 AM" (text.spoken_token).
