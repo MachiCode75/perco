@@ -1,13 +1,14 @@
 // v2 creature archetypes (ARCHITECTURE v2). Every builder returns the §3 Character object.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { cached, mulberry, col } from './util.js';
+import { cached, mulberry, col, shade } from './util.js';
 import { normalizeSpec, normFace, normPose, POSES, FACES } from './spec.js';
 import { createHumanoid, mesh, colMat, texMat } from './humanoid.js';
 import { faceTexture, furryFaceTexture, moonTexture, irisTexture, eyeTexture } from './textures.js';
 import { Builder, M, HEAD_H, HEAD_D } from './geometry.js';
 
 const TAU = Math.PI * 2;
+const hasNum = (v) => (typeof v === 'number' && isFinite(v)) || (typeof v === 'string' && v.trim() !== '' && isFinite(+v));
 const RAW_POSE_OK = (id) => { const s = String(id || '').toLowerCase().trim(); return normPose(s) !== 'stand' || s === 'stand'; };
 /** unknown poses → fallback (creatures idle instead of standing still) */
 const mapPose = (table, fallback) => (id) => { const p = normPose(id); if (!RAW_POSE_OK(id)) return fallback; return table[p] || p; };
@@ -52,22 +53,63 @@ function furGeometry(ctx, key, w, h, d, { density = 9, len = [0.2, 0.42], rad = 
     return b.build();
   });
 }
-function furMat(ctx, color) {
-  return cached(ctx, 'chr:mat:fur:' + color, () => new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 1, metalness: 0, flatShading: true }));
+function furMat(ctx, color, rim = '#252f48') {
+  return cached(ctx, 'chr:mat:fur:' + color + ':' + (rim || 'none'), () => {
+    const m = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 1, metalness: 0, flatShading: true });
+    if (rim) { // faint cool sheen at grazing angles so the black silhouette separates from a dark night background
+      const rc = new THREE.Color(rim);
+      m.onBeforeCompile = (sh) => {
+        sh.uniforms.furRim = { value: rc };
+        sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 furRim;')
+          .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float fr = 1.0 - clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += furRim * fr * fr * fr; }');
+      };
+      m.customProgramCacheKey = () => 'chr-fur-rim';
+    }
+    return m;
+  });
 }
 
 function furryGiant(ctx, raw) {
   const color = col(raw.furColor || (raw.shirt && raw.shirt.colors && raw.shirt.colors[0]), '#161616');
   const spec = normalizeSpec(deep({ build: 'adult', face: 'teeth', hair: { style: 'bald' } }, { ...raw, creature: 'furry_giant' }));
-  spec.scale = typeof raw.scale === 'number' ? spec.scale : 2.3;
+  spec.scale = hasNum(raw.scale) ? spec.scale : 2.3;
   spec.stretch = { arms: 1.7, legs: 0.8, torso: 1.3, neck: -0.45, ...(raw.stretch && typeof raw.stretch === 'object' ? raw.stretch : {}) };
   const st = spec.stretch;
   const W = 1.35, D = 1.5, LW = 1.25;
-  const fm = furMat(ctx, color);
+  const fm = furMat(ctx, color, raw.rim === false ? null : col(raw.rimColor, '#252f48'));
   const faceOk = ['teeth', 'creepy_grin', 'scream', 'hollow', 'blank'];
   let facePlane = null;
+  const hands = []; // per arm: { group, index, thumb } — fingers appear only for tap / pinch / count / point
+  const FINGER_POSES = { giant_tap: 'index', giant_pinch: 'pinch', pinch: 'pinch', count: 'index', point: 'index', tap: 'index' };
   return createHumanoid(ctx, spec, {
     width: W, depth: D, limb: LW, shoulderIn: 0.2, hairless: true, noNeck: true, heightExtra: 0.4,
+    propScale: 1.3 / spec.scale, handPad: [0, 0, 0.55],
+    poseDefaults: { step: { amplitude: 1.45, lift: 0.55, period: 1.6 }, tiptoe: { amplitude: 1.3 } },
+    pinchPoint: (rig) => [0.08, rig.dims.handY + 0.25 - 0.8, 0.34],
+    extras(rig) {
+      const fm2 = colMat(ctx, shade(color, 0.1), 'fur', { flatShading: true, roughness: 0.95 });
+      const fg = cached(ctx, 'chr:geo:giantfinger', () => new RoundedBoxGeometry(0.3, 0.95, 0.3, 2, 0.1).translate(0, -0.42, 0));
+      const tg = cached(ctx, 'chr:geo:giantthumb', () => new RoundedBoxGeometry(0.3, 0.72, 0.3, 2, 0.1).translate(0, -0.3, 0));
+      for (const arm of [rig.armL, rig.armR]) {
+        const s = arm === rig.armL ? -1 : 1;
+        const group = new THREE.Group(); group.position.set(0, rig.dims.handY + 0.25, 0.28); arm.add(group);
+        const index = mesh(fg, fm2); index.position.set(-0.12 * s, 0, 0); group.add(index);
+        const thumb = mesh(tg, fm2); thumb.position.set(0.3 * s, 0.05, 0.05); group.add(thumb);
+        group.visible = false; hands.push({ group, index, thumb, s });
+      }
+    },
+    update(t, rig, pose) {
+      const J = rig.J || {}, mode = FINGER_POSES[pose] || null, left = rig.poseOpts && rig.poseOpts.side === 'left';
+      for (const h of hands) {
+        const active = mode && ((h.s < 0) === !!left);
+        h.group.visible = !!active;
+        if (!active) continue;
+        h.thumb.visible = mode === 'pinch';
+        const pin = J.pinch || 0;
+        h.index.rotation.set(mode === 'index' ? -0.6 * (J.finger || 0) : 0, 0, h.s * (mode === 'pinch' ? -0.25 + 0.37 * pin : 0));
+        h.thumb.rotation.set(0, 0, h.s * (0.35 - 0.55 * pin));
+      }
+    },
     parts: {
       torso: { geo: furGeometry(ctx, 'torso', 2 * W, 2 * st.torso, D, { seed: 1 }), mat: fm },
       arm: { geo: furGeometry(ctx, 'arm', LW, 2 * st.arms, LW, { seed: 2, down: 1.3 }), mat: fm },
@@ -83,7 +125,8 @@ function furryGiant(ctx, raw) {
       },
     },
     faceMap: (id) => { const f = normFace(id); return faceOk.includes(f) ? f : (f === 'grin' || f === 'smile' || f === 'happy' ? 'teeth' : f === 'cry' || f === 'angry' ? 'scream' : 'teeth'); },
-    poseMap: mapPose({ stand: 'hunch', idle: 'hunch', walk: 'lumber', run: 'lumber', wade: 'lumber', loom: 'loom', lean: 'loom', look_down: 'loom', reach: 'reach', point: 'reach', hug: 'reach', arms_up: 'reach', wave: 'reach', hold_sign: 'reach', carry: 'reach', binoculars: 'hunch', talk: 'hunch', cry: 'hunch', shrug: 'hunch' }, 'hunch'),
+    poseMap: mapPose({ stand: 'hunch', idle: 'hunch', walk: 'lumber', run: 'lumber', wade: 'lumber', loom: 'loom', lean: 'loom', look_down: 'loom', reach: 'reach', point: 'reach', hug: 'reach', arms_up: 'reach', wave: 'reach', hold_sign: 'reach', carry: 'reach', binoculars: 'hunch', talk: 'hunch', cry: 'hunch', shrug: 'hunch',
+      tap: 'giant_tap', knock: 'giant_knock', hammer: 'giant_knock', pinch: 'giant_pinch', sleep_lie: 'lie', tiptoe: 'lumber' }, 'hunch'),
     defaultPose: 'hunch', timeScale: 0.9,
   });
 }
@@ -91,7 +134,7 @@ function furryGiant(ctx, raw) {
 // ------------------------------------------------------------------ shadow with many eyes
 function shadowEyes(ctx, raw) {
   const spec = normalizeSpec(deep({ build: 'adult', skin: '#22122f', hair: { style: 'bald' }, face: 'blank' }, { ...raw, creature: 'shadow_eyes' }));
-  spec.scale = typeof raw.scale === 'number' ? spec.scale : 1.45;
+  spec.scale = hasNum(raw.scale) ? spec.scale : 1.45;
   spec.stretch = { arms: 1.45, legs: 1.45, torso: 1.2, neck: 0.15, ...(raw.stretch && typeof raw.stretch === 'object' ? raw.stretch : {}) };
   const bodyCol = col(raw.bodyColor, '#2a1838');
   const dark = cached(ctx, 'chr:mat:shadowbody:' + bodyCol, () => new THREE.MeshStandardMaterial({ color: new THREE.Color(bodyCol), emissive: new THREE.Color('#14071f'), roughness: 0.85 }));
@@ -193,7 +236,7 @@ function scarecrow(ctx, raw) {
 // ------------------------------------------------------------------ sky face (giant moon)
 function skyFace(ctx, raw) {
   const spec = normalizeSpec({ ...raw, creature: 'sky_face' });
-  const scale = typeof raw.scale === 'number' ? spec.scale : 5;
+  const scale = hasNum(raw.scale) ? spec.scale : 5;
   const R = 2.6, glow = col(raw.glowColor, '#ffc21a');
   const phase = typeof ctx.rng === 'function' ? ctx.rng() * 10 : 0;
   const root = new THREE.Group(); root.name = 'creature:sky_face';
@@ -240,11 +283,15 @@ function skyFace(ctx, raw) {
   face.add(mesh(teeth, cached(ctx, 'chr:mat:moonteeth', () => new THREE.MeshStandardMaterial({ color: new THREE.Color('#efe3b8'), emissive: new THREE.Color('#3a3020'), roughness: 0.55 }))));
 
   let pose = 'idle', poseOpts = {}, lastT = 0;
-  const POSE_SET = { idle: 1, loom: 1, reach: 1, walk: 1 };
+  const POSE_SET = { idle: 1, loom: 1, reach: 1, walk: 1, nod: 1, shake_head: 1, look_around: 1 };
+  const SKY_MAP = { look_down: 'loom', lean: 'loom', bend: 'loom', tap: 'loom', knock: 'loom', pinch: 'loom', peek: 'loom', count: 'look_around', offer: 'reach',
+    run: 'walk', step: 'walk', tiptoe: 'walk', spread: 'idle', straddle: 'idle' };
   function update(t) {
     t = +t || 0; lastT = t; const tt = t + phase;
     const loom = pose === 'loom' ? 1 : pose === 'reach' ? 0.6 : 0;
-    face.rotation.set(0.25 * loom + 0.035 * Math.sin(TAU * tt / 6.3), 0.06 * Math.sin(TAU * tt / 8.1) + (pose === 'walk' ? 0.12 * Math.sin(TAU * tt / 4) : 0), 0.04 * Math.sin(TAU * tt / 7.3));
+    const nod = pose === 'nod' ? 0.16 * Math.sin(TAU * 1.4 * tt) : 0, shake = pose === 'shake_head' ? 0.22 * Math.sin(TAU * 1.6 * tt) : 0;
+    const look = pose === 'look_around' ? 0.32 * Math.tanh(2.5 * Math.sin(TAU * 0.35 * tt)) / Math.tanh(2.5) : 0;
+    face.rotation.set(0.25 * loom + nod + 0.035 * Math.sin(TAU * tt / 6.3), shake + look + 0.06 * Math.sin(TAU * tt / 8.1) + (pose === 'walk' ? 0.12 * Math.sin(TAU * tt / 4) : 0), 0.04 * Math.sin(TAU * tt / 7.3));
     pivot.position.y = R + 0.06 * R * Math.sin(TAU * tt / 5.2) - loom * 0.08 * R;
     pivot.position.z = loom * 0.12 * R;
     const k = 1 + 0.05 * Math.sin(TAU * tt * 0.9);
@@ -259,7 +306,7 @@ function skyFace(ctx, raw) {
   const ch = {
     root, height: 2 * R * scale, spec, creature: 'sky_face',
     setFace() { /* the moon keeps its face */ },
-    setPose(id, opts) { const p = normPose(id); pose = POSE_SET[p] ? p : (p === 'look_down' || p === 'lean' ? 'loom' : p === 'run' ? 'walk' : 'idle'); poseOpts = opts || {}; update(lastT); },
+    setPose(id, opts) { const p = normPose(id); pose = POSE_SET[p] ? p : (SKY_MAP[p] || 'idle'); poseOpts = opts || {}; update(lastT); },
     setProp() { }, update, anchors,
     get face() { return 'creepy_grin'; }, get pose() { return pose; },
     joints: { body: pivot, head: face },

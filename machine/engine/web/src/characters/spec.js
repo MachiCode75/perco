@@ -4,7 +4,10 @@ import { col, noPureBlack } from './util.js';
 export const FACES = ['neutral', 'smile', 'happy', 'grin', 'worried', 'sad', 'cry', 'scream', 'angry',
   'surprised', 'scared', 'sleep', 'smirk', 'talk', 'wink', 'creepy_grin', 'wide_eyes', 'hollow', 'teeth', 'blank'];
 export const POSES = ['stand', 'idle', 'wave', 'walk', 'run', 'sit', 'binoculars', 'hold_sign', 'point',
-  'arms_up', 'hug', 'cry', 'shrug', 'look_down', 'lie', 'fall', 'jump', 'talk', 'wade', 'carry', 'reach', 'loom', 'lean'];
+  'arms_up', 'hug', 'cry', 'shrug', 'look_down', 'lie', 'fall', 'jump', 'talk', 'wade', 'carry', 'reach', 'loom', 'lean',
+  // v3 action poses (animated) + creature-scale actions (work for every humanoid; tuned for furry_giant)
+  'tap', 'knock', 'hammer', 'pull_curtain', 'peek', 'nod', 'shake_head', 'look_around', 'rock', 'sit_rock', 'offer', 'count',
+  'crouch', 'tiptoe', 'sleep_lie', 'bend', 'pinch', 'spread', 'straddle', 'step'];
 export const CREATURES = ['furry_giant', 'sky_face', 'shadow_eyes', 'tall_thin', 'stretched', 'doll', 'scarecrow'];
 export const EYE_MODES = ['normal', 'glow', 'hollow', 'many'];
 const CREATURE_ALIAS = { furry: 'furry_giant', yeti: 'furry_giant', bigfoot: 'furry_giant', giant: 'furry_giant', moon: 'sky_face', moon_face: 'sky_face',
@@ -21,8 +24,20 @@ export const SHIRT_PATTERNS = ['solid', 'stripes_h', 'stripes_v', 'plaid', 'polk
   'overalls', 'hoodie', 'dress', 'pajamas_stars', 'tee_logo', 'vest', 'cardigan'];
 export const PANTS_STYLES = ['pants', 'shorts', 'skirt', 'none'];
 export const PANTS_PATTERNS = ['solid', 'jeans', 'floral', 'stripes', 'plaid', 'stars', 'polka'];
-export const ACCESSORIES = ['glasses', 'sunglasses', 'tie', 'mayor_chain', 'cap', 'bow', 'scarf', 'apron', 'beard', 'mustache'];
-export const PROPS_HELD = ['binoculars', 'sign', 'stopwatch', 'phone', 'flashlight', 'book', 'cup', 'letter', 'umbrella', 'bag'];
+export const ACCESSORIES = ['glasses', 'sunglasses', 'tie', 'mayor_chain', 'cap', 'bow', 'scarf', 'apron', 'beard', 'mustache', 'sleep_mask'];
+export const PROPS_HELD = ['binoculars', 'sign', 'stopwatch', 'phone', 'flashlight', 'book', 'cup', 'letter', 'umbrella', 'bag',
+  'cookie', 'plate', 'hammer', 'candle', 'note'];
+export const MASK_SLOTS = ['eyes', 'forehead'];
+const ACC_ALIAS = { sleep_mask2: { type: 'sleep_mask', slot: 'forehead' }, sleepmask: 'sleep_mask', mask: 'sleep_mask', eye_mask: 'sleep_mask',
+  eyemask: 'sleep_mask', blindfold: 'sleep_mask', glasses_sun: 'sunglasses', necktie: 'tie', chain: 'mayor_chain', hat: 'cap', moustache: 'mustache' };
+const PROP_ALIAS = { cookies: 'plate', plate_of_cookies: 'plate', cookie_plate: 'plate', biscuit: 'cookie', torch: 'flashlight', paper: 'note',
+  sticky_note: 'note', candlestick: 'candle', mallet: 'hammer', mug: 'cup', coffee: 'cup', envelope: 'letter', placard: 'sign', cellphone: 'phone' };
+/** Held-prop id normalisation (aliases); unknown ids → null. */
+export function normPropType(t) {
+  const s = String(t || '').toLowerCase().trim();
+  if (PROPS_HELD.includes(s)) return s;
+  return PROP_ALIAS[s] || null;
+}
 export const BUILDS = ['adult', 'kid', 'elder'];
 export const LOGOS = ['dino', 'star', 'heart', 'smiley', 'none'];
 
@@ -39,7 +54,16 @@ export function normFace(id) {
 const POSE_ALIAS = { idle_stand: 'idle', standing: 'stand', walking: 'walk', running: 'run', sitting: 'sit', seated: 'sit',
   sign: 'hold_sign', holding_sign: 'hold_sign', look: 'binoculars', cheer: 'arms_up', celebrate: 'arms_up', hands_up: 'arms_up',
   crying: 'cry', lying: 'lie', lay: 'lie', falling: 'fall', jumping: 'jump', talking: 'talk', speak: 'talk', wading: 'wade', hold: 'carry',
-  reaching: 'reach', grab: 'reach', looming: 'loom', loom_over: 'loom', peek: 'lean', leaning: 'lean', tilt: 'lean' };
+  reaching: 'reach', grab: 'reach', looming: 'loom', loom_over: 'loom', leaning: 'lean', tilt: 'lean',
+  tapping: 'tap', tap_window: 'tap', knocking: 'knock', knock_door: 'knock', hammering: 'hammer', nail: 'hammer', nailing: 'hammer',
+  close_curtain: 'pull_curtain', close_curtains: 'pull_curtain', draw_curtain: 'pull_curtain', curtain: 'pull_curtain', curtains: 'pull_curtain',
+  peeking: 'peek', peep: 'peek', nodding: 'nod', yes: 'nod', shaking_head: 'shake_head', head_shake: 'shake_head', no: 'shake_head',
+  looking_around: 'look_around', scan: 'look_around', nervous: 'look_around', rocking: 'rock', hum: 'rock', humming: 'rock', soothe: 'rock',
+  sit_rocking: 'sit_rock', rocking_chair: 'sit_rock', give: 'offer', hold_out: 'offer', present: 'offer', offering: 'offer', handing: 'offer',
+  counting: 'count', crouching: 'crouch', hide: 'crouch', hiding: 'crouch', cower: 'crouch', duck: 'crouch', sneak: 'tiptoe', sneaking: 'tiptoe',
+  tiptoeing: 'tiptoe', sleep: 'sleep_lie', sleeping: 'sleep_lie', asleep: 'sleep_lie', bend_down: 'bend', bending: 'bend', lean_down: 'bend',
+  stoop: 'bend', pinching: 'pinch', pick: 'pinch', pick_up: 'pinch', arms_wide: 'spread', spread_arms: 'spread', protect: 'spread',
+  stand_over: 'straddle', straddling: 'straddle', stride: 'step', stomp: 'step', stepping: 'step', step_over: 'step' };
 export function normPose(id) {
   const s = String(id || '').toLowerCase().trim();
   if (POSES.includes(s)) return s;
@@ -108,12 +132,23 @@ export function normalizeSpec(spec) {
   if (pattern === 'dress' && !p.style) pstyle = 'none';
   pcolor = noPureBlack(pcolor || '#2c5aa0');
   const pants = { style: pstyle, color: pcolor, pattern: ppat, colors: colorsArr(p.colors, [pcolor, pattern === 'pajamas_stars' ? colors[1] : '#ffffff', '#f2c511']), shoes: p.shoes ? noPureBlack(col(p.shoes)) : null };
-  // accessories: strings or {type,color}
+  // accessories: strings or {type, color, text?, slot?, textColor?} (aliases: sleep_mask2 = sleep mask pushed up on the forehead)
   const acc = [];
   for (const a of Array.isArray(s.accessories) ? s.accessories : []) {
-    const type = typeof a === 'string' ? a : (a && a.type);
+    let type = typeof a === 'string' ? a : (a && typeof a === 'object' ? a.type : null);
+    type = type ? String(type).toLowerCase().trim() : '';
+    let alias = ACC_ALIAS[type];
+    if (typeof alias === 'string') { type = alias; alias = null; } else if (alias) type = alias.type;
     if (!type || !ACCESSORIES.includes(type)) continue;
-    acc.push({ type, color: a && a.color ? col(a.color) : null });
+    const o = a && typeof a === 'object' ? a : {};
+    const item = { type, color: o.color ? col(o.color) : null };
+    if (type === 'sleep_mask') {
+      const slot = String(o.slot || (alias && alias.slot) || '').toLowerCase();
+      item.slot = MASK_SLOTS.includes(slot) ? slot : (slot === 'head' || slot === 'up' || slot === 'top' ? 'forehead' : null);
+      item.text = o.text == null ? null : String(o.text).slice(0, 24);
+      item.textColor = o.textColor ? col(o.textColor) : null;
+    }
+    acc.push(item);
   }
   const num = (v, d, lo, hi) => (typeof v === 'number' && isFinite(v)) ? Math.max(lo, Math.min(hi, v)) : (typeof v === 'string' && isFinite(+v) && v.trim() !== '' ? Math.max(lo, Math.min(hi, +v)) : d);
   const st = (s.stretch && typeof s.stretch === 'object') ? s.stretch : (typeof s.stretch === 'number' ? { arms: s.stretch, legs: s.stretch, torso: 1 + (s.stretch - 1) * 0.4, neck: (s.stretch - 1) * 0.4 } : {});

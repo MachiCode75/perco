@@ -2,17 +2,33 @@
 import * as THREE from 'three';
 import { cached, plastic, shade, col } from './util.js';
 import { normFace, normPose } from './spec.js';
-import { faceTexture, torsoTexture, armTexture, legTexture, haloTexture } from './textures.js';
+import { faceTexture, torsoTexture, armTexture, legTexture, haloTexture, maskTexture } from './textures.js';
 import { atlasBox, headGeometry, hairGeometry, capGeometry, glassesGeometry, lensGeometry, beardGeometry, mustacheGeometry,
   bowGeometry, tieGeometry, chainGeometry, gemGeometry, scarfGeometry, apronGeometry, hoodGeometry, skirtGeometry,
-  HEAD_H, HEAD_W, HEAD_D, EYE_Y } from './geometry.js';
+  maskPanelGeometry, maskBandGeometry, HEAD_H, HEAD_W, HEAD_D, EYE_Y } from './geometry.js';
 import { computePose } from './poses.js';
 import { buildProp } from './props.js';
 
 const DOWN = new THREE.Vector3(0, -1, 0);
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
-const _v = new THREE.Vector3(), _q2 = new THREE.Quaternion();
+const _v = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q2 = new THREE.Quaternion();
+const Z3 = [0, 0, 0];
 export const ROUGH = 0.7;
+/** poses where the skirt block is hidden (legs folded / kneeling) */
+const SEATED = new Set(['sit', 'sit_rock', 'crouch']);
+/** poses with two-handed carrying in front of the chest (props with a `front` slot go there) */
+const FRONT_POSES = new Set(['hold_sign', 'carry']);
+const PINCH_POSES = new Set(['pinch', 'giant_pinch']);
+/** Fabric sleep mask (+ elastic strap) on the head; slot 'eyes' covers the face decal's eyes, 'forehead' sits pushed up above. */
+export function sleepMask(ctx, a, slot) {
+  const color = a.color || '#23253a';
+  const g = new THREE.Group(); g.name = 'sleep_mask:' + slot;
+  g.add(mesh(maskPanelGeometry(ctx), texMat(ctx, maskTexture(ctx, a.text, color, a.textColor))));
+  g.add(mesh(maskBandGeometry(ctx), colMat(ctx, shade(color, -0.4), 'plastic', { roughness: 0.85 })));
+  if (slot === 'forehead') { g.position.set(0, EYE_Y + 0.3, 0.03); g.rotation.x = -0.24; g.scale.set(1.07, 0.92, 1.12); }
+  else g.position.set(0, EYE_Y + 0.02, 0);
+  return g;
+}
 
 export function texMat(ctx, tex, extra = null) {
   return cached(ctx, 'chr:mat:tex:' + tex.uuid + (extra ? JSON.stringify(extra) : ''), () => new THREE.MeshStandardMaterial({ map: tex, roughness: ROUGH, metalness: 0, ...(extra || {}) }));
@@ -40,7 +56,8 @@ export function glowEyes(ctx, head, color, { dx = 0.185, y = EYE_Y + 0.01, z = H
 /**
  * Build a humanoid character.
  * ov (creature overrides): { width, depth, limb, parts:{torso,arm,leg:{geo?,mat?}}, head:{ build(group, ctx)→{setFace?}, noFace }, hairless,
- *   extras(rig), poseMap(id)→id, defaultPose, faceMap(id)→id, update(t, rig), defaultFace, heightExtra }
+ *   extras(rig), poseMap(id)→id, defaultPose, faceMap(id)→id, update(t, rig, pose), defaultFace, heightExtra,
+ *   poseDefaults{pose:opts}, propScale, handPad[x,y,z], pinchPoint(rig)→[x,y,z] (arm-local) }
  */
 export function createHumanoid(ctx, spec, ov = {}) {
   const kid = spec.build === 'kid', elder = spec.build === 'elder';
@@ -124,6 +141,17 @@ export function createHumanoid(ctx, spec, ov = {}) {
     if (skirt) { skirt.scale.set(W, st.legs, D); }
   }
   if (spec.eyes === 'glow' && headM) glowEyes(ctx, head, spec.glowColor);
+  // sleep masks: up to two; a second one (or slot 'forehead' / alias sleep_mask2) is pushed up on the forehead
+  // (a mask without its own `text` reuses the text of the other mask: "He wears 2.")
+  let eyesTaken = false;
+  const masks = spec.accessories.filter((a) => a.type === 'sleep_mask').slice(0, 2);
+  const sharedText = (masks.find((a) => a.text) || {}).text || '';
+  for (const a of masks) {
+    let slot = a.slot || (eyesTaken ? 'forehead' : 'eyes');
+    if (slot === 'eyes' && eyesTaken) slot = 'forehead';
+    if (slot === 'eyes') eyesTaken = true;
+    head.add(sleepMask(ctx, a.text == null ? { ...a, text: sharedText } : a, slot));
+  }
   if (ov.extras) ov.extras(rig);
 
   // ------------------------------------------------------------ state
@@ -146,9 +174,21 @@ export function createHumanoid(ctx, spec, ov = {}) {
     if (o.parent) o.parent.remove(o);
     o.position.set(0, 0, 0); o.rotation.set(0, 0, 0);
     if (prop.grip === 'eyes' && pose === 'binoculars') { prop.mode = 'eyes'; head.add(o); o.position.set(0, EYE_Y + 0.02, HEAD_D / 2 + 0.2); return; }
+    const actArm = poseOpts.side === 'left' ? armL : armR;
+    if (prop.grip === 'arm') { // rigid in the fist (hammer): follows the arm's rotation
+      prop.mode = 'arm'; actArm.add(o); const a = prop.arm || Z3; o.position.set(a[0], handY + a[1], a[2]); return;
+    }
     const fy = (y) => y + torsoH / 2 - 1; // keep front props at chest height
-    if (prop.front && (pose === 'hold_sign' || pose === 'carry' || (prop.grip === 'front' && pose === 'hug'))) { prop.mode = 'front'; upper.add(o); o.position.set(prop.front[0], fy(prop.front[1]), prop.front[2] + (D - 1) * 0.5); return; }
+    if ((pose === 'offer' && prop.grip === 'hand' && prop.type !== 'umbrella') || (pose === 'carry' && prop.small)) { // between the joined hands
+      prop.mode = 'hands'; upper.add(o); if (prop.offerRot) o.rotation.set(prop.offerRot[0], prop.offerRot[1], prop.offerRot[2]); return;
+    }
+    if (prop.front && (FRONT_POSES.has(pose) || (prop.grip === 'front' && (pose === 'hug' || pose === 'offer')))) {
+      prop.mode = 'front'; upper.add(o); o.position.set(prop.front[0], fy(prop.front[1]), prop.front[2] + (D - 1) * 0.5);
+      if (prop.frontRot) o.rotation.set(prop.frontRot[0], prop.frontRot[1], prop.frontRot[2]);
+      return;
+    }
     if (prop.grip === 'front' && pose === 'binoculars') { prop.mode = 'front'; upper.add(o); o.position.set(0, fy(0.9), 1.4); return; }
+    if (PINCH_POSES.has(pose) && prop.grip === 'hand') { prop.mode = 'pinch'; upper.add(o); return; }
     prop.mode = 'hand'; upper.add(o);
     if (prop.type === 'sign') o.rotation.y = -Math.PI / 2;
     if (prop.type === 'umbrella') o.rotation.z = -0.32;
@@ -157,13 +197,15 @@ export function createHumanoid(ctx, spec, ov = {}) {
     if (prop) { if (prop.obj.parent) prop.obj.parent.remove(prop.obj); prop = null; }
     if (!p) return;
     prop = buildProp(ctx, p);
+    if (prop && ov.propScale) prop.obj.scale.multiplyScalar(ov.propScale);
     placeProp();
     update(lastT);
   }
   function setPose(id, opts) {
     pose = ov.poseMap ? ov.poseMap(id) : normPose(id);
     poseOpts = opts && typeof opts === 'object' ? opts : {};
-    if (skirt) skirt.visible = pose !== 'sit';
+    rig.poseOpts = poseOpts;
+    if (skirt) skirt.visible = !SEATED.has(pose);
     placeProp();
     update(lastT);
   }
@@ -175,18 +217,38 @@ export function createHumanoid(ctx, spec, ov = {}) {
   function update(t) {
     t = +t || 0; lastT = t;
     const tt = pose === 'fall' ? t : (t + phase) * (elder ? 0.85 : 1) * (ov.timeScale || 1);
-    const J = computePose(pose, tt, pose === 'fall' ? poseOpts : { ...poseOpts, at: 0 }, elder);
+    // opts.T = raw shot time (scaled like the creature's clock): counted / one-shot actions start at the shot start
+    const pd = ov.poseDefaults && ov.poseDefaults[pose];
+    const J = computePose(pose, tt, pose === 'fall' ? poseOpts : { ...pd, narrow: !!(prop && prop.small), ...poseOpts, T: t * (ov.timeScale || 1) }, elder);
+    rig.J = J;
     body.position.set(J.body.x, J.body.y, J.body.z); body.rotation.set(J.body.rx, J.body.ry, J.body.rz);
-    hips.position.y = pose === 'sit' ? J.hips.y : J.hips.y - 2 + legLen;
+    hips.position.y = J.seated ? J.hips.y : J.kneel ? LW * 0.5 + (J.hips.y - 2) : J.hips.y - 2 + legLen * (1 - (J.legDrop || 0));
     hips.rotation.set(J.hips.rx, 0, J.hips.rz);
     upper.position.y = J.upper.y; upper.rotation.set(J.upper.rx, J.upper.ry, J.upper.rz);
     neck.rotation.set(J.neck.rx, J.neck.ry, J.neck.rz);
     setArm(armL, J.armL, J.twistL); setArm(armR, J.armR, J.twistR);
+    const oL = J.offL || Z3, oR = J.offR || Z3;
+    armL.position.set(shoulderX + oL[0], shoulderY + oL[1], oL[2]); armR.position.set(-shoulderX + oR[0], shoulderY + oR[1], oR[2]);
     legL.rotation.set(J.legL.rx, J.legL.ry, J.legL.rz); legR.rotation.set(J.legR.rx, J.legR.ry, J.legR.rz);
-    if (prop && prop.mode === 'hand') {
-      _v.set(0, handY, 0).applyQuaternion(armR.quaternion).add(armR.position);
-      const h = prop.hand || [0, 0, 0];
-      prop.obj.position.set(_v.x + h[0], _v.y + h[1], _v.z + h[2]);
+    if (prop) {
+      const ps = ov.propScale || 1, pad = ov.handPad || Z3;
+      if (prop.mode === 'hand') {
+        _v.set(0, handY, 0).applyQuaternion(armR.quaternion).add(armR.position);
+        const h = prop.hand || Z3;
+        prop.obj.position.set(_v.x + h[0] * ps + pad[0], _v.y + h[1] * ps + pad[1], _v.z + h[2] * ps + pad[2]);
+      } else if (prop.mode === 'hands') {
+        _v.set(0, handY, 0).applyQuaternion(armL.quaternion).add(armL.position);
+        _v2.set(0, handY, 0).applyQuaternion(armR.quaternion).add(armR.position);
+        _v.add(_v2).multiplyScalar(0.5);
+        const h = prop.palms || [0, 0.2, 0.3];
+        prop.obj.position.set(_v.x + h[0] * ps, _v.y + h[1] * ps + pad[1], _v.z + h[2] * ps + pad[2] * 0.5);
+      } else if (prop.mode === 'pinch') {
+        const a = poseOpts.side === 'left' ? armL : armR;
+        const pp = ov.pinchPoint ? ov.pinchPoint(rig) : [0, handY - 0.32, 0.12];
+        _v.set(pp[0], pp[1], pp[2]).applyQuaternion(a.quaternion).add(a.position);
+        prop.obj.position.copy(_v);
+      }
+      if (prop.update) prop.update(t + phase);
     }
     if (talkMats) {
       const open = Math.sin(t * 29.0 + phase) + 0.7 * Math.sin(t * 17.3 + 1.3) > -0.15;

@@ -21,7 +21,7 @@ bea   kid ponytail #6b3f22 | pajamas_stars #7fb2ee #ffffff | bow
 mom   adult bun #2a1d17 | cardigan #f0a6b8 #fff3f6 | pants #3b4a6b
 dad   adult short #4a3426 | plaid #3a6ea5 #1d2b45 | pants #555555 | glasses
 mayor adult short #2a2a2a | suit #1f2f5c #ffffff | pants #1f2f5c | tie mayor_chain mustache
-beast creature furry_giant | scale 2.2
+beast creature furry_giant | scale 5
 
 places:
 my_room      bedroom variant=boy curtains=3

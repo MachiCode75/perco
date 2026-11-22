@@ -321,4 +321,28 @@ export function skirtGeometry(ctx, length, flare) {
   });
 }
 
+// ------------------------------------------------------------------ v3: sleep mask (head-local, centred on the eye line)
+export const MASK_W = 1.42, MASK_H = 0.42, MASK_D = 0.44;
+/** Chunky padded sleep-mask panel; the front face gets planar UVs (text decal), the rest samples the fabric texel at (0.01, 0.01). */
+export function maskPanelGeometry(ctx) {
+  return cached(ctx, 'chr:geo:acc:maskpanel', () => {
+    const geo = new RoundedBoxGeometry(MASK_W, MASK_H, MASK_D, 2, 0.12);
+    const pos = geo.attributes.position, uv = geo.attributes.uv;
+    const front = geo.groups[4];
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (let i = front.start; i < front.start + front.count; i++) { const x = pos.getX(i), y = pos.getY(i); minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+    for (let i = 0; i < pos.count; i++) {
+      if (i >= front.start && i < front.start + front.count) uv.setXY(i, (pos.getX(i) - minX) / (maxX - minX), (pos.getY(i) - minY) / (maxY - minY));
+      else uv.setXY(i, 0.01, 0.01);
+    }
+    geo.clearGroups();
+    geo.translate(0, 0, FR + 0.075 - MASK_D / 2);
+    return geo;
+  });
+}
+/** Elastic strap around the head (a thin rounded ring slightly larger than the head; its top/bottom stay hidden inside). */
+export function maskBandGeometry(ctx) {
+  return cached(ctx, 'chr:geo:acc:maskband', () => new RoundedBoxGeometry(HEAD_W + 0.07, 0.12, HEAD_D + 0.07, 2, 0.33));
+}
+
 export { Builder, M };

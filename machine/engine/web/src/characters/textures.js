@@ -796,4 +796,134 @@ export function haloTexture(ctx) {
   });
 }
 
+// =====================================================================================  v3: PROPS & ACCESSORIES
+/** Fit text into a box: returns { lines, size } choosing 1 or 2 lines, whichever gives the bigger font. */
+function fitText(g, text, W, H, weight, fam, { maxLines = 2, lineH = 1.05 } = {}) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const measure = (lines) => {
+    g.font = `${weight} 100px ${fam}`;
+    const wMax = Math.max(1, ...lines.map((l) => g.measureText(l).width));
+    return Math.min(W / wMax * 100, H / (lines.length * lineH));
+  };
+  let best = { lines: [words.join(' ')], size: measure([words.join(' ')]) };
+  if (maxLines >= 2 && words.length > 1) {
+    for (let k = 1; k < words.length; k++) {
+      const ls = [words.slice(0, k).join(' '), words.slice(k).join(' ')];
+      const sz = measure(ls);
+      if (sz > best.size * 1.04) best = { lines: ls, size: sz };
+    }
+  }
+  return best;
+}
+/** Sleep mask front: padded fabric, stitched border, BIG bold text (or closed eyes with lashes when no text). */
+export function maskTexture(ctx, text, color = '#23253a', textColor = null) {
+  const W = ctx.quality === 'preview' ? 384 : 768, H = Math.round(W * 0.42 / 1.42);
+  const txt = String(text || '').toUpperCase().trim();
+  const tc = textColor || (luminance(color) > 0.55 ? '#151515' : '#ffffff');
+  return cached(ctx, `chr:tex:mask:${txt}:${color}:${tc}:${W}`, () => {
+    const c = makeCanvas(W, H), g = c.getContext('2d');
+    g.fillStyle = color; g.fillRect(0, 0, W, H);
+    const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, 'rgba(255,255,255,0.10)'); gr.addColorStop(0.5, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(0,0,0,0.16)');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    // stitched border
+    g.strokeStyle = luminance(color) > 0.5 ? shade(color, -0.35) : mix(color, '#ffffff', 0.45); g.lineWidth = H * 0.025; g.setLineDash([H * 0.06, H * 0.05]);
+    g.beginPath(); g.roundRect(W * 0.05, H * 0.11, W * 0.9, H * 0.78, H * 0.16); g.stroke(); g.setLineDash([]);
+    if (txt) {
+      const fam = `Inter, 'Arimo', 'DejaVu Sans', sans-serif`;
+      const { lines, size } = fitText(g, txt, W * 0.82, H * 0.68, 900, fam, { lineH: 1.0 });
+      g.font = `900 ${size}px ${fam}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = tc;
+      g.lineJoin = 'round'; g.strokeStyle = tc; g.lineWidth = size * 0.06;
+      lines.forEach((l, i) => { const y = H / 2 + (i - (lines.length - 1) / 2) * size * 1.0 + size * 0.04; g.strokeText(l, W / 2, y); g.fillText(l, W / 2, y); });
+    } else { // closed eyes ‿ ‿ with lashes
+      g.strokeStyle = tc; g.lineWidth = H * 0.07; g.lineCap = 'round';
+      for (const s of [-1, 1]) {
+        const cx = W / 2 + s * W * 0.2, cy = H * 0.42, r = W * 0.1;
+        g.beginPath(); g.arc(cx, cy, r, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
+        for (let k = 0; k < 4; k++) { const a = (0.25 + k * 0.17) * Math.PI; g.beginPath(); g.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); g.lineTo(cx + Math.cos(a) * r * 1.35, cy + Math.sin(a) * r * 1.35); g.stroke(); }
+      }
+    }
+    return canvasTexture(c);
+  });
+}
+/** Chocolate-chip cookie face (circle fills the texture; used on CircleGeometry caps). */
+export function cookieTexture(ctx) {
+  const S = ctx.quality === 'preview' ? 128 : 256;
+  return cached(ctx, `chr:tex:cookie:${S}`, () => {
+    const c = makeCanvas(S, S), g = c.getContext('2d');
+    g.fillStyle = '#a86a30'; g.fillRect(0, 0, S, S);
+    g.save(); g.scale(S, S);
+    const gr = g.createRadialGradient(0.46, 0.44, 0.05, 0.5, 0.5, 0.5); gr.addColorStop(0, '#e2ad68'); gr.addColorStop(0.7, '#cf9350'); gr.addColorStop(1, '#9f6328');
+    g.fillStyle = gr; g.beginPath(); g.arc(0.5, 0.5, 0.5, 0, TAU); g.fill();
+    const r = mulberry(4711);
+    g.fillStyle = 'rgba(120,70,25,0.25)';
+    for (let i = 0; i < 40; i++) { g.beginPath(); g.arc(0.15 + r() * 0.7, 0.15 + r() * 0.7, 0.008 + r() * 0.015, 0, TAU); g.fill(); }
+    g.strokeStyle = 'rgba(115,65,22,0.55)'; g.lineWidth = 0.012; g.lineCap = 'round';
+    for (let i = 0; i < 5; i++) { const a = r() * TAU, rr = 0.12 + r() * 0.2; g.beginPath(); g.moveTo(0.5 + Math.cos(a) * rr, 0.5 + Math.sin(a) * rr); g.quadraticCurveTo(0.5 + Math.cos(a + 0.3) * (rr + 0.08), 0.5 + Math.sin(a + 0.3) * (rr + 0.08), 0.5 + Math.cos(a + 0.5) * (rr + 0.16), 0.5 + Math.sin(a + 0.5) * (rr + 0.16)); g.stroke(); }
+    const chips = [[0.32, 0.3], [0.62, 0.26], [0.5, 0.5], [0.27, 0.6], [0.72, 0.56], [0.45, 0.76], [0.68, 0.78], [0.2, 0.42], [0.82, 0.38]];
+    for (const [x, y] of chips) {
+      const rad = 0.045 + r() * 0.03;
+      g.fillStyle = '#3b2010'; g.beginPath();
+      for (let k = 0; k < 6; k++) { const a = k / 6 * TAU + r() * 0.5, q = rad * (0.75 + r() * 0.5); g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); }
+      g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,230,200,0.35)'; g.beginPath(); g.arc(x - rad * 0.3, y - rad * 0.3, rad * 0.28, 0, TAU); g.fill();
+    }
+    g.strokeStyle = '#8a5220'; g.lineWidth = 0.03; g.beginPath(); g.arc(0.5, 0.5, 0.485, 0, TAU); g.stroke();
+    g.restore();
+    return canvasTexture(c);
+  });
+}
+/** Handwritten paper note (optional text, auto-wrapped) with a strip of tape on top. */
+export function noteTexture(ctx, text) {
+  const W = ctx.quality === 'preview' ? 320 : 512, H = Math.round(W * 1.22);
+  const txt = String(text == null ? '' : text).slice(0, 80);
+  return cached(ctx, `chr:tex:note:${txt}:${W}`, () => {
+    const c = makeCanvas(W, H), g = c.getContext('2d');
+    g.fillStyle = '#f7f2e2'; g.fillRect(0, 0, W, H);
+    const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, 'rgba(255,255,255,0.25)'); gr.addColorStop(1, 'rgba(160,140,100,0.18)');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(90,130,200,0.35)'; g.lineWidth = W * 0.006;
+    for (let y = H * 0.2; y < H * 0.95; y += H * 0.085) { g.beginPath(); g.moveTo(W * 0.04, y); g.lineTo(W * 0.96, y); g.stroke(); }
+    g.strokeStyle = 'rgba(210,60,60,0.45)'; g.beginPath(); g.moveTo(W * 0.12, 0); g.lineTo(W * 0.12, H); g.stroke();
+    g.fillStyle = 'rgba(235,220,170,0.85)'; g.save(); g.translate(W / 2, H * 0.035); g.rotate(-0.04); g.fillRect(-W * 0.2, -H * 0.03, W * 0.4, H * 0.07); g.restore();
+    const rng = mulberry(hashStr(txt || 'note'));
+    if (txt) {
+      const fam = `'Comic Sans MS', Inter, 'DejaVu Sans', sans-serif`;
+      const words = txt.split(/\s+/).filter(Boolean);
+      // wrap greedily for a few candidate sizes, keep the largest that fits
+      let best = null;
+      for (let size = H * 0.2; size > H * 0.05; size *= 0.92) {
+        g.font = `800 ${size}px ${fam}`;
+        const lines = []; let cur = '';
+        for (const w of words) { const tryL = (cur + ' ' + w).trim(); if (g.measureText(tryL).width > W * 0.78 && cur) { lines.push(cur); cur = w; } else cur = tryL; }
+        if (cur) lines.push(cur);
+        const wOk = lines.every((l) => g.measureText(l).width <= W * 0.84);
+        if (wOk && lines.length * size * 1.15 <= H * 0.72) { best = { lines, size }; break; }
+      }
+      if (!best) best = { lines: [txt], size: H * 0.05 };
+      const { lines, size } = best;
+      g.font = `800 ${size}px ${fam}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      const y0 = H * 0.55 - (lines.length - 1) * size * 1.15 / 2;
+      lines.forEach((l, i) => {
+        g.save(); g.translate(W / 2 + (rng() - 0.5) * W * 0.03, y0 + i * size * 1.15); g.rotate((rng() - 0.5) * 0.06);
+        g.fillStyle = '#1b1d3a'; g.strokeStyle = '#1b1d3a'; g.lineWidth = size * 0.05; g.lineJoin = 'round';
+        g.strokeText(l, 0, 0); g.fillText(l, 0, 0); g.restore();
+      });
+    } else {
+      g.strokeStyle = '#2a2d55'; g.lineWidth = W * 0.012; g.lineCap = 'round';
+      for (let i = 0; i < 5; i++) { const y = H * (0.28 + i * 0.12); g.beginPath(); g.moveTo(W * 0.18, y); for (let x = W * 0.18; x < W * (0.8 - (i === 4 ? 0.3 : 0)); x += W * 0.04) g.lineTo(x, y + (rng() - 0.5) * H * 0.02); g.stroke(); }
+    }
+    return canvasTexture(c);
+  });
+}
+/** Flashlight beam falloff (v = 1 at the lens → 0 at the far end), used with additive blending. */
+export function beamTexture(ctx) {
+  return cached(ctx, 'chr:tex:beam', () => {
+    const c = makeCanvas(4, 128), g = c.getContext('2d');
+    const gr = g.createLinearGradient(0, 0, 0, 128);
+    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,0.6)'); gr.addColorStop(0.6, 'rgba(255,255,255,0.2)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 4, 128);
+    return canvasTexture(c, { mipmaps: false });
+  });
+}
+
 export { mix };
