@@ -7,6 +7,8 @@ import { getMat } from './materials.js';
 import { P } from './props.js';
 import { HOUSE_COLORS, SHUTTER_COLORS, DOOR_COLORS } from './house.js';
 import { createWaterSurface, createRipples } from './water.js';
+import { hasHome, homePlan, consumeLike, withHomeRng, victorianPois } from './home.js';
+import { windowRig } from './windows.js';
 
 export const V = (x, y, z) => ({ x, y, z });
 export const M = (x, y, z, yaw = 0) => ({ x, y, z, yaw });
@@ -48,7 +50,7 @@ export function lot(b, plan, o = {}) {
     for (let x = -pw / 2 + 1.5; x < pw / 2 - 1; x += 2.6) if (Math.abs(x - dx) > 4.6) at(b, x, 0, zf + 1.4, 0, P.bush, { size: 1.15, blobs: 1, flowers: r() < 0.7 });
     if (o.fence !== false && r() < 0.6) { const L = (plan.width + 8) / 2 - 3.5; for (const s of [-1, 1]) at(b, dx + s * (3.5 + L / 2), 0, yard - 0.8, 0, P.fence, { length: L }); }
     if (o.mailbox !== false) at(b, dx + 8, 0, yard - 0.6, 0, P.mailbox, { color: pick(r, ['#1f2b46', '#202020', '#7a2a2a']) });
-    if (r() < 0.5) at(b, (r() < 0.5 ? -1 : 1) * (plan.width / 2 - 3), 0, 3, 0, P.flowerbed, { width: 6, depth: 2.2 });
+    if (r() < 0.5) { const fx = (r() < 0.5 ? -1 : 1) * (plan.width / 2 - 3); if (o.flowerbed !== false) at(b, fx, 0, 3, 0, P.flowerbed, { width: 6, depth: 2.2 }); }
   } else at(b, -plan.width / 2 + 3, 0, 1, 0, P.bush, { size: 1.6, blobs: 2, flowers: false });
   return { ...info, frontZ };
 }
@@ -218,14 +220,20 @@ export const SET_BUILDERS = {
       cameraHints: { establishing: H([24, 9, 32], [-18, 8, -12], 42), aerial: H([40, 60, 70], [0, 0, -15], 45), wide: H([0, 5, 22], [0, 4.5, -2], 50), along: H([70, 5, 4], [-60, 7, -6], 35), from_house: H([0, 6, -8], [0, 4, 14], 50) },
       shadow: { center: [0, 0, -10], radius: 60 }, lightFocus: [0, 0, 0] };
   },
-  house_front(ctx, b) {
+  house_front(ctx, b, opts = {}) {
     const r = b.rng;
     ground(b, -200, 200, -200, 200);
     at(b, 0, 0, 4, 0, P.sidewalk, { length: 300, width: 5 });
     at(b, 0, 0, 15, 0, P.road_segment, { length: 300, width: 16 });
     at(b, 0, 0, 26, Math.PI, P.sidewalk, { length: 300, width: 5 });
     const plan = { style: 'side', width: 32, depth: 23, color: '#a7c7ea', shutter: '#1f2b46', door: '#b52119', doorX: 0, floors: 2 };
-    b.push(0, 0, -10, 0); lot(b, plan, { yard: 11.5, fence: false }); b.pop();
+    let hinfo;
+    if (hasHome(opts)) { // our house in the family colours; the default build still runs (discarded) so neighbours stay identical
+      const hp = homePlan(opts.home); consumeLike(b, (d) => { d.push(0, 0, -10, 0); lot(d, plan, { yard: 11.5, fence: false }); });
+      hinfo = withHomeRng(b, () => { b.push(0, 0, -10, 0); const i = lot(b, hp, { yard: 11.5, fence: false }); b.pop(); return i; });
+      Object.assign(plan, hp);
+    } else { b.push(0, 0, -10, 0); hinfo = lot(b, plan, { yard: 11.5, fence: false }); b.pop(); }
+    const homeP = victorianPois(0, -10, plan, hinfo);
     for (const s of [-1, 1]) { b.lod = 'mid'; b.push(s * 44, 0, -10, 0); lot(b, housePlan(r, s > 0 ? 1 : 4), { yard: 11.5 }); b.pop(); b.lod = 'near'; }
     at(b, -10, 0, -3.5, 0, P.flowerbed, { width: 8, depth: 2.4 }); at(b, 10, 0, -3.5, 0, P.flowerbed, { width: 8, depth: 2.4 });
     treeAt(b, -22, -2, { kind: 'tree_round' }); treeAt(b, 22, -4, { kind: 'tree_pine' }); treeAt(b, 66, 0, {}); treeAt(b, -66, 0, {});
@@ -235,9 +243,10 @@ export const SET_BUILDERS = {
     backdropHills(b, 0, 0, 430);
     const crowd = [...rowSlots(-24, 24, 3, 3.5, 0, 0.35, (x) => Math.abs(x) < 4), ...rowSlots(-30, -16, 3.5, -1, 0), ...rowSlots(16, 30, 3.5, -1, 0), ...rowSlots(-15, 15, 3.3, 27, Math.PI, 0.35)];
     return { waterLevel: null,
-      marks: { A: M(0, 0, -2), B: M(3.4, 0, -2.6), C: M(-3.4, 0, -2.6), D: M(0, 0, -6.5), porch: M(-6, 1.3, -14.5), steps: M(0, 0, -9.6), sidewalk: M(6, 0.35, 3.5), crowd },
-      pois: { house: V(0, 14, -32), door: V(0, 4, -18), porch: V(-6, 3, -15), window: V(-8, 15, -22.5), mailbox: V(8, 4, 0.9), road: V(0, 0, 15), garden: V(10, 1, -3.5) },
-      cameraHints: { establishing: H([0, 9, 44], [0, 13, -20], 45), aerial: H([30, 55, 60], [0, 5, -15], 45), wide: H([0, 5.5, 20], [0, 4.5, -3], 50), porch: H([6, 5, -2], [-2, 4, -16], 50) },
+      marks: { A: M(0, 0, -2), B: M(3.4, 0, -2.6), C: M(-3.4, 0, -2.6), D: M(0, 0, -6.5), porch: M(-6, 1.3, -14.5), steps: M(0, 0, -9.6), sidewalk: M(6, 0.35, 3.5), by_home: M(0, 0, 14, Math.PI), crowd },
+      pois: { house: V(0, 14, -32), door: V(0, 4, -18), porch: V(-6, 3, -15), window: V(-8, 15, -22.5), mailbox: V(8, 4, 0.9), road: V(0, 0, 15), garden: V(10, 1, -3.5), ...homeP },
+      cameraHints: { establishing: H([0, 9, 44], [0, 13, -20], 45), aerial: H([30, 55, 60], [0, 5, -15], 45), wide: H([0, 5.5, 20], [0, 4.5, -3], 50), porch: H([6, 5, -2], [-2, 4, -16], 50),
+        door: H([1.2, 5.4, -12.5], [0, 4.9, -20.2], 45), home_window: H([4, 8, 6], [homeP.home_window.x, homeP.home_window.y, homeP.home_window.z], 30), roof: H([0, 2, 30], [0, 24, -30], 55) },
       shadow: { center: [0, 0, -12], radius: 50 }, lightFocus: [0, 0, -12] };
   },
   church_front(ctx, b) {
@@ -369,14 +378,14 @@ export const SET_BUILDERS = {
   },
 
   // ------------------------------------------------------------------ interiors
-  kitchen(ctx, b) {
-    const R = room(b, { w: 34, d: 36, h: 13, floor: 'tile', floorColor: '#e3cfa6', wall: 'wallpaper', wallColor: '#efe2c0', backOpen: [{ x: 4, y: 4.6, w: 8, h: 5.2 }], leftOpen: [{ x: 2, y: 3.4, w: 7, h: 6.4 }] });
+  kitchen(ctx, b, opts = {}) {
+    const R = room(b, { w: 34, d: 36, h: 13, floor: 'tile', floorColor: '#e3cfa6', wall: 'wallpaper', wallColor: typeof opts.wall === 'string' ? opts.wall : '#efe2c0', backOpen: [{ x: 4, y: 4.6, w: 8, h: 5.2 }], leftOpen: [{ x: 2, y: 3.4, w: 7, h: 6.4 }] });
     const bz = -18 + 1.5 + 0.5;
     at(b, -6, 0, bz, 0, P.kitchen_counter, { length: 14, sink: true, sinkX: 4 - -6 });
     at(b, 10.5, 0, bz + 0.2, 0, P.stove, {}); at(b, 14.5, 0, bz + 0.2, 0, P.fridge, {});
     at(b, 16.5, 0, -2, -Math.PI / 2, P.kitchen_counter, { length: 8, upper: false });
     b.push(4, 0, -18, 0); P.window(b, { width: 8, height: 5.2, y: 7.2, mullionY: 0 }); b.pop();
-    b.push(-17, 0, 2, Math.PI / 2); P.window(b, { width: 7, height: 6.4, y: 6.6, curtains: '#f2e8d0' }); b.pop();
+    b.push(-17, 0, 2, Math.PI / 2); const rig = windowRig(ctx, b, { w: 7, h: 6.4, y: 6.6, curtains: opts.curtains, windowOpen: opts.windowOpen, boarded: opts.boarded, sill: opts.sill, defCurtains: { color: '#f2e8d0' }, light: [-0.55, 0.55, 0.62], seed: 11, dimSun: false }); b.pop();
     at(b, 0, 0, -1, 0, P.table, { width: 10, depth: 5.5, items: true, color: '#8e5a32' });
     for (const s of [-1, 1]) { at(b, s * 2.6, 0, -4.8, 0, P.chair, { color: '#8e5a32' }); at(b, s * 2.6, 0, 2.8, Math.PI, P.chair, { color: '#8e5a32' }); }
     at(b, -6.4, 0, -1, Math.PI / 2, P.chair, { color: '#8e5a32' });
@@ -385,14 +394,14 @@ export const SET_BUILDERS = {
     at(b, -13, 0, -15.5, 0, P.potted_plant, {});
     outsideView(b, 'back', 34, 36); outsideView(b, 'left', 34, 36);
     const crowd = gridSlots(-14, 14, -12, 15, 36, 0, 0, (x, z) => Math.abs(x) < 7.5 && z > -7 && z < 5);
-    return { interior: true, waterLevel: null,
+    return { interior: true, waterLevel: null, extra: rig.extra, update: (t) => rig.update(t), onEnv: (e) => rig.onEnv(e),
       marks: { A: M(0, 0, 5.5), B: M(3.0, 0, 5), C: M(-3.0, 0, 5), D: M(-8, 0, -10), seat1: M(-2.6, 0, -4.8, 0), seat2: M(2.6, 0, 2.8, Math.PI), stove: M(10.5, 0, -10, Math.PI), crowd },
-      pois: { table: V(0, 3, -1), counter: V(-6, 3.4, -16), stove: V(10.5, 3.5, -15.5), fridge: V(14.5, 6, -15.5), window: V(4, 7, -18), door: V(16.5, 4, 8), lamp: V(0, 8, -1) },
+      pois: { table: V(0, 3, -1), counter: V(-6, 3.4, -16), stove: V(10.5, 3.5, -15.5), fridge: V(14.5, 6, -15.5), window: V(4, 7, -18), door: V(16.5, 4, 8), lamp: V(0, 8, -1), side_window: rig.world.window, sill: rig.world.sill, outside: rig.world.outside },
       cameraHints: { establishing: H([14, 10, 17], [-3, 3.5, -8], 58), aerial: H([0, 12.3, 16], [0, 0, -5], 62), wide: H([0.5, 6, 17.3], [0, 3.4, 2], 62), table: H([0, 7, 10], [0, 3, -1], 50) },
       shadow: { center: [0, 0, 0], radius: 22 }, lightFocus: [0, 6, 0], windowLight: [-0.55, 0.55, 0.62] };
   },
-  living_room(ctx, b) {
-    const R = room(b, { w: 34, d: 36, h: 13, floor: 'floorwood', floorColor: '#9a5a32', wall: 'woodpanel', wallColor: '#d8853e', backWall: 'wallpaper', backColor: '#8f9466', leftOpen: [{ x: -2, y: 3.4, w: 7, h: 6.6 }] });
+  living_room(ctx, b, opts = {}) {
+    const R = room(b, { w: 34, d: 36, h: 13, floor: 'floorwood', floorColor: '#9a5a32', wall: 'woodpanel', wallColor: '#d8853e', backWall: 'wallpaper', backColor: typeof opts.wall === 'string' ? opts.wall : '#8f9466', leftOpen: [{ x: -2, y: 3.4, w: 7, h: 6.6 }] });
     at(b, 0, 0, -18, 0, P.fireplace, { width: 10, height: 13 });
     b.push(0, 0, -18 + 2.4, 0); P.picture_frame(b, { width: 6, height: 4, y: 9.2, variant: 0 }); b.pop();
     b.push(-11, 0, -18, 0); P.picture_frame(b, { width: 3, height: 3.6, y: 7, variant: 1 }); b.pop();
@@ -404,40 +413,14 @@ export const SET_BUILDERS = {
     at(b, 14, 0, -16, 0, P.bookshelf, { width: 5, height: 10 });
     at(b, 12.5, 0, -12.5, 0, P.lamp, {}); at(b, -14.5, 0, -15.5, 0, P.lamp, {});
     at(b, 15.6, 0, 6, -Math.PI / 2, P.tv, {});
-    b.push(-17, 0, -2, Math.PI / 2); P.window(b, { width: 7, height: 6.6, y: 6.7, curtains: '#c8742e' }); b.pop();
+    b.push(-17, 0, -2, Math.PI / 2); const rig = windowRig(ctx, b, { w: 7, h: 6.6, y: 6.7, curtains: opts.curtains, windowOpen: opts.windowOpen, boarded: opts.boarded, sill: opts.sill, defCurtains: { color: '#c8742e' }, light: [-0.6, 0.5, 0.4], seed: 13 }); b.pop();
     outsideView(b, 'left', 34, 36);
     const crowd = gridSlots(-13, 13, -6, 15, 36, 0, 0, (x, z) => Math.abs(x) < 4 && Math.abs(z + 1.5) < 3);
-    return { interior: true, waterLevel: null,
+    return { interior: true, waterLevel: null, extra: rig.extra, update: (t) => rig.update(t), onEnv: (e) => rig.onEnv(e),
       marks: { A: M(0, 0, 4), B: M(3.0, 0, 3.4), C: M(-3.0, 0, 3.4), D: M(-3.5, 0, -11), armchair: M(8.5, 0, -9, -0.6), sofa: M(-12.5, 0, 3, Math.PI / 2), fire: M(4, 0, -12.5, 0), crowd },
-      pois: { fireplace: V(0, 2.5, -15), armchair: V(8.5, 2, -9), sofa: V(-12.5, 2, 3), tv: V(15.6, 4.5, 6), window: V(-17, 6.7, -2), picture: V(0, 9.2, -15.5), table: V(0, 1.8, -1.5) },
+      pois: { fireplace: V(0, 2.5, -15), armchair: V(8.5, 2, -9), sofa: V(-12.5, 2, 3), tv: V(15.6, 4.5, 6), window: V(-17, 6.7, -2), picture: V(0, 9.2, -15.5), table: V(0, 1.8, -1.5), sill: rig.world.sill, outside: rig.world.outside, curtains: V(-15.6, 7.5, -2) },
       cameraHints: { establishing: H([10, 9.5, 16], [-2, 4.5, -10], 56), aerial: H([0, 12.3, 16], [0, 0, -5], 62), wide: H([0.5, 6, 17.3], [0, 3.6, 0], 62), fireplace: H([0, 6, 6], [0, 5, -16], 50) },
       shadow: { center: [0, 0, 0], radius: 22 }, lightFocus: [0, 5, -6], windowLight: [-0.6, 0.5, 0.4] };
-  },
-  bedroom(ctx, b) {
-    room(b, { w: 28, d: 26, h: 12, floor: 'floorwood', floorColor: '#a8774a', wall: 'wallpaper', wallColor: '#b9cbe0', backOpen: [{ x: 0, y: 3.6, w: 9, h: 6.6 }] });
-    b.push(0, 0, -13, 0); P.window(b, { width: 9, height: 6.6, y: 6.9, curtains: '#3f5f9a' }); b.pop();
-    at(b, -9, 0, 2, Math.PI / 2, P.bed, { color: '#2f4f8f' });
-    at(b, -11.5, 0, -5.5, 0, P.nightstand, {}); at(b, -11.5, 2.8, -5.5, 0, P.lamp, { kind: 'table' });
-    at(b, 8.5, 0, -10.8, 0, P.table, { width: 6, depth: 3.2, height: 3.2, color: '#7a5030' }); at(b, 10, 3.2, -11.3, 0, P.lamp, { kind: 'table', shade: '#e8d29a' });
-    at(b, 8.5, 0, -7.6, Math.PI, P.chair, { color: '#7a5030' });
-    at(b, 11.5, 0, 4, -Math.PI / 2, P.bookshelf, { width: 5, height: 8 });
-    at(b, 0, 0, 1, 0, P.rug, { width: 10, depth: 7 });
-    b.push(-13.4, 0, 2, Math.PI / 2); P.picture_frame(b, { width: 4, height: 3, y: 8.5, variant: 2 }); b.pop();
-    // view through the window: the lit town across the lake (lower than the 1st-floor room)
-    const keep = b.chunk; b.chunk = 'out'; b.cast = false; b.lod = 'far';
-    b.push(0, -14, -40, 0);
-    ground(b, -200, 200, -20, 10);
-    b.push(0, 0, -100, 0); shoreSide(b, { half: 140, docks: [0], church: -44, seedShift: 5 }); b.pop();
-    b.boxB(400, 1, 100, 0, -10.5, -50, 'sand', '#3a5a64', { cast: false });
-    b.pop(); b.chunk = keep; b.cast = true; b.lod = 'near';
-    backdropHills(b, 0, -150, 420);
-    const water = createWaterSurface(ctx, { x0: -250, x1: 250, z0: -142, z1: -48, level: -15.5 });
-    const crowd = gridSlots(-8, 10, -6, 10, 36, 0, 0, (x, z) => x < -3.5 && z > -4 && z < 8);
-    return { interior: true, waterLevel: null, extra: [water],
-      marks: { A: M(0, 0, -9.5), B: M(3.4, 0, -8.5), C: M(-3, 0, -8.5), D: M(2, 0, 4), bed: M(-9, 2.6, 2, Math.PI / 2), desk: M(8.5, 0, -7.6, Math.PI), crowd },
-      pois: { window: V(0, 7, -14), across: V(0, -8, -150), bed: V(-9, 2, 2), desk: V(8.5, 3.2, -10.8), door: V(13, 4, 8), lamp: V(-11.5, 4, -5.5) },
-      cameraHints: { establishing: H([6, 8, 12], [-1, 4.5, -12], 58), aerial: H([0, 11.3, 12], [0, 0, -4], 62), wide: H([1, 6, 12], [0, 4.5, -9], 58), window: H([1.5, 7.5, -4], [0, 2, -80], 40) },
-      shadow: { center: [0, 0, 0], radius: 20 }, lightFocus: [0, 5, -6], windowLight: [0.3, 0.5, -0.8] };
   },
   classroom(ctx, b) {
     room(b, { w: 40, d: 34, h: 13, floor: 'floorwood', floorColor: '#c79a62', wall: 'wallpaper', wallColor: '#e9e1c8', leftOpen: [{ x: -8, y: 3.6, w: 7, h: 6.4 }, { x: 4, y: 3.6, w: 7, h: 6.4 }] });
@@ -498,13 +481,19 @@ export const INTERIORS = new Set(['kitchen', 'living_room', 'bedroom', 'classroo
 const RECV_OUTDOOR = new Set(['grass', 'asphalt', 'concrete', 'sand', 'dirt', 'planks', 'stone']);
 
 export function buildSet(ctx, id, opts = {}) {
+  if (!opts || typeof opts !== 'object' || Array.isArray(opts)) opts = {};
   const fn = SET_BUILDERS[id] || SET_BUILDERS.lake_dock;
   const rid = SET_BUILDERS[id] ? id : 'lake_dock';
   const rng = makeRng(rid + ':' + (opts.seed ?? 1));
   const interior = INTERIORS.has(rid);
   // outdoors only ground-like surfaces receive shadows (PCF-soft = ~25 taps per fragment in SwiftShader)
-  const b = new Builder(ctx, { rng, lod: 'near', grid: true, getMat: (k) => getMat(ctx, k), recvOnly: interior ? null : RECV_OUTDOOR });
-  const def = fn(ctx, b, opts);
+  let b = new Builder(ctx, { rng, lod: 'near', grid: true, getMat: (k) => getMat(ctx, k), recvOnly: interior ? null : RECV_OUTDOOR });
+  let def;
+  try { def = fn(ctx, b, opts); } catch (e) { // never throw on bad opts: rebuild with defaults
+    console.warn('[world] set', rid, 'opts rejected:', e.message);
+    b = new Builder(ctx, { rng: makeRng(rid + ':' + (opts.seed ?? 1)), lod: 'near', grid: true, getMat: (k) => getMat(ctx, k), recvOnly: interior ? null : RECV_OUTDOOR });
+    def = fn(ctx, b, {}); opts = {};
+  }
   // crowd slots: nearest to mark A first, slots between the actors and the camera (+Z side) last
   const A = def.marks.A || { x: 0, z: 0 };
   if (Array.isArray(def.marks.crowd)) def.marks.crowd = def.marks.crowd.map((m, i) => ({ m, i, k: Math.hypot(m.x - A.x, m.z - A.z) + (m.z > A.z + 1.5 && !def.interior ? 1000 : 0) }))
@@ -517,8 +506,11 @@ export function buildSet(ctx, id, opts = {}) {
     id: rid, group, interior: !!def.interior, waterLevel: def.waterLevel ?? null,
     marks: def.marks, pois: def.pois, cameraHints: def.cameraHints,
     shadow: def.shadow, lightFocus: def.lightFocus, windowLight: def.windowLight, env: def.env || null, _lamps: b.lamps,
+    opts, power: String(opts.power || 'on').toLowerCase() === 'off' ? 'off' : 'on', fireOn: opts.fire === true || opts.fire === 'on',
+    onEnv: def.onEnv || null,
     update(t, camera) {
       if (ctx.worldSet !== inst) return;
+      if (def.update) def.update(t, camera);
       if (ripples) ripples.update(t, group);
       if (ctx.worldEnv && camera) ctx.worldEnv.update(t, camera);
     },

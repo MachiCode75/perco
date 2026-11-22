@@ -1,13 +1,15 @@
 // World module — public API. Contract: ARCHITECTURE.md §4. Owner: world module.
-//   SETS, PROPS, createSet(ctx, id, opts), createProp(ctx, id, opts), applyEnvironment(ctx, {time, weather, interior})
+//   SETS, PROPS, createSet(ctx, id, opts), createProp(ctx, id, opts), applyEnvironment(ctx, {time, weather, interior, power})
 // See README.md in this folder for sets (marks / pois / cameraHints), props and options.
 import * as THREE from 'three';
 import { Builder, makeRng } from './core.js';
 import { getMat } from './materials.js';
 import { P } from './props.js';
 import './props2.js';                       // v2 props register into P
+import './props3.js';                       // v3 story props (cookie, giant_hand, glowing_eyes …) register into P
 import { buildSet, SET_BUILDERS } from './sets.js';
 import './sets2.js';                        // v2 sets register into SET_BUILDERS
+import './sets3.js';                        // v3: bedroom variants/window rig, library, shop_front, home identity
 import { CARD_STYLES as CARDS } from './cards.js';
 import { applyEnvironment as applyEnv } from './environment.js';
 
@@ -24,6 +26,7 @@ const CACHE_MAX = 3;
  * same location looks identical in every shot. Built sets are cached on ctx (last 3) and reused.
  */
 export function createSet(ctx, id, opts = {}) {
+  if (!opts || typeof opts !== 'object' || Array.isArray(opts)) opts = {};
   if (!ctx.worldSetCache) ctx.worldSetCache = new Map();
   const key = id + ':' + JSON.stringify(opts || {});
   let inst = ctx.worldSetCache.get(key);
@@ -45,13 +48,18 @@ export function createSet(ctx, id, opts = {}) {
 
 /** Standalone prop (merged by material). opts.seed for a fixed variation, else ctx.rng is used. */
 export function createProp(ctx, id, opts = {}) {
+  if (!opts || typeof opts !== 'object') opts = {};
   const fn = P[id];
   if (!fn) { console.warn('[world] unknown prop', id); return new THREE.Group(); }
   const rng = opts.seed !== undefined ? makeRng(opts.seed) : (ctx.rng || Math.random);
   const b = new Builder(ctx, { rng, lod: opts.lod || 'near', getMat: (k) => getMat(ctx, k) });
-  const info = fn(b, opts) || {};
+  let info = {};
+  try { info = fn(b, opts || {}) || {}; } catch (e) { console.warn('[world] prop', id, e.message); }
   const g = b.build('prop:' + id);
   g.userData = { prop: id, info, lamps: b.lamps };
+  // animated props: userData.update(t) (t = seconds since shot start); close-up point: userData.focus (local)
+  if (typeof info.update === 'function') g.userData.update = (t) => { try { info.update(t); } catch (e) { /* never throw */ } };
+  if (info.focus && typeof info.focus.x === 'number') g.userData.focus = { ...info.focus };
   return g;
 }
 

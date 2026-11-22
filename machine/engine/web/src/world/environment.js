@@ -1,5 +1,5 @@
 // World module — sky / time-of-day / weather / lights / particles / underwater switch.
-// applyEnvironment(ctx, {time, weather, interior}) builds an env group in ctx.scene and stores
+// applyEnvironment(ctx, {time, weather, interior, power}) builds an env group in ctx.scene and stores
 // ctx.worldEnv = { update(t, camera) } which the current SetInstance.update() drives every frame.
 import * as THREE from 'three';
 import { getMat, worldUniforms } from './materials.js';
@@ -98,8 +98,10 @@ function makeRain(ctx, n = 1600) {
   } };
 }
 
-export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interior = false } = {}) {
+export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interior = false, power } = {}) {
   const scene = ctx.scene; const set = ctx.worldSet && ctx.worldSet.__scene === scene ? ctx.worldSet : ctx.worldSet;
+  // blackout: no lit windows, lamp posts, porch lights or interior lamps; interiors get dim cold moonlight only
+  const off = String(power ?? set?.power ?? 'on').toLowerCase() === 'off';
   if (ctx.worldEnv?.group?.parent) ctx.worldEnv.group.parent.remove(ctx.worldEnv.group);
   const p = preset(time, weather);
   // per-set look overrides, e.g. { day: { hor, mid, top, fog, hemiGnd } } (only with clear weather)
@@ -112,9 +114,12 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   const sky = makeSky(ctx, p); group.add(sky);
   scene.background = C(p.hor);
   const sunDir = new THREE.Vector3(...p.sun).normalize();
-  const hemi = interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.16 : p.time === 'dusk' ? 0.6 : 1.5)
-    : new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI); group.add(hemi);
-  const sun = new THREE.DirectionalLight(C(p.sunCol), interior ? (p.time === 'night' ? 0.15 : p.time === 'dusk' ? 0.5 : Math.max(1.6, p.sunI * 0.8)) : p.sunI);
+  const dark = p.time === 'night' || p.time === 'dusk';
+  const moonIn = interior && off && dark; // blacked-out interior at night: cold moonlight through the windows only
+  const hemi = moonIn ? new THREE.HemisphereLight(C(p.time === 'night' ? '#6a7cb0' : '#8a86b0'), C('#141824'), p.time === 'night' ? 0.7 : 0.85)
+    : interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.16 : p.time === 'dusk' ? 0.6 : 1.5)
+    : new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI * (off && dark ? 0.85 : 1)); group.add(hemi);
+  const sun = new THREE.DirectionalLight(C(moonIn ? '#a9bfff' : p.sunCol), moonIn ? (p.time === 'night' ? 1.1 : 0.9) : interior ? (p.time === 'night' ? 0.15 : p.time === 'dusk' ? 0.5 : Math.max(1.6, p.sunI * 0.8)) : p.sunI);
   const focus = set?.shadow || { center: [0, 0, 0], radius: 60 };
   const fc = new THREE.Vector3(...focus.center);
   let ldir = sunDir.clone(); if (ldir.y < 0.25) { ldir.y = 0.25; ldir.normalize(); } // keep shadows sane at dusk
@@ -132,10 +137,13 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   ctx.renderer.toneMappingExposure = p.exp * (interior ? 1.0 : 1.0);
 
   // material reactions
-  const glow = interior ? Math.max(p.glow, 0.15) : p.glow;
+  const glow = off ? 0 : interior ? Math.max(p.glow, 0.15) : p.glow;
   for (const m of [getMat(ctx, 'win'), ...[...(ctx.worldMats?.values() || [])].filter((q) => q.userData?.def?.glow && q.name !== 'win')]) { m.emissive.set(glow > 0 ? '#ffd48a' : '#000000'); m.emissiveIntensity = glow; }
-  const lg = getMat(ctx, 'lampglass'); lg.emissive.set(p.lamps > 0 ? '#ffd890' : '#000000'); lg.emissiveIntensity = p.lamps * 1.4;
-  const bulb = getMat(ctx, 'bulb'); bulb.emissive.set('#ffe2a8'); bulb.emissiveIntensity = interior ? (p.time === 'night' || p.time === 'dusk' ? 1.4 : 0.6) : 0.8;
+  const lampK = off ? 0 : p.lamps;
+  const lg = getMat(ctx, 'lampglass'); lg.emissive.set(lampK > 0 ? '#ffd890' : '#000000'); lg.emissiveIntensity = lampK * 1.4;
+  const bulb = getMat(ctx, 'bulb'); bulb.emissive.set(off ? '#000000' : '#ffe2a8'); bulb.emissiveIntensity = off ? 0 : interior ? (dark ? 1.4 : 0.6) : 0.8;
+  const scr = getMat(ctx, 'screen'); scr.emissiveIntensity = off ? 0 : 0.6; scr.color.set(off ? '#121212' : '#ffffff');
+  const fireOn = !off || !!set?.fireOn; const fm = getMat(ctx, 'fire'); fm.visible = fireOn;
   const wm = waterMaterial(ctx); const wu = wm.uniforms;
   wu.uColor.value.set(p.water[0]); wu.uDeep.value.set(p.water[1]); wu.uSkyTop.value.set(p.top); wu.uSkyHor.value.set(p.hor);
   wu.uSunDir.value.copy(sunDir); wu.uSunCol.value.set(p.sunCol); wu.uSpec.value = p.weather === 'clear' ? (p.time === 'night' ? 0.5 : 1.3) : 0.15;
@@ -145,7 +153,10 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   const lamps = (set?._lamps || []).slice();
   const ref = new THREE.Vector3(...(set?.lightFocus || focus.center));
   lamps.sort((a, b) => ((a.x - ref.x) ** 2 + (a.z - ref.z) ** 2) - ((b.x - ref.x) ** 2 + (b.z - ref.z) ** 2));
-  const nightK = interior ? 1 : p.lamps;
+  const nightK = off ? 0 : interior ? 1 : p.lamps;
+  if (off && fireOn && interior) { // power cut but the fire still burns (set opts.fire): fire light only
+    for (const l of lamps.filter((q) => q.kind === 'fire').slice(0, 2)) { const pl = new THREE.PointLight('#ff9a4a', 60, 30, 1.6); pl.position.set(l.x, l.y, l.z); pl.userData.fire = true; group.add(pl); }
+  }
   if (nightK > 0) {
     let n = 0; const maxL = interior ? 4 : 4;
     for (const l of lamps) {
@@ -178,11 +189,12 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   for (const q of parts) group.add(q.obj);
 
   scene.add(group);
+  try { set?.onEnv?.({ time: p.time, weather: p.weather, interior, power: off ? 'off' : 'on', sun, hemi }); } catch (e) { console.warn('[world] set.onEnv', e.message); }
   const normalFog = { color: scene.fog.color.clone(), near: fogN, far: fogF, bg: scene.background.clone() };
   let under = false;
   const lights = group.children.filter((o) => o.isPointLight && o.userData.fire);
   ctx.worldEnv = {
-    group, preset: p, interior,
+    group, preset: p, interior, power: off ? 'off' : 'on',
     update(t, camera) {
       sky.position.copy(camera.position);
       for (const q of parts) q.update(t, camera);

@@ -1,7 +1,8 @@
 // World module — v2 sets (multi-reference): suburban_street, forest_road, hospital_room, warehouse,
 // backyard, city_street, town_square, rooftops_sky, card. Registered into SET_BUILDERS (sets.js).
 // Same conventions: action near the origin, camera side +Z, background −Z, marks A–D + crowd ≥ 30.
-import { pick, range } from './core.js';
+import { pick, range, makeRng } from './core.js';
+import { hasHome, homePlan, consumeLike, withHomeRng, victorianPois, ranchPois } from './home.js';
 import { P } from './props.js';
 import { wire } from './props2.js';
 import { buildCard } from './cards.js';
@@ -10,36 +11,72 @@ import { SET_BUILDERS, INTERIORS, V, M, H, ground, at, backdropHills, treeAt, ho
 const DESERT_HILLS = { near: ['#9a8466', '#a08a6a', '#8e7a60'], far: ['#8a7a86', '#94848e', '#7e7286'] };
 
 const NEW = {
-  suburban_street(ctx, b) {
+  suburban_street(ctx, b, opts = {}) {
     // ref5: single-storey stucco/brick ranch houses, dry lawns, driveways, wooden power poles + wires,
-    // wide plain asphalt road (camera side), desert haze. Marks on the sidewalk.
-    const r = b.rng;
+    // wide plain asphalt road (camera side), desert haze. Marks on the sidewalk. Our house = the one at x=-4
+    // (opts.home → the family's 2-storey Victorian in those colours). Forest edge at the −X end of the street.
+    const r = b.rng; const PH = 34; const homeX = -4;
     ground(b, -300, 300, -300, 300, 'grass', '#e2dc9c');
     b.boxB(600, 0.9, 300, 0, -0.95, -250, 'sand', '#e6d6b8', { cast: false });
     at(b, 0, 0, 1, 0, P.sidewalk, { length: 400, width: 4 });
     at(b, 0, 0, 13, 0, P.road_segment, { length: 400, width: 20, centerLine: false, edgeLines: false });
     at(b, 0, 0, 25, Math.PI, P.sidewalk, { length: 400, width: 4 });
-    const poles = [];
+    const lotBody = (bb, x) => {
+      const rr = bb.rng;
+      bb.push(x, 0, -24, 0); const info = P.house_ranch(bb, { garage: rr() < 0.8, boarded: rr() < 0.15 }); bb.pop();
+      if (info.garage) bb.boxB(11, 0.1, 21.5, x + info.garage.x, 0, -24 + info.d / 2 + 10.7, 'concrete', '#cfc9be', { cast: false });
+      bb.boxB(3, 0.1, 18.5, x + info.door.x, 0, -24 + info.d / 2 + 9.3, 'concrete', '#cfc9be', { cast: false });
+      if (bb.lod === 'near') { for (let k = 0; k < 3; k++) at(bb, x - 14 + k * 3.2, 0, -24 + info.d / 2 + 2.2, 0, P.bush, { flowers: false, size: 1.2, color: '#6a8a3a' }); const gx = x + (info.garage ? info.garage.x - 7.5 : 8); if (rr() < 0.7 && Math.abs(gx) > 7) at(bb, gx, 0, 2.6, 0, P.garbage_can, {}); }
+      if (rr() < 0.5) treeAt(bb, x + 18, -12 + rr() * 4, { kind: 'tree_round', height: range(rr, 12, 16), color: '#6a8a3a' });
+      return info;
+    };
+    const infos = {}; let homeP;
     for (let i = -4; i <= 4; i++) {
-      const x = i * 40 - 4;
+      const x = i * 40 + homeX;
       b.lod = Math.abs(x) < 60 ? 'near' : 'mid';
-      b.push(x, 0, -24, 0); const info = P.house_ranch(b, { garage: r() < 0.8, boarded: r() < 0.15 }); b.pop();
-      if (info.garage) b.boxB(11, 0.1, 21.5, x + info.garage.x, 0, -24 + info.d / 2 + 10.7, 'concrete', '#cfc9be', { cast: false });
-      b.boxB(3, 0.1, 18.5, x + info.door.x, 0, -24 + info.d / 2 + 9.3, 'concrete', '#cfc9be', { cast: false });
-      if (b.lod === 'near') { for (let k = 0; k < 3; k++) at(b, x - 14 + k * 3.2, 0, -24 + info.d / 2 + 2.2, 0, P.bush, { flowers: false, size: 1.2, color: '#6a8a3a' }); const gx = x + (info.garage ? info.garage.x - 7.5 : 8); if (r() < 0.7 && Math.abs(gx) > 7) at(b, gx, 0, 2.6, 0, P.garbage_can, {}); }
-      if (r() < 0.5) treeAt(b, x + 18, -12 + r() * 4, { kind: 'tree_round', height: range(r, 12, 16), color: '#6a8a3a' });
+      if (i === 0 && hasHome(opts)) {
+        consumeLike(b, (d) => lotBody(d, x)); // keep the neighbours' random sequence identical
+        const hp = homePlan(opts.home);
+        const hi = withHomeRng(b, () => { b.push(x, 0, -6, 0); const q = lot(b, hp, { yard: 5, fence: false, flowerbed: false }); b.pop(); return q; });
+        homeP = victorianPois(x, -6, hp, hi);
+      } else {
+        infos[i] = lotBody(b, x);
+        if (i === 0) homeP = ranchPois(x, -24, infos[i]);
+      }
     }
     for (let i = -4; i <= 4; i++) { b.lod = 'far'; b.push(i * 42 + 10, 0, 64, Math.PI); P.house_ranch(b, { garage: r() < 0.6 }); b.pop(); }
     b.lod = 'near';
-    for (let x = -200; x <= 200; x += 44) { b.push(x, 0, -2.6, 0); P.power_pole(b, { transformer: Math.round(x / 44) % 2 === 0 }); b.pop(); poles.push(x); }
-    for (let i = 0; i < poles.length - 1; i++) for (const dx of [-3.8, 0.8, 3.8]) wire(b, [poles[i] + dx, 25, -2.6], [poles[i + 1] + dx, 25, -2.6], 1.6);
-    for (let k = 0; k < 6; k++) { const x = poles[k + 1]; wire(b, [x + 0.8, 25, -2.6], [x + 6, 18, 26], 0.8); }
+    // power poles (34 tall: higher than any roof) — one stands right of our house so est/wide views show it
+    const poles = [];
+    for (let x = -170; x <= 190; x += 44) { b.push(x, 0, -2.6, 0); P.power_pole(b, { height: PH, transformer: Math.round(x / 44) % 2 === 0 }); b.pop(); poles.push(x); }
+    for (let i = 0; i < poles.length - 1; i++) for (const dx of [-3.8, 0.8, 3.8]) wire(b, [poles[i] + dx, PH - 1, -2.6], [poles[i + 1] + dx, PH - 1, -2.6], 1.8);
+    for (let k = 0; k < 6; k++) { const x = poles[k + 1]; wire(b, [x + 0.8, PH - 1, -2.6], [x + 6, 18, 26], 0.8); }
+    // optional: one giant footprint on the lawn in front of every house (opts.footprints)
+    if (opts.footprints) for (let i = -4; i <= 4; i++) at(b, i * 40 + homeX - 11, 0, -3.6, -Math.PI / 2 + (i % 2) * 0.12, P.giant_footprint, { length: 9, side: i % 2 ? 'right' : 'left' });
+    // forest edge at the far (−X) end of the street: dead end, barrier, dark pine wall
+    const keepR = b.rng; b.rng = makeRng('suburb-forest'); const fr = b.rng; b.lod = 'far'; b.chunk = 'far';
+    b.boxB(150, 0.05, 340, -275, 0, 0, 'grass', '#5a6c46', { cast: false });
+    b.boxB(0.8, 0.12, 20, -200.5, 0, 13, 'dirt', '#ffffff', { cast: false });
+    for (let k = 0; k < 6; k++) b.boxB(0.5, 1.0, 2.8, -199, 1.6, 4.6 + k * 3.4, 'satin', k % 2 ? '#c81e1e' : '#f4f4f0');
+    for (const z of [3.6, 13, 22.4]) b.boxB(0.45, 2.6, 0.45, -199, 0, z, 'metal', '#5a5f66');
+    at(b, -194, 0, 26, 0.5, P.sign_board, { text: 'DEAD END', width: 4.4, height: 2.2, colors: ['#151515'], bg: '#f2c230', underline: false });
+    for (let k = 0; k < 170; k++) {
+      const x = -203 - Math.pow(fr(), 0.75) * 150; const z = -170 + fr() * 330;
+      at(b, x, 0, z, fr() * 6, P.tree_pine, { height: range(fr, 34, 52), trunk: 1.8, wide: 0.85, color: pick(fr, ['#21402a', '#264a30', '#1c3824', '#2c5034']) });
+    }
+    b.rng = keepR; b.lod = 'near'; b.chunk = '';
     backdropHills(b, 0, -100, 420, 22, DESERT_HILLS);
     const crowd = [...rowSlots(-40, 40, 3.4, 1.2, 0, 0.35, (x) => Math.abs(x) < 6), ...rowSlots(-30, 30, 3.6, -5, 0, 0, (x) => Math.abs(x) < 8)];
+    const nbr = (i) => { const x = i * 40 + homeX; const q = infos[i] ? ranchPois(x, -24, infos[i]) : null; return q ? { house: q.home, window: q.home_window } : { house: V(x, 7, -24), window: V(x - 12, 5.7, -12.6) }; };
+    const n1 = nbr(1), n2 = nbr(-1);
     return { waterLevel: null,
-      marks: { A: M(0, 0.35, 1.2), B: M(3.3, 0.35, 0.8), C: M(-3.3, 0.35, 0.8), D: M(0, 0, -4), road: M(0, 0, 12), driveway: M(-14, 0, -6), crowd },
-      pois: { house: V(-4, 6, -24), door: V(-7, 3, -12), garage: V(4, 4, -12), road: V(0, 0, 13), pole: V(-22, 20, -2.6), sky: V(0, 45, -80), across: V(0, 5, 64) },
-      cameraHints: { establishing: H([0, 8, 42], [0, 8, -16], 45), aerial: H([40, 60, 70], [0, 0, -20], 45), wide: H([0, 5, 22], [0, 4.5, -1], 50), street: H([70, 6, 13], [-60, 6, 2], 38) },
+      marks: { A: M(0, 0.35, 1.2), B: M(3.3, 0.35, 0.8), C: M(-3.3, 0.35, 0.8), D: M(0, 0, -4), road: M(0, 0, 12), driveway: M(-14, 0, -6),
+        by_pole: M(18, 0, -3, 0), by_home: M(homeX, 0, 7, Math.PI), neighbor1: M(n1.window.x + 2, 0, 6, Math.PI), neighbor2: M(n2.window.x + 2, 0, 6, Math.PI), guard: M(-170, 0, 13, -Math.PI / 2), crowd },
+      pois: { house: V(-4, 6, -24), door: V(-7, 3, -12), garage: V(4, 4, -12), road: V(0, 0, 13), pole: V(6, 20, -2.6), sky: V(0, 45, -80), across: V(0, 5, 64),
+        ...homeP, pole_top: V(3.4, PH - 1.6, -2.3), trees: V(-232, 16, 13), street_end: V(-196, 0, 13), footprint: V(homeX - 11, 0.1, -3.6),
+        neighbor1: n1.house, neighbor1_window: n1.window, neighbor2: n2.house, neighbor2_window: n2.window },
+      cameraHints: { establishing: H([0, 8, 42], [0, 8, -16], 45), aerial: H([40, 60, 70], [0, 0, -20], 45), wide: H([0, 5, 22], [0, 4.5, -1], 50), street: H([70, 6, 13], [-60, 6, 2], 38),
+        to_forest: H([2, 6, 9], [-210, 14, 11], 32), pole_top: H([0, 3, 14], [3.4, PH - 3, -2.6], 36), home: H([-4, 7, 30], [-4, 13, -24], 45) },
       env: { day: { top: '#5d8cc4', mid: '#a6bfd2', hor: '#e3d8c4', fog: '#e0d4bf', ground: '#c8b89a', hemiGnd: '#a89470', fogF: 1100 }, golden: { hor: '#ffbf7a', fog: '#e8b888' } },
       shadow: { center: [0, 0, -10], radius: 60 }, lightFocus: [0, 0, 0] };
   },
@@ -212,24 +249,41 @@ const NEW = {
       shadow: { center: [0, 0, sz + 6], radius: 50 }, lightFocus: [0, 0, sz + 10] };
   },
 
-  rooftops_sky(ctx, b) {
+  rooftops_sky(ctx, b, opts = {}) {
     // ref3/ref5: low camera looking up over the roofs with lots of sky; marks high above the houses
     // for a giant creature (`giant`, on the ground behind the row) or a face in the sky (`sky`).
-    const r = b.rng;
+    // Our house = the central front-row house (opts.home → the family's Victorian in those colours); power poles.
+    const r = b.rng; const PH = 34;
     ground(b, -300, 300, -300, 300);
     at(b, 0, 0, 4, 0, P.sidewalk, { length: 400, width: 4 }); at(b, 0, 0, 16, 0, P.road_segment, { length: 400, width: 16 });
-    for (let k = -3; k <= 3; k++) { b.lod = Math.abs(k) <= 1 ? 'near' : 'mid'; b.push(k * 44, 0, -6, 0); lot(b, housePlan(r, k + 4), { yard: 8 }); b.pop(); }
+    let homeP, homeInfo, homePl;
+    for (let k = -3; k <= 3; k++) {
+      b.lod = Math.abs(k) <= 1 ? 'near' : 'mid';
+      if (k === 0 && hasHome(opts)) {
+        consumeLike(b, (d) => lot(d, housePlan(d.rng, k + 4), { yard: 8 }));
+        homePl = homePlan(opts.home); homeInfo = withHomeRng(b, () => { b.push(0, 0, -6, 0); const q = lot(b, homePl, { yard: 8 }); b.pop(); return q; });
+      } else { const pl = housePlan(r, k + 4); b.push(k * 44, 0, -6, 0); const q = lot(b, pl, { yard: 8 }); b.pop(); if (k === 0) { homePl = pl; homeInfo = q; } }
+    }
+    homeP = victorianPois(0, -6, homePl, homeInfo);
+    const backZ = homeP.home.z - (homeInfo?.d || 24) / 2;
     for (let k = -4; k <= 4; k++) { b.lod = 'far'; b.chunk = 'far'; b.push(k * 46 + 20, 0, -96, 0); lot(b, housePlan(r, k + 9), { yard: 6, fence: false }); b.pop(); }
     for (let k = -3; k <= 3; k++) { b.lod = 'far'; b.chunk = 'far'; b.push(k * 44 + 10, 0, 74, Math.PI); lot(b, housePlan(r, k + 2), { yard: 6 }); b.pop(); }
     b.chunk = ''; b.lod = 'near';
     for (let k = 0; k < 14; k++) treeAt(b, range(r, -150, 150), -70 - r() * 15, { kind: 'tree_pine', height: range(r, 24, 32) });
     for (let x = -132; x <= 132; x += 24) if (Math.abs(x) > 10) at(b, x, 0, 6.6, 0, P.lamp_post, {});
+    if (opts.poles !== false) {
+      const poles = []; for (let x = -120; x <= 110; x += 44) { b.push(x, 0, 2.6, 0); P.power_pole(b, { height: PH, transformer: x === 12 }); b.pop(); poles.push(x); }
+      for (let i = 0; i < poles.length - 1; i++) for (const dx of [-3.8, 0.8, 3.8]) wire(b, [poles[i] + dx, PH - 1, 2.6], [poles[i + 1] + dx, PH - 1, 2.6], 1.8);
+    }
     backdropHills(b, 0, -60, 430);
     const crowd = [...rowSlots(-40, 40, 3.4, 4, 0, 0.35, (x) => Math.abs(x) < 6), ...rowSlots(-30, 30, 3.6, 12, 0, 0, (x) => Math.abs(x) < 5)];
     return { waterLevel: null,
-      marks: { A: M(0, 0.35, 4), B: M(3.4, 0.35, 3.4), C: M(-3.4, 0.35, 3.4), D: M(0, 0, 9), giant: M(0, 0, -62, 0), sky: M(0, 58, -110, 0), roof: M(0, 33, -38, 0), crowd },
-      pois: { sky: V(0, 60, -110), giant: V(0, 30, -62), rooftops: V(0, 30, -40), moon: V(-60, 90, -260), house: V(0, 14, -30), road: V(0, 0, 16) },
-      cameraHints: { establishing: H([0, 1.8, 40], [0, 52, -80], 60), aerial: H([0, 45, 80], [0, 20, -60], 50), wide: H([0, 4, 24], [0, 9, 0], 52), up: H([0, 1.6, 14], [0, 48, -90], 60), over: H([0, 34, 30], [0, 34, -110], 50) },
+      marks: { A: M(0, 0.35, 4), B: M(3.4, 0.35, 3.4), C: M(-3.4, 0.35, 3.4), D: M(0, 0, 9), giant: M(-22, 0, -52, 0), sky: M(0, 58, -110, 0), roof: M(0, 33, -38, 0),
+        over_home: M(0, 0, +(backZ - 3).toFixed(2), 0), by_home: M(0, 0, 9, Math.PI), crowd },
+      pois: { sky: V(0, 60, -110), giant: V(-22, 30, -52), rooftops: V(0, 30, -40), moon: V(-60, 90, -260), house: V(0, 14, -30), road: V(0, 0, 16),
+        ...homeP, pole_top: V(9.4, PH - 1.6, 2.9), over_home: V(0, 32, +(backZ - 3).toFixed(2)) },
+      cameraHints: { establishing: H([0, 1.8, 40], [0, 52, -80], 60), aerial: H([0, 45, 80], [0, 20, -60], 50), wide: H([0, 4, 24], [0, 9, 0], 52), up: H([0, 1.6, 14], [0, 48, -90], 60), over: H([0, 34, 30], [0, 34, -110], 50),
+        home: H([0, 3, 30], [0, 22, -40], 55), giant_low: H([-6, 1.6, 34], [-22, 34, -52], 58) },
       shadow: { center: [0, 0, -20], radius: 70 }, lightFocus: [0, 0, 0] };
   },
 

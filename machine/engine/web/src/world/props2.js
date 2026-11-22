@@ -94,11 +94,17 @@ P.civic_building = (b, o = {}) => {
 /** flat shop/building sign: bold block letters, aspect-correct texture (e.g. TOWN WAREHOUSE) */
 P.shop_sign = (b, o = {}) => {
   const w = o.width || 12, h = o.height || 2.4, y = o.y ?? 10; const text = String(o.text || 'SHOP').toUpperCase();
-  const key = canvasMat(b.ctx, 'shopsign:' + text + (o.bg || '') + (o.ink || '') + w + 'x' + h, () => {
+  // o.lines: 2 → split a long text into two balanced lines (or use '\n' in the text)
+  let lines = text.split('\n').filter(Boolean);
+  if (lines.length === 1 && o.lines === 2 && text.includes(' ')) { const ws = text.split(' '); let best = null; for (let i = 1; i < ws.length; i++) { const a = ws.slice(0, i).join(' '), c2 = ws.slice(i).join(' '); const d = Math.abs(a.length - c2.length); if (!best || d < best[0]) best = [d, a, c2]; } lines = [best[1], best[2]]; }
+  const key = canvasMat(b.ctx, 'shopsign:' + lines.join('|') + (o.bg || '') + (o.ink || '') + w + 'x' + h, () => {
     const W = 1024, Hc = Math.max(64, Math.round(1024 * h / w)); const c = document.createElement('canvas'); c.width = W; c.height = Hc; const g = c.getContext('2d');
     g.fillStyle = o.bg || '#141414'; g.fillRect(0, 0, W, Hc); g.fillStyle = o.ink || '#f2c230'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    let size = Hc * 0.62; g.font = `900 ${size}px "Liberation Sans", "DejaVu Sans", sans-serif`; while (g.measureText(text).width > W * 0.9 && size > 10) { size -= 2; g.font = `900 ${size}px "Liberation Sans", "DejaVu Sans", sans-serif`; }
-    g.fillText(text, W / 2, Hc / 2 + size * 0.04); return c;
+    const n = lines.length; const font = (sz) => `900 ${sz}px "Liberation Sans", "DejaVu Sans", sans-serif`;
+    let size = (Hc * 0.62) / Math.max(1, n * 0.85); g.font = font(size); while (lines.some((l) => g.measureText(l).width > W * 0.9) && size > 10) { size -= 2; g.font = font(size); }
+    lines.forEach((l, i) => g.fillText(l, W / 2, Hc / 2 + (i - (n - 1) / 2) * size * 1.08 + size * 0.04));
+    if (o.border !== false && n > 1) { g.strokeStyle = o.ink || '#f2c230'; g.lineWidth = Hc * 0.025; g.strokeRect(Hc * 0.05, Hc * 0.05, W - Hc * 0.1, Hc * 0.9); }
+    return c;
   }, { rough: 0.5 });
   b.box(w + 0.4, h + 0.4, 0.4, 0, y, 0.2, 'metal', o.frame || '#202224'); b.quad(w, h, 0, y, 0.42, key, '#ffffff', { cast: false });
 };

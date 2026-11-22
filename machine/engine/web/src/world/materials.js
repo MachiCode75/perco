@@ -49,6 +49,10 @@ const DEFS = {
   granite: { tex: 'granite', rough: 0.7 },
   bronze: { rough: 0.38, metal: 0.55 },
   tower: { tex: 'tower_day', glow: 'tower_glow', rough: 0.4, lambert: true },   // per-text map assigned by signMaterial()
+  glass: { rough: 0.08, opacity: 0.16, interior: true },                          // window panes (faint sheen)
+  sheer: { tex: 'fabric', rough: 0.95, lambert: true, interior: true, opacity: 0.82 }, // sheer curtain layer
+  fur: { rough: 1, lambert: true, interior: true },                               // giant fur / skin (no snow patch)
+  mud: { tex: 'dirt', rough: 0.5, interior: true },                               // wet mud (footprints)
 };
 
 function patch(mat, U) {
@@ -86,6 +90,7 @@ export function getMat(ctx, key) {
   else m = new THREE.MeshStandardMaterial(p);
   m.name = key;
   m.userData.def = d;
+  if (d.opacity !== undefined) { m.transparent = true; m.opacity = d.opacity; m.depthWrite = false; }
   if (d.glow) { m.emissiveMap = getTexture(ctx, d.glow); m.emissive = new THREE.Color(0, 0, 0); }
   if (d.lamp || d.bulb || d.fire || d.screen) m.emissive = new THREE.Color(0, 0, 0);
   if (d.fire) { m.emissive = new THREE.Color('#ff8a2a'); m.emissiveIntensity = 2.2; }

@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T02:15:08.880Z",
+ "generated": "2026-11-22T21:39:40.582Z",
  "FACES": [
   "neutral",
   "smile",
@@ -45,7 +45,27 @@
   "carry",
   "reach",
   "loom",
-  "lean"
+  "lean",
+  "tap",
+  "knock",
+  "hammer",
+  "pull_curtain",
+  "peek",
+  "nod",
+  "shake_head",
+  "look_around",
+  "rock",
+  "sit_rock",
+  "offer",
+  "count",
+  "crouch",
+  "tiptoe",
+  "sleep_lie",
+  "bend",
+  "pinch",
+  "spread",
+  "straddle",
+  "step"
  ],
  "HAIR_STYLES": [
   "spiky",
@@ -85,7 +105,25 @@
   "cup",
   "letter",
   "umbrella",
-  "bag"
+  "bag",
+  "cookie",
+  "plate",
+  "hammer",
+  "candle",
+  "note"
+ ],
+ "ACCESSORIES": [
+  "glasses",
+  "sunglasses",
+  "tie",
+  "mayor_chain",
+  "cap",
+  "bow",
+  "scarf",
+  "apron",
+  "beard",
+  "mustache",
+  "sleep_mask"
  ],
  "CREATURES": [
   "furry_giant",
@@ -195,7 +233,20 @@
   "iv_pole",
   "curtain_track",
   "plaque",
-  "statue"
+  "statue",
+  "cookie",
+  "cookie_plate",
+  "fur_tuft",
+  "giant_footprint",
+  "footprint_trail",
+  "note_paper",
+  "giant_hand",
+  "window_face",
+  "glowing_eyes",
+  "candle",
+  "hammer_nails",
+  "plush",
+  "ball"
  ],
  "FRAMINGS": [
   "extreme_wide",
@@ -433,7 +484,8 @@
     "D",
     "porch",
     "steps",
-    "sidewalk"
+    "sidewalk",
+    "by_home"
    ],
    "crowds": [
     {
@@ -448,13 +500,20 @@
     "window",
     "mailbox",
     "road",
-    "garden"
+    "garden",
+    "home",
+    "home_window",
+    "home_door",
+    "home_roof"
    ],
    "cameraHints": [
     "establishing",
     "aerial",
     "wide",
-    "porch"
+    "porch",
+    "door",
+    "home_window",
+    "roof"
    ]
   },
   "church_front": {
@@ -666,7 +725,10 @@
     "fridge",
     "window",
     "door",
-    "lamp"
+    "lamp",
+    "side_window",
+    "sill",
+    "outside"
    ],
    "cameraHints": [
     "establishing",
@@ -700,45 +762,16 @@
     "tv",
     "window",
     "picture",
-    "table"
+    "table",
+    "sill",
+    "outside",
+    "curtains"
    ],
    "cameraHints": [
     "establishing",
     "aerial",
     "wide",
     "fireplace"
-   ]
-  },
-  "bedroom": {
-   "interior": true,
-   "water": null,
-   "marks": [
-    "A",
-    "B",
-    "C",
-    "D",
-    "bed",
-    "desk"
-   ],
-   "crowds": [
-    {
-     "area": "crowd",
-     "slots": 34
-    }
-   ],
-   "pois": [
-    "window",
-    "across",
-    "bed",
-    "desk",
-    "door",
-    "lamp"
-   ],
-   "cameraHints": [
-    "establishing",
-    "aerial",
-    "wide",
-    "window"
    ]
   },
   "classroom": {
@@ -784,7 +817,12 @@
     "C",
     "D",
     "road",
-    "driveway"
+    "driveway",
+    "by_pole",
+    "by_home",
+    "neighbor1",
+    "neighbor2",
+    "guard"
    ],
    "crowds": [
     {
@@ -799,13 +837,28 @@
     "road",
     "pole",
     "sky",
-    "across"
+    "across",
+    "home",
+    "home_window",
+    "home_door",
+    "home_roof",
+    "pole_top",
+    "trees",
+    "street_end",
+    "footprint",
+    "neighbor1",
+    "neighbor1_window",
+    "neighbor2",
+    "neighbor2_window"
    ],
    "cameraHints": [
     "establishing",
     "aerial",
     "wide",
-    "street"
+    "street",
+    "to_forest",
+    "pole_top",
+    "home"
    ]
   },
   "forest_road": {
@@ -1017,7 +1070,9 @@
     "D",
     "giant",
     "sky",
-    "roof"
+    "roof",
+    "over_home",
+    "by_home"
    ],
    "crowds": [
     {
@@ -1031,14 +1086,22 @@
     "rooftops",
     "moon",
     "house",
-    "road"
+    "road",
+    "home",
+    "home_window",
+    "home_door",
+    "home_roof",
+    "pole_top",
+    "over_home"
    ],
    "cameraHints": [
     "establishing",
     "aerial",
     "wide",
     "up",
-    "over"
+    "over",
+    "home",
+    "giant_low"
    ]
   },
   "card": {
@@ -1066,6 +1129,122 @@
     "aerial",
     "close",
     "angled"
+   ]
+  },
+  "bedroom": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "bed",
+    "desk"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 34
+    }
+   ],
+   "pois": [
+    "window",
+    "across",
+    "bed",
+    "desk",
+    "door",
+    "lamp",
+    "sill",
+    "outside",
+    "curtains",
+    "wall_art"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "window",
+    "curtains",
+    "sill",
+    "outside"
+   ]
+  },
+  "library": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "table",
+    "librarian",
+    "shelves",
+    "newspapers"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 27
+    }
+   ],
+   "pois": [
+    "shelves",
+    "table",
+    "newspapers",
+    "desk",
+    "window",
+    "door",
+    "lamp",
+    "sign"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "newspapers",
+    "table",
+    "shelves",
+    "desk"
+   ]
+  },
+  "shop_front": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "door",
+    "window",
+    "road"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 55
+    }
+   ],
+   "pois": [
+    "sign",
+    "window",
+    "display",
+    "door",
+    "awning",
+    "road",
+    "bakery",
+    "diner",
+    "lamp"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "sign",
+    "window",
+    "street"
    ]
   }
  }

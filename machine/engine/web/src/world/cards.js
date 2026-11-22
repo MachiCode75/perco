@@ -415,3 +415,9 @@ export function buildCard(ctx, b, P, opts = {}) {
     shadow: { center: [0, CY, 0], radius: 16 }, lightFocus: [0, CY, 0], windowLight: [-0.5, 0.6, 0.65],
   };
 }
+
+// ------------------------------------------------------------------ helpers for world props (note_paper, newspaper rack)
+/** the `note` card's paper (same look as the card), as a canvas — used by the note_paper prop */
+export function drawNoteSheet(W, H, o = {}) { return drawNote(W, H, o, makeRng(hashStr('note:' + JSON.stringify(o)))); }
+/** the `newspaper` card's front page, as a canvas — used by the library newspaper rack */
+export function drawNewsSheet(W, H, o = {}) { return drawNewspaper(W, H, o, makeRng(hashStr('news:' + JSON.stringify(o)))); }
