@@ -91,6 +91,17 @@ P.civic_building = (b, o = {}) => {
   return { w: W, d: D, frontZ: D / 2 + 9, height: Hh + 14 };
 };
 /** skyline tower (lit windows at night via the 'tower' material) */
+/** flat shop/building sign: bold block letters, aspect-correct texture (e.g. TOWN WAREHOUSE) */
+P.shop_sign = (b, o = {}) => {
+  const w = o.width || 12, h = o.height || 2.4, y = o.y ?? 10; const text = String(o.text || 'SHOP').toUpperCase();
+  const key = canvasMat(b.ctx, 'shopsign:' + text + (o.bg || '') + (o.ink || '') + w + 'x' + h, () => {
+    const W = 1024, Hc = Math.max(64, Math.round(1024 * h / w)); const c = document.createElement('canvas'); c.width = W; c.height = Hc; const g = c.getContext('2d');
+    g.fillStyle = o.bg || '#141414'; g.fillRect(0, 0, W, Hc); g.fillStyle = o.ink || '#f2c230'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    let size = Hc * 0.62; g.font = `900 ${size}px "Liberation Sans", "DejaVu Sans", sans-serif`; while (g.measureText(text).width > W * 0.9 && size > 10) { size -= 2; g.font = `900 ${size}px "Liberation Sans", "DejaVu Sans", sans-serif`; }
+    g.fillText(text, W / 2, Hc / 2 + size * 0.04); return c;
+  }, { rough: 0.5 });
+  b.box(w + 0.4, h + 0.4, 0.4, 0, y, 0.2, 'metal', o.frame || '#202224'); b.quad(w, h, 0, y, 0.42, key, '#ffffff', { cast: false });
+};
 P.tower = (b, o = {}) => {
   const w = o.width || 30, d = o.depth || 30, h = o.height || 120;
   b.boxB(w, h, d, 0, 0, 0, 'tower', o.color || '#c8d0d8');
@@ -156,7 +167,7 @@ P.roller_door = (b, o = {}) => { // in a wall plane z=0; open 0..1 raises the sh
   const W = o.width || 16, H = o.height || 14, open = Math.max(0, Math.min(1, o.open || 0)), c = o.color || '#c8ccd0';
   b.box(W + 1.2, 0.8, 0.6, 0, H + 0.4, 0.3, 'metal', '#5a5f66'); for (const s of [-1, 1]) b.box(0.6, H, 0.6, s * (W / 2 + 0.3), H / 2, 0.3, 'metal', '#5a5f66');
   const sh = H * (1 - open); if (sh > 0.1) b.quad(W, sh, 0, H - sh / 2, 0.12, 'rollerdoor', c, { cast: false, uvRect: [0, 0, 1, sh / H] });
-  if (open > 0) b.quad(W, H - sh, 0, (H - sh) / 2, -0.4, 'plain', '#0e0e10', { cast: false });
+  if (open > 0) b.quad(W, H - sh, 0, (H - sh) / 2, 0.06, 'plain', '#0b0b0c', { cast: false });
 };
 P.boarded_window = (b, o = {}) => { // planks nailed over a window opening on a wall plane z=0
   const w = o.width || 5, h = o.height || 5, y = o.y ?? 3, c = o.color || '#8a6a46';
@@ -210,7 +221,7 @@ P.plaque = (b, o = {}) => { // bronze plaque on a wall plane z=0, centred at y (
 };
 /** statue on a granite plinth with a plaque; kind 'head' (giant bust, ref6) | 'figure' (blocky person) */
 P.statue = (b, o = {}) => {
-  const kind = o.kind || 'head', bronze = o.color || '#4a3a2a'; const ph = o.plinth || 7, pw = 8;
+  const kind = o.kind || 'head', bronze = o.color || '#6e5536'; const ph = o.plinth || 7, pw = 8;
   b.boxB(pw + 2, 1, pw + 2, 0, 0, 0, 'granite', '#8a8e92'); b.boxB(pw, ph, pw, 0, 1, 0, 'granite', '#9a9ea2'); b.boxB(pw + 1, 0.8, pw + 1, 0, 1 + ph, 0, 'granite', '#8a8e92');
   b.push(0, 0, pw / 2, 0); P.plaque(b, { y: 1 + ph * 0.55, width: 3.6, height: 2.4, title: o.title ?? 'ELIAS HART', text: o.text ?? 'THE ONE WHO NEVER SLEPT' }); b.pop();
   const y0 = 1.8 + ph;
@@ -222,11 +233,12 @@ P.statue = (b, o = {}) => {
   } else {
     const c = bronze; // big stylised head (moai-like bust)
     b.boxB(6.2, 2.4, 4.6, 0, y0, 0, 'bronze', shade(c, -0.05));
-    b.boxB(5.4, 8.5, 5.0, 0, y0 + 2.2, 0, 'bronze', c);
-    b.boxB(5.8, 1.3, 5.4, 0, y0 + 9.6, -0.2, 'bronze', shade(c, 0.03));
-    b.box(4.6, 0.9, 1.0, 0, y0 + 7.6, 2.6, 'bronze', shade(c, -0.08));
-    b.prim('wedge', 0, y0 + 4.2, 2.9, 1.5, 3.4, 1.6, 'bronze', shade(c, 0.02));
-    for (const s of [-1, 1]) { b.box(1.3, 0.6, 0.3, s * 1.4, y0 + 6.8, 2.55, 'plastic', '#1a140e'); b.box(0.8, 3, 0.8, s * 2.9, y0 + 6, 0, 'bronze', c); }
-    b.box(2.6, 0.5, 0.3, 0, y0 + 3.2, 2.55, 'plastic', '#1a140e');
+    b.prim('frus8', 0, y0 + 6.2, 0, 3.4, 8.4, 3.1, 'bronze', c, { ry: Math.PI / 8 });            // tapered head
+    b.prim('box', 0, y0 + 10.6, -0.3, 5.0, 1.2, 4.6, 'bronze', shade(c, 0.04));                  // flat crown
+    b.box(5.0, 1.1, 1.3, 0, y0 + 7.8, 2.4, 'bronze', shade(c, 0.06));                           // brow ridge
+    b.prim('wedge', 0, y0 + 3.6, 3.0, 1.9, 4.4, 2.2, 'bronze', shade(c, 0.05));                 // big nose
+    for (const s of [-1, 1]) { b.box(1.5, 0.7, 0.3, s * 1.45, y0 + 6.9, 2.35, 'plastic', '#120d08'); b.box(1.0, 3.6, 1.0, s * 3.2, y0 + 6, 0.2, 'bronze', shade(c, -0.04)); }
+    b.box(2.8, 0.6, 0.6, 0, y0 + 2.6, 2.6, 'bronze', shade(c, -0.12));                            // lips
+    b.prim('box', 0, y0 + 1.0, 1.6, 4.0, 2.0, 2.0, 'bronze', shade(c, -0.02));                    // chin
   }
 };

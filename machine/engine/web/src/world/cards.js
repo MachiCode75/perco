@@ -73,8 +73,8 @@ function crayon(g, pts, color, width, r, closed = false) {
 }
 const circlePts = (cx, cy, rx, ry, n = 40) => Array.from({ length: n + 1 }, (_, i) => [cx + Math.cos((i / n) * Math.PI * 2) * rx, cy + Math.sin((i / n) * Math.PI * 2) * ry]);
 function hatch(g, cx, cy, rx, ry, color, r, density = 260) {
-  g.save(); g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); g.clip(); g.strokeStyle = color; g.globalAlpha = 0.45; g.lineWidth = 4;
-  for (let i = 0; i < density; i++) { const x = cx + (r() - 0.5) * rx * 2, y = cy + (r() - 0.5) * ry * 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 14 + r() * 10, y - 10 - r() * 8); g.stroke(); }
+  g.save(); g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); g.clip(); g.strokeStyle = color; g.globalAlpha = 0.5; g.lineWidth = 6;
+  for (let i = 0; i < density * 3; i++) { const x = cx + (r() - 0.5) * rx * 2, y = cy + (r() - 0.5) * ry * 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 14 + r() * 10, y - 10 - r() * 8); g.stroke(); }
   g.restore(); g.globalAlpha = 1;
 }
 /** simple child crayon drawings: moon | sun | face | house | eye | tree | family | none */
@@ -267,8 +267,8 @@ function drawNewspaper(W, H, o, r) {
   const c = canvas(W, H), g = c.getContext('2d');
   g.fillStyle = '#ece6d6'; g.fillRect(0, 0, W, H); grain(g, W, H, 16, 11);
   const pad = W * 0.06; g.fillStyle = '#151515'; g.textAlign = 'center';
-  const mast = (o.title || 'THE DAILY GAZETTE').toUpperCase(); const mf = fit(g, mast, (s) => `bold ${s}px ${SERIF}`, W - 2 * pad, H * 0.08, 110, 20, 1);
-  g.font = `bold ${mf.size}px ${SERIF}`; g.fillText(mf.lines[0], W / 2, H * 0.08);
+  const mast = (o.title || 'THE DAILY GAZETTE').toUpperCase(); let ms = 110; g.font = `bold ${ms}px ${SERIF}`; while (g.measureText(mast).width > W - 2 * pad && ms > 16) { ms -= 2; g.font = `bold ${ms}px ${SERIF}`; }
+  g.fillText(mast, W / 2, H * 0.08);
   g.fillRect(pad, H * 0.1, W - 2 * pad, 4); g.font = `${H * 0.016}px ${SERIF}`; g.fillText(o.date || 'MORNING EDITION  •  25¢', W / 2, H * 0.122); g.fillRect(pad, H * 0.13, W - 2 * pad, 2);
   const hl = fit(g, (o.text || 'TOWN VANISHES OVERNIGHT').toUpperCase(), (s) => `bold ${s}px ${SERIF}`, W - 2 * pad, H * 0.28, 150, 24, 1.05);
   g.font = `bold ${hl.size}px ${SERIF}`; hl.lines.forEach((l, i) => g.fillText(l, W / 2, H * 0.15 + (i + 0.9) * hl.size * 1.05));

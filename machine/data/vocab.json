@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-21T20:34:13.828Z",
+ "generated": "2026-11-22T02:14:05.438Z",
  "FACES": [
   "neutral",
   "smile",
@@ -15,7 +15,12 @@
   "sleep",
   "smirk",
   "talk",
-  "wink"
+  "wink",
+  "creepy_grin",
+  "wide_eyes",
+  "hollow",
+  "teeth",
+  "blank"
  ],
  "POSES": [
   "stand",
@@ -37,7 +42,10 @@
   "jump",
   "talk",
   "wade",
-  "carry"
+  "carry",
+  "reach",
+  "loom",
+  "lean"
  ],
  "HAIR_STYLES": [
   "spiky",
@@ -137,7 +145,30 @@
   "sign_board",
   "curtain",
   "stairs",
-  "pier_post"
+  "pier_post",
+  "house_ranch",
+  "brownstone",
+  "civic_building",
+  "shop_sign",
+  "tower",
+  "power_pole",
+  "garbage_can",
+  "privacy_fence",
+  "swing_set",
+  "swing",
+  "treehouse",
+  "crate",
+  "pallet",
+  "roller_door",
+  "boarded_window",
+  "guard_rail",
+  "road_sign",
+  "hospital_bed",
+  "heart_monitor",
+  "iv_pole",
+  "curtain_track",
+  "plaque",
+  "statue"
  ],
  "FRAMINGS": [
   "extreme_wide",
@@ -715,6 +746,299 @@
     "aerial",
     "wide",
     "students"
+   ]
+  },
+  "suburban_street": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "road",
+    "driveway"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 34
+    }
+   ],
+   "pois": [
+    "house",
+    "door",
+    "garage",
+    "road",
+    "pole",
+    "sky",
+    "across"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "street"
+   ]
+  },
+  "forest_road": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "shoulder"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 30
+    }
+   ],
+   "pois": [
+    "road",
+    "forest",
+    "sign",
+    "rail",
+    "horizon"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "shoulder"
+   ]
+  },
+  "hospital_room": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "bed",
+    "bedside",
+    "chair"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 38
+    }
+   ],
+   "pois": [
+    "bed",
+    "patient",
+    "monitor",
+    "window",
+    "door",
+    "curtain"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "monitor",
+    "patient"
+   ]
+  },
+  "warehouse": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "door",
+    "inside"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 32
+    }
+   ],
+   "pois": [
+    "door",
+    "sign",
+    "crates",
+    "inside",
+    "lamp"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "sign"
+   ]
+  },
+  "backyard": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "treehouse",
+    "swing",
+    "ladder",
+    "deck"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 36
+    }
+   ],
+   "pois": [
+    "treehouse",
+    "swing",
+    "fence",
+    "house",
+    "back_door",
+    "tree"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "house",
+    "treehouse"
+   ]
+  },
+  "city_street": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "sidewalk",
+    "stoop"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 34
+    }
+   ],
+   "pois": [
+    "skyline",
+    "road",
+    "stoop",
+    "door",
+    "lamp",
+    "buildings"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "stoop"
+   ]
+  },
+  "town_square": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "plaque",
+    "statue_top"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 43
+    },
+    {
+     "area": "audience",
+     "slots": 30
+    }
+   ],
+   "pois": [
+    "statue",
+    "plaque",
+    "hall",
+    "benches",
+    "lamp",
+    "square"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "plaque",
+    "statue"
+   ]
+  },
+  "rooftops_sky": {
+   "interior": false,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "giant",
+    "sky",
+    "roof"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 35
+    }
+   ],
+   "pois": [
+    "sky",
+    "giant",
+    "rooftops",
+    "moon",
+    "house",
+    "road"
+   ],
+   "cameraHints": [
+    "establishing",
+    "aerial",
+    "wide",
+    "up",
+    "over"
+   ]
+  },
+  "card": {
+   "interior": true,
+   "water": null,
+   "marks": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "crowds": [
+    {
+     "area": "crowd",
+     "slots": 30
+    }
+   ],
+   "pois": [
+    "card",
+    "text"
+   ],
+   "cameraHints": [
+    "establishing",
+    "wide",
+    "aerial",
+    "close",
+    "angled"
    ]
   }
  }

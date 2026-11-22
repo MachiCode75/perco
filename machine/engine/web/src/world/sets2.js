@@ -26,20 +26,20 @@ const NEW = {
       b.push(x, 0, -24, 0); const info = P.house_ranch(b, { garage: r() < 0.8, boarded: r() < 0.15 }); b.pop();
       if (info.garage) b.boxB(11, 0.1, 21.5, x + info.garage.x, 0, -24 + info.d / 2 + 10.7, 'concrete', '#cfc9be', { cast: false });
       b.boxB(3, 0.1, 18.5, x + info.door.x, 0, -24 + info.d / 2 + 9.3, 'concrete', '#cfc9be', { cast: false });
-      if (b.lod === 'near') { for (let k = 0; k < 3; k++) at(b, x - 14 + k * 3.2, 0, -24 + info.d / 2 + 2.2, 0, P.bush, { flowers: false, size: 1.2, color: '#6a8a3a' }); if (r() < 0.7) at(b, x + (info.garage ? info.garage.x - 7.5 : 8), 0, 2.6, 0, P.garbage_can, {}); }
+      if (b.lod === 'near') { for (let k = 0; k < 3; k++) at(b, x - 14 + k * 3.2, 0, -24 + info.d / 2 + 2.2, 0, P.bush, { flowers: false, size: 1.2, color: '#6a8a3a' }); const gx = x + (info.garage ? info.garage.x - 7.5 : 8); if (r() < 0.7 && Math.abs(gx) > 7) at(b, gx, 0, 2.6, 0, P.garbage_can, {}); }
       if (r() < 0.5) treeAt(b, x + 18, -12 + r() * 4, { kind: 'tree_round', height: range(r, 12, 16), color: '#6a8a3a' });
     }
-    for (let i = -4; i <= 4; i++) { b.lod = 'far'; b.push(i * 42 + 10, 0, 52, Math.PI); P.house_ranch(b, { garage: r() < 0.6 }); b.pop(); }
+    for (let i = -4; i <= 4; i++) { b.lod = 'far'; b.push(i * 42 + 10, 0, 64, Math.PI); P.house_ranch(b, { garage: r() < 0.6 }); b.pop(); }
     b.lod = 'near';
-    for (let x = -200; x <= 200; x += 44) { b.push(x + 22, 0, -2.6, 0); const pi = P.power_pole(b, { transformer: (x / 44) % 2 === 0 }); b.pop(); poles.push(x + 22); }
+    for (let x = -200; x <= 200; x += 44) { b.push(x, 0, -2.6, 0); P.power_pole(b, { transformer: Math.round(x / 44) % 2 === 0 }); b.pop(); poles.push(x); }
     for (let i = 0; i < poles.length - 1; i++) for (const dx of [-3.8, 0.8, 3.8]) wire(b, [poles[i] + dx, 25, -2.6], [poles[i + 1] + dx, 25, -2.6], 1.6);
     for (let k = 0; k < 6; k++) { const x = poles[k + 1]; wire(b, [x + 0.8, 25, -2.6], [x + 6, 18, 26], 0.8); }
     backdropHills(b, 0, -100, 420, 22, DESERT_HILLS);
     const crowd = [...rowSlots(-40, 40, 3.4, 1.2, 0, 0.35, (x) => Math.abs(x) < 6), ...rowSlots(-30, 30, 3.6, -5, 0, 0, (x) => Math.abs(x) < 8)];
     return { waterLevel: null,
       marks: { A: M(0, 0.35, 1.2), B: M(3.3, 0.35, 0.8), C: M(-3.3, 0.35, 0.8), D: M(0, 0, -4), road: M(0, 0, 12), driveway: M(-14, 0, -6), crowd },
-      pois: { house: V(-4, 6, -24), door: V(-7, 3, -12), garage: V(4, 4, -12), road: V(0, 0, 13), pole: V(-22, 20, -2.6), sky: V(0, 45, -80), across: V(0, 5, 52) },
-      cameraHints: { establishing: H([0, 8, 46], [0, 8, -16], 45), aerial: H([40, 60, 70], [0, 0, -20], 45), wide: H([0, 5, 22], [0, 4.5, -1], 50), street: H([70, 6, 13], [-60, 6, 2], 38) },
+      pois: { house: V(-4, 6, -24), door: V(-7, 3, -12), garage: V(4, 4, -12), road: V(0, 0, 13), pole: V(-22, 20, -2.6), sky: V(0, 45, -80), across: V(0, 5, 64) },
+      cameraHints: { establishing: H([0, 8, 42], [0, 8, -16], 45), aerial: H([40, 60, 70], [0, 0, -20], 45), wide: H([0, 5, 22], [0, 4.5, -1], 50), street: H([70, 6, 13], [-60, 6, 2], 38) },
       env: { day: { top: '#5d8cc4', mid: '#a6bfd2', hor: '#e3d8c4', fog: '#e0d4bf', ground: '#c8b89a', hemiGnd: '#a89470', fogF: 1100 }, golden: { hor: '#ffbf7a', fog: '#e8b888' } },
       shadow: { center: [0, 0, -10], radius: 60 }, lightFocus: [0, 0, 0] };
   },
@@ -105,12 +105,9 @@ const NEW = {
     b.push(0, 0, fz, 0);
     P.roller_door(b, { width: 18, height: 15, open: opts.open ?? 0.4 });
     at(b, 15, 0, 0, 0, P.door, { width: 4, height: 8, color: '#5a5f66', frame: '#3a3f46' });
-    P.sign_board(b, { text: opts.sign || 'TOWN WAREHOUSE', posts: false, back: false, width: 26, height: 4.6, y: 18.6, colors: ['#f2c230'], bg: '#141414', underline: false });
-    b.box(1.2, 0.8, 1.2, -11, 17, 0.6, 'lampglass', '#fff3c8', { cast: false }); b.box(0.3, 0.3, 1.2, -11, 17.4, 0.3, 'metal', '#333', { cast: false }); b.lamp(-11, 16.4, 1.4, 'post');
+    P.shop_sign(b, { text: opts.sign || 'TOWN WAREHOUSE', width: 28, height: 4.6, y: 18.6, bg: '#141414', ink: '#f2c230' });
+    b.box(1.2, 0.8, 1.2, -11, 14.6, 0.6, 'lampglass', '#fff3c8', { cast: false }); b.box(0.3, 0.3, 1.2, -11, 15.0, 0.3, 'metal', '#333', { cast: false }); b.lamp(-11, 14.0, 1.4, 'post');
     b.pop();
-    // dark interior visible through the opening + crates inside
-    b.boxB(18, 15, 1, 0, 0, fz - 14, 'plain', '#0e0e10', { cast: false });
-    for (let k = 0; k < 6; k++) at(b, -6 + (k % 3) * 4, 0, fz - 6 - Math.floor(k / 3) * 4, 0, P.crate, { size: 3.4 });
     // crates & pallets outside
     const stacks = [[-17, -9], [-21, -6], [-17, -4.5], [20, -8], [23.5, -5]];
     for (const [x, z] of stacks) { at(b, x, 0, z, r() * 0.4 - 0.2, P.crate, { size: range(r, 3, 3.8) }); if (r() < 0.6) at(b, x + 0.3, 3.3, z, r() * 0.3, P.crate, { size: 2.8 }); }
@@ -123,7 +120,7 @@ const NEW = {
     const crowd = gridSlots(-22, 22, -10, 8, 40, 0, 0, (x, z) => Math.abs(x) < 6 && z > -8);
     return { waterLevel: null,
       marks: { A: M(0, 0, -1.5), B: M(3.4, 0, -2), C: M(-3.4, 0, -2), D: M(0, 0, -7), door: M(0, 0, -15), inside: M(0, 0, -22, 0), crowd },
-      pois: { door: V(0, 6, -16), sign: V(0, 18.6, -15.8), crates: V(-18, 2, -6), inside: V(0, 4, -32), lamp: V(-11, 17, -15) },
+      pois: { door: V(0, 6, -16), sign: V(0, 18.6, -15.8), crates: V(-18, 2, -6), inside: V(0, 4, -32), lamp: V(-11, 14.6, -15) },
       cameraHints: { establishing: H([0, 9, 40], [0, 11.5, -16], 46), aerial: H([40, 50, 50], [0, 5, -20], 45), wide: H([0, 5, 20], [0, 4.5, -3], 50), sign: H([0, 14, 6], [0, 18, -16], 40) },
       env: { day: { hor: '#e3d8c4', fog: '#e0d4bf', mid: '#a6bfd2', top: '#5d8cc4' } },
       shadow: { center: [0, 0, -10], radius: 55 }, lightFocus: [0, 0, -10] };
@@ -173,7 +170,7 @@ const NEW = {
     b.chunk = ''; b.lod = 'near';
     for (let z = 40; z > -400; z -= 30) for (const s of [-1, 1]) { b.chunk = z < -90 ? 'far' : ''; at(b, s * 11.2, 0.35, z + (s > 0 ? 15 : 0), 0, P.lamp_post, { height: 12 }); if (z > -150 && ((z / 30) | 0) % 2 === 0) { b.boxB(2.4, 0.3, 2.4, s * 13, 0.3, z + 7, 'dirt', '#ffffff', { cast: false }); at(b, s * 13, 0.35, z + 7, 0, P.tree_round, { height: 14 }); } }
     b.chunk = '';
-    for (const [x, z] of [[7.5, 18], [-7.5, -14], [7.5, -40], [-7.5, -66], [7.5, -100]]) at(b, x, 0, z, 0, P.car, {});
+    for (const [x, z] of [[-7.5, -14], [7.5, -40], [-7.5, -66], [7.5, -100]]) at(b, x, 0, z, 0, P.car, { color: pick(r, ['#c0392b', '#2e6bc6', '#e8e4dc', '#3c8d5a', '#e3b23c']) });
     // skyline
     b.chunk = 'bg'; b.cast = false; b.receive = false;
     for (let k = 0; k < 16; k++) { const x = -160 + k * 21 + range(r, -6, 6); at(b, x, 0, -560 - r() * 120, 0, P.tower, { width: range(r, 18, 34), depth: 24, height: range(r, 70, 190), spire: r() < 0.3, color: pick(r, ['#b8c4d0', '#c8ccd4', '#a8b4c4']) }); }
@@ -194,7 +191,7 @@ const NEW = {
     b.boxB(76, 0.25, 70, 0, 0, sz + 4, 'cobble', '#ffffff', { cast: false });
     at(b, 0, 0.25, sz, 0, P.statue, { kind: opts.statue || 'head', title: opts.title ?? 'ELIAS HART', text: opts.text ?? 'THE ONE WHO NEVER SLEPT' });
     for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2 + Math.PI / 8; const x = Math.sin(a) * 15, z = sz + Math.cos(a) * 15; if (Math.cos(a) > 0.8) continue; at(b, x, 0.25, z, a + Math.PI, P.bench, {}); }
-    for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; at(b, Math.sin(a) * 21, 0.25, sz + Math.cos(a) * 21, 0, P.lamp_post, { height: 12 }); }
+    for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2 + Math.PI / 8; at(b, Math.sin(a) * 21, 0.25, sz + Math.cos(a) * 21, 0, P.lamp_post, { height: 12 }); }
     for (const [x, z] of [[-30, sz - 26], [30, sz - 26], [-30, sz + 30], [30, sz + 30], [-34, sz], [34, sz]]) { at(b, x, 0.25, z, 0, P.tree_round, { height: 16 }); }
     for (const s of [-1, 1]) at(b, s * 9, 0.25, sz + 22, 0, P.planter, { width: 5 });
     b.push(0, 0, sz - 60, 0); P.civic_building(b, {}); b.pop();
@@ -202,7 +199,7 @@ const NEW = {
     for (let k = 0; k < 6; k++) { b.lod = 'far'; b.push(-45 + k * 18, 0, 46, Math.PI); P.brownstone(b, { floors: 3 + (k % 2) }); b.pop(); }
     b.lod = 'near';
     b.chunk = 'bg'; b.cast = false; b.receive = false;
-    for (let k = 0; k < 10; k++) at(b, -150 + k * 33, 0, -330 - r() * 60, 0, P.tower, { width: range(r, 20, 30), height: range(r, 80, 170), spire: r() < 0.3 });
+    for (let k = 0; k < 10; k++) at(b, -220 + k * 48, 0, -520 - r() * 80, 0, P.tower, { width: range(r, 22, 34), height: range(r, 70, 150), spire: r() < 0.3 });
     b.chunk = ''; b.cast = true; b.receive = true;
     // crowd: a ring around the statue facing it (the reference's gathering), then rows facing camera
     const crowd = [];
@@ -221,9 +218,9 @@ const NEW = {
     const r = b.rng;
     ground(b, -300, 300, -300, 300);
     at(b, 0, 0, 4, 0, P.sidewalk, { length: 400, width: 4 }); at(b, 0, 0, 16, 0, P.road_segment, { length: 400, width: 16 });
-    for (let k = -3; k <= 3; k++) { b.lod = Math.abs(k) <= 1 ? 'near' : 'mid'; b.push(k * 44, 0, -4, 0); lot(b, housePlan(r, k + 4), { yard: 8 }); b.pop(); }
+    for (let k = -3; k <= 3; k++) { b.lod = Math.abs(k) <= 1 ? 'near' : 'mid'; b.push(k * 44, 0, -6, 0); lot(b, housePlan(r, k + 4), { yard: 8 }); b.pop(); }
     for (let k = -4; k <= 4; k++) { b.lod = 'far'; b.chunk = 'far'; b.push(k * 46 + 20, 0, -96, 0); lot(b, housePlan(r, k + 9), { yard: 6, fence: false }); b.pop(); }
-    for (let k = -3; k <= 3; k++) { b.lod = 'far'; b.chunk = 'far'; b.push(k * 44 + 10, 0, 36, Math.PI); lot(b, housePlan(r, k + 2), { yard: 6 }); b.pop(); }
+    for (let k = -3; k <= 3; k++) { b.lod = 'far'; b.chunk = 'far'; b.push(k * 44 + 10, 0, 74, Math.PI); lot(b, housePlan(r, k + 2), { yard: 6 }); b.pop(); }
     b.chunk = ''; b.lod = 'near';
     for (let k = 0; k < 14; k++) treeAt(b, range(r, -150, 150), -70 - r() * 15, { kind: 'tree_pine', height: range(r, 24, 32) });
     for (let x = -132; x <= 132; x += 24) if (Math.abs(x) > 10) at(b, x, 0, 6.6, 0, P.lamp_post, {});
@@ -232,7 +229,7 @@ const NEW = {
     return { waterLevel: null,
       marks: { A: M(0, 0.35, 4), B: M(3.4, 0.35, 3.4), C: M(-3.4, 0.35, 3.4), D: M(0, 0, 9), giant: M(0, 0, -62, 0), sky: M(0, 58, -110, 0), roof: M(0, 33, -38, 0), crowd },
       pois: { sky: V(0, 60, -110), giant: V(0, 30, -62), rooftops: V(0, 30, -40), moon: V(-60, 90, -260), house: V(0, 14, -30), road: V(0, 0, 16) },
-      cameraHints: { establishing: H([0, 2.2, 34], [0, 34, -70], 56), aerial: H([0, 45, 80], [0, 20, -60], 50), wide: H([0, 4, 24], [0, 9, 0], 52), up: H([0, 1.6, 14], [0, 48, -90], 60), over: H([0, 34, 30], [0, 34, -110], 50) },
+      cameraHints: { establishing: H([0, 1.8, 40], [0, 52, -80], 60), aerial: H([0, 45, 80], [0, 20, -60], 50), wide: H([0, 4, 24], [0, 9, 0], 52), up: H([0, 1.6, 14], [0, 48, -90], 60), over: H([0, 34, 30], [0, 34, -110], 50) },
       shadow: { center: [0, 0, -20], radius: 70 }, lightFocus: [0, 0, 0] };
   },
 

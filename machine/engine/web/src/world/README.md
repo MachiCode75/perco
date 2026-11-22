@@ -27,6 +27,10 @@ Previews: `docs/img/world_<set>.jpg` (one per set) and `docs/img/world_times.jpg
 | `sets.js` | town layout generator + the 15 set compositions |
 | `environment.js` | sky shader, lights, fog, exposure, night lamps, snow/rain, underwater switch |
 | `water.js` | lake surface shader, ripple rings around waders |
+| `props2.js` | v2 props (ranch house, brownstone, power pole, treehouse, hospital, statue, plaque, …) |
+| `sets2.js` | v2 sets (suburban_street … rooftops_sky) + `card` |
+| `cards.js` | text cards: canvas drawing of the 10 card styles, auto-fit text, crayon drawings |
+| `fonts/` | vendored OFL fonts (Patrick Hand = kid handwriting, Permanent Marker), see `fonts/LICENSE.txt` |
 
 ## Conventions
 
@@ -67,12 +71,51 @@ Previews: `docs/img/world_<set>.jpg` (one per set) and `docs/img/world_times.jpg
 | `bedroom` | upstairs room, big window on the back wall looking across the lake at the town (lit windows at night), bed, desk lamp | `bed`, `desk`; `A` is at the window | window, across, bed, desk, door, lamp | `window` (over the shoulder out of the window) |
 | `classroom` | chalkboard, teacher desk, 12 student desks facing −Z, windows, clock | `teacher`; array `seats` (12 desk chairs, yaw π = facing the board) | board, desk, window, students, door | `students` (from the board) |
 
+### v2 sets (multi-reference, `docs/05-multi-reference.md`)
+
+Previews: `docs/img/world_<set>.jpg`, cards: `docs/img/world_cards.jpg`.
+
+| Set | What | Extra marks | POIs | Extra hints |
+|---|---|---|---|---|
+| `suburban_street` | ref5 desert suburb: single-storey stucco/brick ranch houses with tile hip roofs, garages, driveways, dry lawns, wooden power poles + wires, wide plain road (camera side), dusty sky (`set.env`) | `road`, `driveway` | house, door, garage, road, pole, sky, across | `street` (along the road) |
+| `forest_road` | ref2: two-lane road running away (−Z) through dense tall pines, guard rail, curve/speed signs, one lamp; great at night/rain. `opts.sign` = text of a roadside wooden sign | `shoulder` | road, forest, sign, rail, horizon | `shoulder` |
+| `hospital_room` | ref2 ending: hospital bed, heart monitor (72), IV pole, privacy curtain, window with blinds, chair, flowers | `bed` (on the mattress, y=3.1), `bedside`, `chair` | bed, patient, monitor, window, door, curtain | `monitor` (screen close-up), `patient` |
+| `warehouse` | ref5: big corrugated shed, roller door half open (`opts.open` 0–1), black sign with yellow letters (`opts.sign`, default TOWN WAREHOUSE), crates, pallets, bins, poles | `door`, `inside` | door, sign, crates, inside, lamp | `sign` |
+| `backyard` | ref3: lawn, privacy fence, swing set, treehouse in a big tree (ladder), neighbours over the fence; house back + deck behind the camera | `treehouse` (on the platform, y=11.3), `swing`, `ladder`, `deck` | treehouse, swing, fence, house, back_door, tree | `house` (reverse), `treehouse` |
+| `city_street` | ref6: brick brownstone rows with stoops along a street running away (−Z), street lamps, trees, parked cars, skyline at the vanishing point (towers light up at night) | `sidewalk`, `stoop` (top step, y=5) | skyline, road, stoop, door, lamp, buildings | `stoop` |
+| `town_square` | ref6: cobbled plaza, statue (`opts.statue` 'head'\|'figure') on a granite plinth with bronze plaque (`opts.title`, `opts.text`), benches, lamps, civic building with portico/dome, brownstones, skyline | `plaque` (in front of the plaque, facing it), `statue_top`; `crowd` = rings around the statue **facing it**, `audience` = rows facing camera | statue, plaque, hall, benches, lamp, square | `plaque` (close), `statue` (low angle) |
+| `rooftops_sky` | ref3/ref5: low camera looking up over the roofs, lots of sky; place a giant behind the row or a face in the sky | `giant` (ground behind the houses, for a `scale` 6–8 creature), `sky` (y=58, for `sky_face`), `roof` (on a ridge) | sky, giant, rooftops, moon, house, road | `up` (steep look up), `over` (over the roofs) |
+| `card` | full-frame text card, see below | `A–D`/`crowd` exist but are off-frame | card, text | `close`, `angled` |
+
+### Text cards — `set: "card"`, `setOptions: {style, text, title, drawing, …}`
+
+The establishing/wide/aerial hint is the same straight-on 9:16 framing (camera `[0,8,30]`, fov 30 → a
+9 × 16 window); the card object fills it, with a little background (wood table, wall, plinth, road)
+at the edges so slow push-ins/pull-outs stay plausible. Text is auto-sized and wrapped (`\n` forces a
+line break). Each set instance is cached per options; card textures are disposed on eviction.
+
+| style | look | options |
+|---|---|---|
+| `notebook` | lined paper (red margin) on a table, kid handwriting (Patrick Hand) with per-letter jitter | `text`, `title` (underlined), `drawing`: `moon` (smiley moon with pins, ref3) \| `sun` \| `face` \| `house` \| `eye` \| `tree` \| `family` \| `none` |
+| `note` | yellow sticky/paper note with tape on a table | `text`, `title` (marker), `drawing`, `color`, `ink` |
+| `sign_wood` | dark wooden roadside sign on posts, carved serif letters, forest + road behind | `title` (default WELCOME TO), `text` (default MAPLE HOLLOW), `subtitle`, `color`, `ink` |
+| `sign_metal` | green highway sign with white border/letters on poles | `title`, `text`, `subtitle` (e.g. POP. 412), `color` (board), `ink` |
+| `plaque` | bronze plaque with engraved serif text on a granite plinth | `title` (ELIAS HART), `text` (THE ONE WHO NEVER SLEPT) |
+| `phone` | phone in hand-size on a table, message bubbles | `title` (contact), `text`: one message per line, lines starting with `>` are sent (blue, right), `time` |
+| `newspaper` | newsprint front page: masthead, headline, photo, columns | `title` (masthead), `text` (headline), `drawing` (photo), `date` |
+| `monitor` | heart monitor: black screen, green ECG line, ♥ + number (ref2) | `text` (number, default 72), `title` (label, default HR) |
+| `calendar` | wall calendar: month header, days crossed out in red up to the circled day | `title` (month), `text` (day(s) to circle, e.g. "13" or "13,14"), `note`, `startDay` (0–6), `days`, `cross:false` |
+| `clock` | red 7-segment alarm clock in a dark room (ref4 "3:00"), or an analog face | `text` (e.g. "3:00"), `title` (AM/PM), `color`, `analog:true` |
+
+Sign/plaque cards are outdoor (`interior: false`, environment sky); the others are interior-lit
+(`interior: true`) with a soft lamp gradient, so `time: night` makes them darker/moodier.
+
 Interiors: `interior: true`, `waterLevel: null`. Walls/ceiling do not cast shadows so the window
 light (directional, `set.windowLight`) enters the room; practical lamps become point lights.
 
 `opts` for `createSet`: `{ seed }` (variation of the generated town; default 1).
 
-## Props (`PROPS`, 58)
+## Props (`PROPS`, 81)
 
 `createProp(ctx, id, opts)` → merged `THREE.Group` (`userData.info` holds layout info, e.g. the
 house door position). Unknown ids return an empty group (warning, never throws).
@@ -95,7 +138,17 @@ house door position). Unknown ids return an empty group (warning, never throws).
   `bookshelf`, `kitchen_counter (length, sink, upper)`, `fridge`, `stove`, `rug`,
   `picture_frame (variant 0–3, y)`, `tv`, `lamp (kind 'floor'|'table')`, `pendant_lamp (drop)`,
   `ceiling_light`, `cabinet`, `desk` (school desk + chair), `chalkboard`, `clock`, `curtain`, `stairs`.
-* **Signs**: `sign_board ({text, width, height, posts, colors, bg})` — marker-style text texture.
+* **Signs**: `sign_board ({text, width, height, posts, colors, bg})` — marker-style text texture;
+  `shop_sign ({text, width, height, y, bg, ink})` — bold block letters (e.g. TOWN WAREHOUSE);
+  `road_sign ({kind: 'curve'|'stop'|'speed', text})`; `plaque ({title, text, width, height, y})`.
+* **v2 buildings**: `house_ranch (color, roof, garage, boarded, door)` — single-storey stucco/brick,
+  tile hip roof; `brownstone (floors 3–4, color, flip, stoopX)` — returns `stoop`/`door` positions;
+  `civic_building`; `tower (width, depth, height, spire)` — skyline block with night-lit windows.
+* **v2 street/yard**: `power_pole (height, transformer)` (+ `wire()` helper in props2.js),
+  `garbage_can` (wheelie bin), `privacy_fence (length, height)`, `swing_set`/`swing`, `treehouse (height)`,
+  `crate (size)`, `pallet`, `roller_door (width, height, open 0–1)`, `boarded_window (width, height, y)`,
+  `guard_rail (length)`, `statue (kind 'head'|'figure', title, text)`.
+* **v2 hospital**: `hospital_bed`, `heart_monitor (text)`, `iv_pole`, `curtain_track (length, h)`.
 
 Composing a new place: create a `Builder` (`core.js`) and call `P.<id>(b, opts)` inside
 `b.push(x, y, z, yaw) … b.pop()` — see `sets.js` (`lot()`, `shoreSide()`, `room()` helpers).
@@ -125,7 +178,8 @@ Composing a new place: create a `Builder` (`core.js`) and call `P.<id>(b, opts)`
 * Opaque draw order is front-to-back-ish (props/houses, then ground, far chunk, hills, lake bed,
   sky last) so early-z rejects hidden pixels.
 * Measured through the real runtime (`engine/tools/test_world/perf.js`, 720×1280, 10 characters,
-  JPEG encode included, low machine load): lake_dock **~270 ms (establishing) / ~350 ms (wide)** per frame.
+  JPEG encode included, low machine load): lake_dock **~270 ms (establishing) / ~350 ms (wide)** per frame;
+  v2: town_square ~190 ms, city_street ~285–315 ms, forest_road ~155–195 ms, suburban_street ~180–190 ms.
   The first frame of a new shot also compiles shaders (~1–1.5 s); built sets are cached on ctx.
 
 ## Testing tools (`engine/tools/test_world/`)
@@ -134,4 +188,8 @@ Composing a new place: create a `Builder` (`core.js`) and call `P.<id>(b, opts)`
   free-camera renders through `index.html`/`page.js` (`--cam x,y,z:tx,ty,tz:fov` for a custom camera).
 * `perf.js` real-runtime frame timing; `cpuprof.js` load-independent CPU-time profile vs a
   calibration scene (`--ab noRecv,noWater,…` for A/B); `dump.js` lists marks/pois/hints of every set.
+* `cards.js` renders every card style (`--only notebook,plaque`).
 * Scene specs for `engine/tools/preview.js`: `engine/tools/test_scenes/world_*.json`.
+
+`set.env` (optional, per set): sky/fog/light overrides per time of day applied by `applyEnvironment`
+with clear/overcast weather (e.g. the dusty desert haze of `suburban_street`).
