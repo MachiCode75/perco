@@ -35,6 +35,10 @@ import contact_sheet as CS  # noqa: E402
 import text as T  # noqa: E402
 
 MASK = os.path.join(ROOT, "assets", "jumelles_1080x1920.png")
+POV_MASKS = {"binoculars": MASK,
+             "vignette": os.path.join(ROOT, "assets", "pov_vignette_1080x1920.png"),
+             "keyhole": os.path.join(ROOT, "assets", "pov_keyhole_1080x1920.png"),
+             "peephole": os.path.join(ROOT, "assets", "pov_peephole_1080x1920.png")}
 SR = 44100
 W_IN, H_IN, W_OUT, H_OUT = 720, 1280, 1080, 1920
 
@@ -282,20 +286,26 @@ def build_audio(a, n_samples, work):
 
 
 # ---------------------------------------------------------------------------------------------- video
-def bino_ranges(ep, tl):
-    flags = {s["id"]: bool(s.get("binoculars")) for s in ep.get("shots", [])}
-    out, f = [], 0
+def pov_kind(shot):
+    k = shot.get("pov") or ("binoculars" if shot.get("binoculars") else None)
+    return k if k in POV_MASKS else ("binoculars" if k else None)
+
+
+def pov_ranges(ep, tl):
+    """{mask kind: merged [(first_frame, last_frame)]} for shots with a POV mask."""
+    kinds = {s["id"]: pov_kind(s) for s in ep.get("shots", [])}
+    res, f = {}, 0
     for s in tl["shots"]:
-        if flags.get(s["id"]):
-            out.append((f, f + s["frames"] - 1))
+        k = kinds.get(s["id"])
+        if k:
+            rr = res.setdefault(k, [])
+            r = (f, f + s["frames"] - 1)
+            if rr and r[0] == rr[-1][1] + 1:
+                rr[-1] = (rr[-1][0], r[1])
+            else:
+                rr.append(r)
         f += s["frames"]
-    merged = []
-    for r in out:
-        if merged and r[0] == merged[-1][1] + 1:
-            merged[-1] = (merged[-1][0], r[1])
-        else:
-            merged.append(r)
-    return merged
+    return res
 
 
 def stamp_of(a, files):
@@ -378,21 +388,22 @@ def main():
         with open(lst, "w") as f:
             for c in clips:
                 f.write("file '" + c.replace("'", "'\\''") + "'\n")
-        ranges = bino_ranges(ep, tl)
+        povs = pov_ranges(ep, tl)
+        ranges = [r for rr in povs.values() for r in rr]
         in_matrix = "bt709" if cs == "bt709" else "bt601"
         g = [f"[0:v]setpts=N/({fps}*TB),scale={W_OUT}:{H_OUT}:flags=lanczos+accurate_rnd+full_chroma_int:"
              f"in_color_matrix={in_matrix}:out_color_matrix=bt709:in_range=tv:out_range=tv,setsar=1[v0]"]
         last = "v0"
-        if ranges:
-            en = "+".join(f"between(n,{r0},{r1})" for r0, r1 in ranges)
-            g.append(f"[{last}][1:v]overlay=0:0:format=auto:eof_action=repeat:enable='{en}'[v1]")
-            last = "v1"
+        for i, (kind, rr) in enumerate(sorted(povs.items()), 1):
+            en = "+".join(f"between(n,{r0},{r1})" for r0, r1 in rr)
+            g.append(f"[{last}][{i}:v]overlay=0:0:format=auto:eof_action=repeat:enable='{en}'[vm{i}]")
+            last = f"vm{i}"
         vf = f"[{last}]"
         if not a.no_captions:
             vf += f"ass=filename='{esc(ass_path)}':fontsdir='{esc(CAP.FONTS_DIR)}',"
         vf += "format=yuv420p[vout]"
         g.append(vf)
-        aidx = 2 if ranges else 1
+        aidx = 1 + len(povs)
         g.append(f"[{aidx}:a]loudnorm=I={a.lufs}:TP={a.tp}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
                  f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:"
                  f"linear=true:print_format=summary,aresample={SR},aformat=sample_fmts=fltp:channel_layouts=stereo[aout]")
@@ -400,8 +411,8 @@ def main():
         open(graph, "w").write(";\n".join(g))
         tmp_out = a.out + ".part.mp4"
         cmd = ["ffmpeg", "-hide_banner", "-nostats", "-y", "-f", "concat", "-safe", "0", "-i", lst]
-        if ranges:
-            cmd += ["-i", MASK]
+        for kind in sorted(povs):
+            cmd += ["-i", POV_MASKS[kind]]
         cmd += ["-i", mixf, "-filter_complex_script", graph, "-map", "[vout]", "-map", "[aout]",
                 "-frames:v", str(total), "-fps_mode", "cfr", "-r", str(fps),
                 "-c:v", "libx264", "-preset", a.preset, "-crf", str(a.crf), "-profile:v", "high", "-pix_fmt", "yuv420p",
@@ -409,7 +420,7 @@ def main():
                 "-x264-params", "keyint=60:min-keyint=30",
                 "-c:a", "aac", "-b:a", "192k", "-ar", str(SR), "-ac", "2",
                 "-movflags", "+faststart", "-metadata", f"title={ep.get('title', slug)}", tmp_out]
-        log(f"encoding: concat → scale lanczos → {len(ranges)} binocular range(s) → captions → x264 crf {a.crf} "
+        log(f"encoding: concat → scale lanczos → {len(ranges)} POV-mask range(s) {sorted(povs)} → captions → x264 crf {a.crf} "
             f"{a.preset} (+ loudnorm {a.lufs} LUFS)")
         t1 = time.time()
         r = run(cmd, "final encode")

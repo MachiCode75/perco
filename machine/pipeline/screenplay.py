@@ -65,6 +65,8 @@ def parse_cast_line(line, V):
     head = parts[0].split()
     key, spec = head[0], {"name": head[0].replace("_", " ").title()}
     rest = head[1:]
+    if rest and rest[0] == "creature" and len(rest) > 1:  # e.g. "moon creature sky_face"
+        spec["creature"] = rest[1]; rest = rest[2:]
     for tok in list(rest):
         if tok in BUILDS:
             spec["build"] = tok; rest.remove(tok)
@@ -79,7 +81,15 @@ def parse_cast_line(line, V):
             continue
         cols = [t for t in toks if t.startswith("#")]
         word = toks[0]
-        if word in PANTS:
+        if word == "scale" and len(toks) > 1:
+            spec["scale"] = float(toks[1])
+        elif word == "stretch":
+            spec["stretch"] = {k: float(v) for k, v in (t.split("=") for t in toks[1:] if "=" in t)}
+        elif word == "eyes" and len(toks) > 1:
+            spec["eyes"] = toks[1]
+            if cols:
+                spec["glowColor"] = cols[0]
+        elif word in PANTS:
             spec["pants"] = {"style": word, **({"color": cols[0]} if cols else {})}
         elif word == "skin" and cols:
             spec["skin"] = cols[0]
@@ -102,7 +112,8 @@ def parse_actor(tok, cast, V, poses_faces_props):
         return None
     a = {"id": aid}
     for part in [p for p in (m.group(2) or "").split(":") if p]:
-        apply_word(a, part, V)
+        if not apply_word(a, part, V):
+            a.setdefault("_unknown", []).append(part)
     if m.group(3):
         a["mark"] = m.group(3)
     if m.group(4):
@@ -189,13 +200,25 @@ def compile_screenplay(text, V, SETS):
                 "weather": scene["weather"], "framing": None, "angle": "eye", "move": "static",
                 "binoculars": False, "actors": []}
         last, subject, quote_speaker = None, None, None
-        for tok in dirs.split():
-            if tok in FRAMING:
+        import shlex
+        try:
+            toks = shlex.split(dirs, posix=True)
+        except ValueError as e:
+            errors.append(f"line {ln}: bad quotes in directives ({e})"); toks = dirs.split()
+        for tok in toks:
+            if tok.startswith("card:"):  # full-frame text card: card:<style> text="..." title="..." drawing=<id>
+                shot["set"] = "card"; shot["setOptions"] = {"style": tok[5:]}
+                shot["framing"] = shot["framing"] or "establishing"
+            elif tok.startswith(("text=", "title=", "drawing=")) and shot.get("setOptions") is not None:
+                k, _, v = tok.partition("="); shot["setOptions"][k] = v
+            elif tok.startswith("pov:"):
+                shot["pov"] = tok[4:]
+            elif tok in FRAMING:
                 shot["framing"] = FRAMING[tok]
             elif tok in MOVE:
                 shot["move"] = MOVE[tok]
             elif tok == "bino":
-                shot["binoculars"] = True
+                shot["binoculars"] = True; shot["pov"] = "binoculars"
             elif tok.startswith("crowd"):
                 parts = tok.split(":")
                 c = {"count": 10, "pose": "stand", "area": "crowd"}
@@ -232,6 +255,8 @@ def compile_screenplay(text, V, SETS):
                 if a is None:
                     errors.append(f"line {ln}: unknown directive '{tok}'")
                     continue
+                for u in a.pop("_unknown", []):
+                    errors.append(f"line {ln}: '{u}' is not a known pose/face/prop for {a['id']} (see data/vocab.json)")
                 shot["actors"].append(a); last = a
         # defaults
         acts = shot["actors"]

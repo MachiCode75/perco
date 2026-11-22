@@ -439,7 +439,7 @@ window.engine = {
       target: targetEntry ? targetEntry.character : res.point(targetRef),
       set, actors: state.actorList.filter((e) => !e.crowd).map((e) => e.character),
       blockers: state.actorList.filter((e) => !e.crowd && e !== subjEntry && e !== targetEntry).map((e) => e.character),
-      duration, fov: camFov, binoculars: !!shot.binoculars, seed, setId,
+      duration, fov: camFov, binoculars: !!(shot.binoculars || shot.pov), seed, setId,
       allowUnderwater: !!(shot.underwater || shot.camera?.underwater || setId === 'underwater'),
       subjectTravel: subjEntry && subjEntry.walk ? [0.33, 0.66, 1].map((k) => { const w = subjEntry.walk; const tt = Math.max(0, k * duration - w.delay); const d = Math.min(w.dist, w.speed * Math.max(0, tt - 0.15)); return w.dir.clone().multiplyScalar(d); }) : null,
       baseZoom: typeof shot.zoom === 'number' ? shot.zoom : (options.baseZoom ?? undefined), subjectProp: subjEntry ? subjEntry.def.prop : null, subjectPropObject: subjEntry ? subjEntry.propObject : null, camera: shot.camera || {}, moveAmount: shot.moveAmount,
