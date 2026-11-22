@@ -324,7 +324,7 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
                                                    ensure_ascii=False, indent=1))
     al.write_wav(out_dir / "narration.wav", wav, sr)
     # ---- delivery: reshape intonation/pitch/dynamics like the reference narrator (timing unchanged)
-    delivery = (episode.get("voice") or {}).get("delivery", "reference")
+    delivery = (episode.get("voice") or {}).get("delivery", "natural")  # "reference" = WORLD reshaping (sounded robotic)
     if provider == "kokoro" and delivery == "reference":
         import prosody
         vcfg = episode.get("voice") or {}
