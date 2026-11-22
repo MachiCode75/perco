@@ -100,27 +100,29 @@ def parse_cast_line(line, V):
     return key, spec
 
 
-def parse_actor(tok, cast, V, poses_faces_props):
-    m = re.match(r"^([a-z0-9_]+)((?::[^@>~]+)*)(?:@([^>~]+))?(?:>([^~]+))?(?:~(.+))?$", tok)
+def parse_actor(tok, cast, V, _unused=None):
+    """id followed by any of :part @mark >facing ~depth segments, in any order."""
+    m = re.match(r"^([a-z0-9_]+)(.*)$", tok)
     if not m:
         return None
-    aid = m.group(1)
+    aid, rest = m.group(1), m.group(2)
     if aid.startswith("extra"):
-        n = aid[5:] or "1"
-        aid = f"extra:{n}"
+        aid = f"extra:{aid[5:] or '1'}"
     elif aid not in cast:
         return None
+    if rest and rest[0] not in ":@>~":
+        return None
     a = {"id": aid}
-    for part in [p for p in (m.group(2) or "").split(":") if p]:
-        if not apply_word(a, part, V):
-            a.setdefault("_unknown", []).append(part)
-    if m.group(3):
-        a["mark"] = m.group(3)
-    if m.group(4):
-        a["facing"] = facing_ref(m.group(4), cast)
-    if m.group(5):
-        d = m.group(5)
-        a["depth"] = DEPTH.get(d, None) if d in DEPTH else float(d)
+    for kind, val in re.findall(r"([:@>~])([^:@>~]+)", rest):
+        if kind == ":":
+            if not apply_word(a, val, V):
+                a.setdefault("_unknown", []).append(val)
+        elif kind == "@":
+            a["mark"] = val
+        elif kind == ">":
+            a["facing"] = facing_ref(val, cast)
+        elif kind == "~":
+            a["depth"] = DEPTH[val] if val in DEPTH else float(val)
     return a
 
 
@@ -283,6 +285,13 @@ def compile_screenplay(text, V, SETS):
             shot["target"] = acts[1]["id"]
         if shot["framing"] == "over_shoulder" and "target" not in shot:
             errors.append(f"line {ln}: ots needs a target (>poi or >actor)")
+        if shot["set"] == "card" and acts:
+            errors.append(f"line {ln}: a text card takes no actors — start a new '== <set>' scene before this line")
+        giants = [a["id"] for a in acts if cast.get(a["id"], {}).get("creature") in ("furry_giant", "sky_face")
+                  or float(cast.get(a["id"], {}).get("scale", 1)) > 2]
+        sinfo = SETS.get(shot["set"], {}) if SETS else {}
+        if giants and sinfo.get("interior"):
+            errors.append(f"line {ln}: giant {giants} inside interior set '{shot['set']}' — use an exterior scene (e.g. rooftops_sky)")
         if quote_speaker:
             q = re.findall(r"[\"“]([^\"”]+)[\"”]?", say) or ([say.strip('"“” ')] if say.strip().startswith(("\"", "“")) else [])
             if not q and say.strip().endswith(("\"", "”")):

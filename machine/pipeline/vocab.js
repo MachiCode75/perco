@@ -23,7 +23,7 @@ const { openRuntime } = require('../engine/browser');
         } catch (e) { sets[id] = { error: String(e) }; }
       }
       return { generated: new Date().toISOString(), FACES: ch.FACES, POSES: ch.POSES, HAIR_STYLES: ch.HAIR_STYLES, SHIRT_PATTERNS: ch.SHIRT_PATTERNS,
-        PROPS_HELD: ch.PROPS_HELD, PROPS: wo.PROPS, FRAMINGS: di.FRAMINGS, MOVES: di.MOVES, SETS: sets };
+        PROPS_HELD: ch.PROPS_HELD, CREATURES: ch.CREATURES, EYE_MODES: ch.EYE_MODES, CARD_STYLES: wo.CARD_STYLES, PROPS: wo.PROPS, FRAMINGS: di.FRAMINGS, MOVES: di.MOVES, SETS: sets };
     });
     const out = path.join(__dirname, '..', 'data', 'vocab.json');
     fs.writeFileSync(out, JSON.stringify(vocab, null, 1));

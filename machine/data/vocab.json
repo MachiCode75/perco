@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T02:14:05.438Z",
+ "generated": "2026-11-22T02:15:08.880Z",
  "FACES": [
   "neutral",
   "smile",
@@ -86,6 +86,33 @@
   "letter",
   "umbrella",
   "bag"
+ ],
+ "CREATURES": [
+  "furry_giant",
+  "sky_face",
+  "shadow_eyes",
+  "tall_thin",
+  "stretched",
+  "doll",
+  "scarecrow"
+ ],
+ "EYE_MODES": [
+  "normal",
+  "glow",
+  "hollow",
+  "many"
+ ],
+ "CARD_STYLES": [
+  "notebook",
+  "sign_wood",
+  "sign_metal",
+  "plaque",
+  "note",
+  "phone",
+  "newspaper",
+  "monitor",
+  "calendar",
+  "clock"
  ],
  "PROPS": [
   "house_victorian",

@@ -43,7 +43,7 @@ cast:
 <key> <build> <hair> <#hair> | <shirt pattern> <#c1> <#c2> | <pants style> <#c> | <accessories…>
 <key> creature <id> | scale 4 | eyes glow #ffd84a          # creatures
 <key> adult bun #222 | cardigan #f0a0b0 | pants #334 | stretch arms=2 legs=1.6   # creepy elongated
-== <set> <time> [weather]                                    # scene header
+== <set> <time> [weather]   # scene header: EVERY following shot uses this set until the next header
 <spoken words> | <directives>                                # one line = one shot
 ```
 Directives: framing `est wide xwide aer med mcu cu xcu ots pov two ins low high back` · move `push pull
