@@ -1,0 +1,3 @@
+{"set":"lake_dock","time":"day","framing":"close_up","subject":"a","seed":5,
+ "actors":[{"id":"a","mark":"A","facing":"camera","pose":"binoculars","face":"smile","prop":{"type":"binoculars"},
+   "spec":{"build":"kid","hair":{"style":"spiky","color":"#f6dc3c"},"shirt":{"pattern":"stripes_h","colors":["#f2c511","#151515"]},"pants":{"style":"pants","color":"#151515"}}}]}

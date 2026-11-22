@@ -1,0 +1,24 @@
+// Reference-like cast used by the character test bench (also handy as spec examples).
+module.exports = {
+  toby: { name: 'Toby (bee kid)', build: 'kid', skin: '#f2c8a0', hair: { style: 'spiky', color: '#f6dc3c' }, shirt: { pattern: 'stripes_h', colors: ['#f2c511', '#151515'] }, pants: { style: 'pants', color: '#151515' }, face: 'smile' },
+  brother: { name: 'Little brother', build: 'kid', skin: '#f2c8a0', hair: { style: 'short', color: '#7a4a2a' }, shirt: { pattern: 'tee_logo', colors: ['#e2453c', '#f2c511', '#2f5fb3'], logo: 'dino' }, pants: { style: 'pants', color: '#2f62c0', shoes: '#e9eef8' }, face: 'grin' },
+  mom: { name: 'Mom', build: 'adult', skin: '#f2c8a0', hair: { style: 'ponytail', color: '#1b1b1f' }, shirt: { pattern: 'cardigan', colors: ['#f4c6d0', '#f4efe6'] }, pants: { style: 'pants', color: '#3f6fb5', pattern: 'floral', shoes: '#c8742f' }, face: 'smile' },
+  grandpa: { name: 'Grandpa', build: 'elder', skin: '#f2d2b0', hair: { style: 'bald', color: '#cccccc' }, shirt: { pattern: 'vest', colors: ['#3e7c55', '#f4f4f0'], sleevePattern: 'plaid', sleeveColors: ['#f3ece4', '#e09a95'] }, pants: { style: 'pants', color: '#8b8b88' }, accessories: ['glasses'], face: 'angry' },
+  mayor: { name: 'Mayor', build: 'adult', skin: '#f2c8a0', hair: { style: 'short', color: '#1b1b1f' }, shirt: { pattern: 'suit', colors: ['#1e2f6b', '#f4f4f4', '#c0262d'] }, pants: { style: 'pants', color: '#1e2f6b' }, accessories: ['mayor_chain'], face: 'talk' },
+  bride: { name: 'Bride', build: 'adult', skin: '#f2c8a0', hair: { style: 'long', color: '#1b1b1f' }, shirt: { pattern: 'dress', colors: ['#f7f7f5', '#ececec'], sleeves: 'long' }, pants: { style: 'none' }, face: 'happy' },
+  groom: { name: 'Groom', build: 'adult', skin: '#f2c8a0', hair: { style: 'short', color: '#2a1a10' }, shirt: { pattern: 'suit', colors: ['#1c1c1f', '#f4f4f4', '#1c1c1f'] }, pants: { style: 'pants', color: '#1c1c1f' }, face: 'smile' },
+  oldlady: { name: 'Old lady', build: 'elder', skin: '#f2d2b0', hair: { style: 'long', color: '#ececec' }, shirt: { pattern: 'polka', colors: ['#f2a5c4', '#ffffff'] }, pants: { style: 'pants', color: '#f2a5c4', pattern: 'polka', colors: ['#f2a5c4', '#ffffff'] }, face: 'smile' },
+  argyle: { name: 'Argyle man', build: 'adult', skin: '#f2c8a0', hair: { style: 'short', color: '#9a9a9a' }, shirt: { pattern: 'argyle_vest', colors: ['#2c4f9e', '#f2c94c', '#f4f4f0'] }, pants: { style: 'pants', color: '#d8c49a' }, face: 'cry' },
+  pyjama: { name: 'Star pyjamas', build: 'kid', skin: '#f2c8a0', hair: { style: 'spiky', color: '#f6dc3c' }, shirt: { pattern: 'pajamas_stars', colors: ['#22346e', '#f2d24b', '#f4f4f4'] }, face: 'worried' },
+  overalls: { name: 'Overalls', build: 'adult', skin: '#f2c8a0', hair: { style: 'messy', color: '#6b4226' }, shirt: { pattern: 'overalls', colors: ['#d9302c', '#3d63b8', '#f4f4f4'] }, face: 'happy' },
+  dad: { name: 'Dad', build: 'adult', skin: '#f2c8a0', hair: { style: 'short', color: '#4a2c1a' }, shirt: { pattern: 'solid', colors: ['#f1efe8'] }, pants: { style: 'pants', color: '#5d7fb0' }, face: 'happy' },
+};
+module.exports.creatures = {
+  furry: { creature: 'furry_giant' },
+  moon: { creature: 'sky_face' },
+  shadow: { creature: 'shadow_eyes' },
+  slender: { creature: 'tall_thin' },
+  stretchedMom: { creature: 'stretched', build: 'adult', skin: '#f2c8a0', hair: { style: 'ponytail', color: '#3b2416' }, shirt: { pattern: 'polka', colors: ['#c9b7e6', '#e8e0f6'] }, pants: { style: 'pants', color: '#c9b7e6', pattern: 'polka', colors: ['#c9b7e6', '#e8e0f6'] } },
+  doll: { creature: 'doll' },
+  scarecrow: { creature: 'scarecrow', eyes: 'glow', glowColor: '#ff8a1a' },
+};

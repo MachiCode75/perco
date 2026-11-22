@@ -1,0 +1,12 @@
+# audio module (python 3.13 tested)
+kokoro-onnx==0.6.1      # pulls onnxruntime, phonemizer, espeakng-loader (bundled libespeak-ng + data)
+onnxruntime>=1.20
+onnx>=1.17              # one-off graph surgery: expose phoneme durations
+numpy>=2.0
+scipy>=1.13
+soxr>=0.5               # resampling (also a librosa dependency)
+pyloudnorm>=0.1.1       # BS.1770 loudness
+# validation only (audio/validate_timing.py --asr):
+sherpa-onnx>=1.10
+edge-tts>=7.0        # free Microsoft Edge neural voices (needs host speech.platform.bing.com)
+pyworld>=0.3       # delivery reshaping (audio/prosody.py)

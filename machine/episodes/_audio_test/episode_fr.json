@@ -1,0 +1,213 @@
+{
+  "version": 1,
+  "id": "_audio_test_fr",
+  "title": "Test audio",
+  "language": "fr",
+  "voice": {
+    "provider": "kokoro",
+    "voice": null,
+    "speed": 1.0
+  },
+  "music": {
+    "mood": "calm_to_eerie",
+    "file": null
+  },
+  "captions": {
+    "highlight": [
+      "Toby"
+    ]
+  },
+  "cast": {
+    "me": {
+      "name": "Me",
+      "build": "kid",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "messy",
+        "color": "#5a3a1a"
+      },
+      "shirt": {
+        "pattern": "hoodie",
+        "colors": [
+          "#3b6fb6",
+          "#ffffff"
+        ]
+      },
+      "pants": {
+        "style": "pants",
+        "color": "#2b2b2b"
+      },
+      "accessories": [],
+      "face": "neutral"
+    },
+    "toby": {
+      "name": "Toby",
+      "build": "kid",
+      "skin": "#f2c8a0",
+      "hair": {
+        "style": "spiky",
+        "color": "#f5d742"
+      },
+      "shirt": {
+        "pattern": "stripes_h",
+        "colors": [
+          "#f2c511",
+          "#151515"
+        ]
+      },
+      "pants": {
+        "style": "shorts",
+        "color": "#151515"
+      },
+      "accessories": [],
+      "face": "smile"
+    }
+  },
+  "shots": [
+    {
+      "id": "001",
+      "say": "Chaque matin, je regarde la ville de l'autre côté du lac avec les vieilles jumelles de mon grand-père.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "over_shoulder",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "me",
+      "target": "poi:across",
+      "binoculars": false,
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "facing": "poi:lake",
+          "pose": "binoculars",
+          "face": "neutral",
+          "prop": {
+            "type": "binoculars"
+          },
+          "depth": 0
+        }
+      ],
+      "crowd": {
+        "count": 0,
+        "pose": "stand",
+        "area": "crowd"
+      },
+      "note": "audio module test"
+    },
+    {
+      "id": "002",
+      "say": "Elle ressemble exactement à la nôtre. Mêmes maisons, même église, même boîte aux lettres rouge au coin de la rue.",
+      "set": "lake_far_shore",
+      "time": "day",
+      "weather": "clear",
+      "framing": "pov",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "set",
+      "target": null,
+      "binoculars": true,
+      "actors": [],
+      "crowd": {
+        "count": 0,
+        "pose": "stand",
+        "area": "crowd"
+      },
+      "note": "audio module test"
+    },
+    {
+      "id": "003",
+      "say": "Mais hier, quelque chose a changé. L'autre Toby m'a fait signe.",
+      "set": "lake_far_shore",
+      "time": "day",
+      "weather": "clear",
+      "framing": "pov",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "toby",
+      "target": null,
+      "binoculars": true,
+      "actors": [
+        {
+          "id": "toby",
+          "mark": "B",
+          "facing": "camera",
+          "pose": "wave",
+          "face": "smile",
+          "prop": null,
+          "depth": 0
+        }
+      ],
+      "crowd": {
+        "count": 0,
+        "pose": "stand",
+        "area": "crowd"
+      },
+      "note": "audio module test"
+    },
+    {
+      "id": "004",
+      "say": "Notre Toby dormait encore. J'ai compté 10 secondes.",
+      "set": "bedroom",
+      "time": "day",
+      "weather": "clear",
+      "framing": "medium",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "toby",
+      "target": null,
+      "binoculars": false,
+      "actors": [
+        {
+          "id": "toby",
+          "mark": "B",
+          "facing": "camera",
+          "pose": "sleep",
+          "face": "sleep",
+          "prop": null,
+          "depth": 0
+        }
+      ],
+      "crowd": {
+        "count": 0,
+        "pose": "stand",
+        "area": "crowd"
+      },
+      "note": "audio module test"
+    },
+    {
+      "id": "005",
+      "say": "Puis le nôtre s'est réveillé... et a fait signe aussi.",
+      "set": "lake_dock",
+      "time": "day",
+      "weather": "clear",
+      "framing": "close_up",
+      "angle": "eye",
+      "move": "push_in",
+      "subject": "me",
+      "target": null,
+      "binoculars": false,
+      "actors": [
+        {
+          "id": "me",
+          "mark": "A",
+          "facing": "poi:lake",
+          "pose": "stand",
+          "face": "scared",
+          "prop": null,
+          "depth": 0
+        }
+      ],
+      "crowd": {
+        "count": 0,
+        "pose": "stand",
+        "area": "crowd"
+      },
+      "note": "audio module test"
+    }
+  ],
+  "ending": {
+    "hold": 2.0
+  }
+}

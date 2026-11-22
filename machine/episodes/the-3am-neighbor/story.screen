@@ -1,0 +1,42 @@
+title: The 3AM Neighbor
+id: the-3am-neighbor
+lang: en
+voice: young_storyteller
+
+cast:
+me    kid spiky #f2d232 | stripes_h #e7c43f #151515 | pants #151515
+mom   adult bun #2a1d17 | cardigan #f0a6b8 #fff3f6 | pants #3b4a6b
+dad   adult short #4a3426 | plaid #3a6ea5 #1d2b45 | pants #555555 | glasses
+beast creature furry_giant
+
+== card night
+On our street, the power goes out at 3:00 every night. | card:clock text=3:00 title=AM push
+== suburban_street night
+Exactly 3:00. | est push
+== kitchen day
+Mom says it's the old wires. | med mom:talk
+Dad says don't look outside. | cu dad:worried push q:dad
+== bedroom night
+So of course, I looked. | med me:wide_eyes>window
+Through my window, | ots me >across pov:vignette
+== rooftops_sky night
+I saw something taller than the power poles. | est beast@giant:loom
+Black fur. | cu beast:loom push
+A grin full of teeth. | xcu beast push
+== suburban_street night
+It walked down the street, | wide beast:walk@road
+checking every house. | est beast:lean@road push
+Like counting. | cu me:scared push
+== house_front day
+The next morning, | est push
+there was a note on our door. | card:note title="DEAR NEIGHBOR" text="You looked." push
+Mom read it twice. | med mom:worried:letter
+Then she taped the window shut. | mcu mom:look_down
+== card night
+Tonight, the lights went out at 2:59. | card:clock text=2:59 title=AM push
+== bedroom night
+One minute early. | cu me:wide_eyes push
+And something is knocking. | wide me:scared>door shake
+Not on the door. | cu me:scared push
+== rooftops_sky night
+On the roof. | low beast:reach@giant push

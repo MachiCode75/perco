@@ -1,0 +1,4 @@
+{"set":"lake_dock","time":"day","framing":"medium","subject":"a","seed":3,
+ "actors":[{"id":"a","mark":"A","facing":"camera","pose":"hold_sign","face":"grin","prop":{"type":"sign","text":"HI ME!"},
+   "spec":{"build":"kid","skin":"#f2c8a0","hair":{"style":"short","color":"#7a4a2a"},"shirt":{"pattern":"tee_logo","colors":["#e2453c","#f2c511","#2f5fb3"],"logo":"dino"},"pants":{"style":"pants","color":"#2f62c0","shoes":"#e9eef8"}}}],
+ "crowd":{"count":5}}

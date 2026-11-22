@@ -1,0 +1,105 @@
+{
+ "fps": 30,
+ "width": 720,
+ "height": 1280,
+ "duration": 16.3,
+ "shots": [
+  {
+   "id": "001",
+   "start": 0.0,
+   "end": 1.5,
+   "frames": 45,
+   "firstWord": 0,
+   "lastWord": 7
+  },
+  {
+   "id": "002",
+   "start": 1.5,
+   "end": 2.833,
+   "frames": 40,
+   "firstWord": 8,
+   "lastWord": 14
+  },
+  {
+   "id": "003",
+   "start": 2.833,
+   "end": 4.033,
+   "frames": 36,
+   "firstWord": 15,
+   "lastWord": 18
+  },
+  {
+   "id": "004",
+   "start": 4.033,
+   "end": 5.3,
+   "frames": 38,
+   "firstWord": 19,
+   "lastWord": 23
+  },
+  {
+   "id": "005",
+   "start": 5.3,
+   "end": 6.7,
+   "frames": 42,
+   "firstWord": 24,
+   "lastWord": 31
+  },
+  {
+   "id": "006",
+   "start": 6.7,
+   "end": 8.3,
+   "frames": 48,
+   "firstWord": 32,
+   "lastWord": 37
+  },
+  {
+   "id": "007",
+   "start": 8.3,
+   "end": 9.433,
+   "frames": 34,
+   "firstWord": 38,
+   "lastWord": 40
+  },
+  {
+   "id": "008",
+   "start": 9.433,
+   "end": 10.633,
+   "frames": 36,
+   "firstWord": 41,
+   "lastWord": 44
+  },
+  {
+   "id": "009",
+   "start": 10.633,
+   "end": 11.967,
+   "frames": 40,
+   "firstWord": 45,
+   "lastWord": 50
+  },
+  {
+   "id": "010",
+   "start": 11.967,
+   "end": 13.467,
+   "frames": 45,
+   "firstWord": 51,
+   "lastWord": 58
+  },
+  {
+   "id": "011",
+   "start": 13.467,
+   "end": 14.8,
+   "frames": 40,
+   "firstWord": 59,
+   "lastWord": 66
+  },
+  {
+   "id": "012",
+   "start": 14.8,
+   "end": 16.3,
+   "frames": 45,
+   "firstWord": 67,
+   "lastWord": 72
+  }
+ ],
+ "note": "fake timeline for engine tests"
+}

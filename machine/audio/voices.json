@@ -1,0 +1,14 @@
+{
+ "narrator_c2": {
+  "_comment": "Voice chosen by the user (sample: assets/voice/narrator_c2_sample.mp3). Chatterbox (open source) conditioned on our own Kokoro prompt, sentence groups ≤ 22 words, then played faster (pitch rises with speed, no time-stretch artifacts).",
+  "provider": "chatterbox",
+  "prompt": "assets/voice/narrator_prompt.wav",
+  "exaggeration": 1.0,
+  "cfg_weight": 0.5,
+  "temperature": 0.8,
+  "seed": 7,
+  "group_words": 22,
+  "gap": 0.05,
+  "speedup": 1.114
+ }
+}
