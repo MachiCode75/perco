@@ -296,3 +296,19 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
     extra face `wink`, setPose options (see engine/web/src/characters/README.md).
 - v1.2: **no music bed by default** (`music` omitted/null → voice-only mix; the user adds music later).
   `post/assemble.py --music` is optional.
+- v2 (multi-reference, see docs/05-multi-reference.md) — NEW contracts:
+  - **Creatures & modifiers (characters module)**: a CharacterSpec may contain
+    `"creature": "<id>"` (archetype: `furry_giant`, `sky_face`, `shadow_eyes`, `stretched`, `tall_thin`,
+    `blob`, `doll`, … listed in exported `CREATURES`), `"scale": 3.0` (uniform giant/small),
+    `"stretch": {"arms": 2, "legs": 1.6, "torso": 1.3, "neck": 0.8}` (creepy elongation of a normal
+    character), `"eyes": "normal|glow|hollow|many"`, `"glowColor": "#ffd84a"`. Creatures still return
+    the §3 Character object (setPose/setFace/update/anchors may do creature-specific things; unknown
+    poses fall back to idle). New scary FACES: `creepy_grin, wide_eyes, hollow, teeth, blank`.
+  - **Text cards (world module)**: set id `card` with `setOptions: {style, text, title, drawing}`;
+    styles `notebook` (lined paper, handwritten), `sign_wood`, `sign_metal` (e.g. WELCOME TO …),
+    `plaque`, `note`, `phone` (message bubbles), `newspaper`, `monitor` (heart rate line + number),
+    `calendar`, `clock`. The card fills a 9:16 frame from cameraHints.establishing.
+  - **POV masks (post)**: shot field `pov: "binoculars" | "vignette" | "keyhole" | "scope"`
+    (`binoculars: true` stays an alias). Director narrows the FOV for any `pov`.
+  - **New sets (world)**: `suburban_street`, `forest_road`, `hospital_room`, `warehouse`, `backyard`,
+    `city_street`, `town_square`, `rooftops_sky`.
