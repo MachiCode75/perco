@@ -31,8 +31,11 @@ ABBREV = {"mr.", "mrs.", "ms.", "dr.", "st.", "jr.", "sr.", "vs.", "etc.", "m.",
 
 # Reference reel (docs/01-reference-analysis.md): 757 words / 170.6 s ≈ 266 wpm, pauses 0.12–0.24 s.
 # v2 (refs 1/3/5 transcribed): 254–272 wpm, inter-word gaps p90 ≈ 0.36 s, max ≈ 0.64 s → tighter pauses.
-DEFAULTS = {"wpm": 268.0, "sentence_pause": 0.12, "ellipsis_pause": 0.18, "paragraph_pause": 0.18,
-            "clause_pause": 0.06, "lead_in": 0.12, "tail": 0.40, "lufs": -16.0}
+# v3 (same "In this town…" openings read by the reference and by us): the reference articulates 10–50 %
+# slower inside sentences but leaves almost no silence between them (continuous flow) → tiny pauses,
+# the pace solver then lowers the engine speed to keep ~268 wpm.
+DEFAULTS = {"wpm": 268.0, "sentence_pause": 0.05, "ellipsis_pause": 0.10, "paragraph_pause": 0.10,
+            "clause_pause": 0.0, "hook_words": 28, "hook_pace": 0.88, "lead_in": 0.12, "tail": 0.40, "lufs": -16.0}
 SPEED_RANGE = (0.6, 1.9)  # kokoro engine speed bounds (model accepts 0.5–2.0)
 
 
@@ -269,11 +272,17 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
     # ---- synthesize chunks
     pieces = []
     for ci, ((a, b, kind), t) in enumerate(zip(chunks, texts)):
+        # the reference delivers the hook ("In this town, …") ~10–15 % slower than the rest
+        hook = a < opt["hook_words"] and provider == "kokoro"
+        if hook:
+            prov.set_pace(eng_speed * opt["hook_pace"])
         audio, times = prov.synth(t, toks[a:b])
+        if hook:
+            prov.set_pace(eng_speed)
         audio, times = trim_chunk(np.asarray(audio, np.float32), prov.sample_rate, times)
         for cj, lj, target in [x for x in internal if x[0] == ci][::-1]:
             audio, times = enforce_gap(audio, prov.sample_rate, times, lj, target,
-                                       max_gap=target * 2.5 if provider != "kokoro" else None)
+                                       max_gap=target * 2.5 if provider != "kokoro" else max(0.08, target * 1.6))
         audio = al.resample(audio, prov.sample_rate, al.OUT_SR)
         pieces.append((audio, times))
         print(f"[tts] chunk {ci + 1}/{len(chunks)} {len(audio) / al.OUT_SR:5.2f}s  {t[:60]}", file=sys.stderr)
