@@ -28,7 +28,8 @@
   on a high mark/`rooftops_sky`, `scale` 4–8), `shadow_eyes` (many glowing eyes), `tall_thin`, `stretched`
   (elongated version of a cast look, creepy_grin), `doll`, `scarecrow`. Poses `loom reach lean walk`.
   Scary faces for anyone: `creepy_grin wide_eyes hollow teeth blank`; `eyes glow|hollow|many`.
-  Stage giants BEHIND the subject (never between subject and camera).
+  Stage giants BEHIND the subject (never between subject and camera). In `rooftops_sky` put the giant on
+  `@giant` (or sky_face on `@sky`) and use `low` or `cu`/`xcu` (its `est` view frames the houses only).
 - Framing mix: med ~40 % · wide/est ~20 % · mcu ~13 % · cu ~10 % · ots/two/low/ins/aer the rest.
   ~3/4 of character shots face camera. Faces change on the emotional word.
 - POV masks 5–15 % when someone watches/peeks/remembers: `bino`, `pov:vignette`, `pov:keyhole`, `pov:peephole`.
