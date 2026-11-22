@@ -70,6 +70,7 @@ def caption_band(frames):
         a -= 1
     while b < len(k) - 1 and k[b] > thr:
         b += 1
+    a, b = max(a, top - 70), min(b, top + 70)  # captions are one line: cap the band (keeps OCR fast)
     return a, b
 
 
@@ -155,6 +156,7 @@ def main():
     thumbs = frames_at(a.video, mids, w, h, scale_w=180)
     full = frames_at(a.video, [mids[i] for i in range(0, len(mids), max(1, len(mids) // 40))], w, h)
     band = caption_band(full)
+    print(f"caption band {band}", flush=True)
     pov = [i + 1 for i, f in enumerate(thumbs) if f.size and masked_pov(f)]
     thumbs = [f if f.size else np.zeros((320, 180, 3), np.uint8) for f in thumbs]
     words = ocr_words(a.video, band, dur, w, work)
