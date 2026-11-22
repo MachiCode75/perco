@@ -165,10 +165,10 @@ export function windowRig(ctx, b, o = {}) {
     const to = cur.animate === 'close' ? (cur.state === 'gap' ? W('gap') : W('closed')) : (cur.state === 'gap' || cur.state === 'layered' ? W(cur.state) : W('open'));
     return from + (to - from) * e;
   };
-  // light through the window: sample the opening across x; sheer passes 60 %, other layers ~8 %
+  // light through the window: sample the opening across x; sheer passes 60 %, other layers ~8 % (stacks pulled open don't count)
   const NS = 24; const sampleT = (wds) => {
     const T = new Array(NS).fill(1);
-    for (let k = 0; k < NS; k++) { const x = -w / 2 + (k + 0.5) * w / NS; layers.forEach((L, j) => { const wd = wds[j]; if (wd > L.open + 0.05 && (x < -L.half + wd || x > L.half - wd)) T[k] *= L.kind === 'sheer' ? 0.6 : 0.08; }); // stacks pulled open don't count if (boarded) T[k] *= 0.5; }
+    for (let k = 0; k < NS; k++) { const x = -w / 2 + (k + 0.5) * w / NS; layers.forEach((L, j) => { const wd = wds[j]; if (wd > L.open + 0.05 && (x < -L.half + wd || x > L.half - wd)) T[k] *= L.kind === 'sheer' ? 0.6 : 0.08; }); if (boarded) T[k] *= 0.5; }
     return T;
   };
   let sun = null, sunBase = 0; const dimSun = o.dimSun !== false;
@@ -176,7 +176,7 @@ export function windowRig(ctx, b, o = {}) {
     const wds = layers.map((L) => Math.max(0.3, widthAt(L, t)));
     layers.forEach((L, j) => { const sc = wds[j] / L.full; for (const p of L.pv) p.scale.x = sc; });
     const T = sampleT(wds); const mean = T.reduce((a, c) => a + c, 0) / NS;
-    if (sun && dimSun) sun.intensity = sunBase * (0.22 + 0.78 * mean);
+    if (sun && dimSun) sun.intensity = sunBase * (0.35 + 0.65 * mean);
     if (pool) {
       let a = -1, z = -1; for (let k = 0; k < NS; k++) if (T[k] > 0.3) { if (a < 0) a = k; z = k; }
       pool.visible = envK > 0 && a >= 0;

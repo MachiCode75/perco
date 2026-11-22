@@ -116,7 +116,7 @@ export function applyEnvironment(ctx, { time = 'day', weather = 'clear', interio
   const sunDir = new THREE.Vector3(...p.sun).normalize();
   const dark = p.time === 'night' || p.time === 'dusk';
   const moonIn = interior && off && dark; // blacked-out interior at night: cold moonlight through the windows only
-  const hemi = moonIn ? new THREE.HemisphereLight(C(p.time === 'night' ? '#6a7cb0' : '#8a86b0'), C('#141824'), p.time === 'night' ? 0.7 : 0.85)
+  const hemi = moonIn ? new THREE.HemisphereLight(C(p.time === 'night' ? '#6a7cb0' : '#8a86b0'), C('#161a28'), p.time === 'night' ? 0.82 : 0.9)
     : interior ? new THREE.HemisphereLight(C(p.time === 'night' ? '#d8c4a8' : '#fff2dc'), C(p.time === 'night' ? '#8a6a4a' : '#d2b48c'), p.time === 'night' ? 0.16 : p.time === 'dusk' ? 0.6 : 1.5)
     : new THREE.HemisphereLight(C(p.hemiSky), C(p.hemiGnd), p.hemiI * (off && dark ? 0.85 : 1)); group.add(hemi);
   const sun = new THREE.DirectionalLight(C(moonIn ? '#a9bfff' : p.sunCol), moonIn ? (p.time === 'night' ? 1.1 : 0.9) : interior ? (p.time === 'night' ? 0.15 : p.time === 'dusk' ? 0.5 : Math.max(1.6, p.sunI * 0.8)) : p.sunI);

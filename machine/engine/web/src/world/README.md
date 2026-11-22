@@ -7,7 +7,7 @@ the Roblox-style lakeside Victorian town of the reference reel. Contract: `ARCHI
 import { SETS, PROPS, createSet, createProp, applyEnvironment } from './src/world/index.js';
 const set = createSet(ctx, 'lake_dock', { seed: 1 });   // SetInstance (cached on ctx, last 3 kept)
 ctx.scene.add(set.group);
-applyEnvironment(ctx, { time: 'night', weather: 'snow', interior: set.interior });
+applyEnvironment(ctx, { time: 'night', weather: 'snow', interior: set.interior, power: 'on' });
 // per frame: set.update(t, camera)   ← also drives sky, particles, water, underwater fog
 ```
 
@@ -30,6 +30,10 @@ Previews: `docs/img/world_<set>.jpg` (one per set) and `docs/img/world_times.jpg
 | `props2.js` | v2 props (ranch house, brownstone, power pole, treehouse, hospital, statue, plaque, …) |
 | `sets2.js` | v2 sets (suburban_street … rooftops_sky) + `card` |
 | `cards.js` | text cards: canvas drawing of the 10 card styles, auto-fit text, crayon drawings |
+| `props3.js` | v3 story props (cookie, fur_tuft, giant_footprint, note_paper, giant_hand, window_face, glowing_eyes, candle …) + kids' room decor atlases |
+| `sets3.js` | v3 sets: `bedroom` (variants + window rig), `library`, `shop_front` |
+| `windows.js` | interior window rig: casing, sashes (open/locked), deep sill + items, 1–3 stacked curtain layers (animated), boards, moonlight pool |
+| `home.js` | "our house" identity (`opts.home`) shared by house_front / suburban_street / rooftops_sky |
 | `fonts/` | vendored OFL fonts (Patrick Hand = kid handwriting, Permanent Marker), see `fonts/LICENSE.txt` |
 
 ## Conventions
@@ -59,16 +63,16 @@ Previews: `docs/img/world_<set>.jpg` (one per set) and `docs/img/world_times.jpg
 | `lake_far_shore` | same town (other seed/church/gazebo placement); hints look from across the water | as lake_dock | + `viewer` (where the watcher stands across the lake) | `binoculars` (telephoto fov 8 from across the lake), `across` |
 | `lake_aerial` | the lake town rotated so the lake runs along Z (look down its length, like the reel's aerial) | as lake_dock (rotated) | as lake_dock | `top` |
 | `street` | lakeside street: actors on the house-side sidewalk, houses behind, road + crosswalk in front, lake-side lawn/lake behind the camera; church down the street | `crossing`, `lake_side`; `crowd` along both sidewalks | road, crosswalk, house, door, church, lake, across, dock | `along` (down the street), `from_house` |
-| `house_front` | one light-blue house with porch, red door, flowerbeds, path, mailbox; neighbours; road at +Z | `porch` (on the porch, y=1.3), `steps`, `sidewalk` | house, door, porch, window, mailbox, road, garden | `porch` |
+| `house_front` | one light-blue house with porch, red door, flowerbeds, path, mailbox; neighbours; road at +Z. `opts.home` (see v3) | `porch` (on the porch, y=1.3), `steps`, `sidewalk`, `by_home` (road, facing the house) | house, door, porch, window, mailbox, road, garden, home, home_window, home_door, home_roof | `porch`, `door`, `home_window`, `roof` |
 | `church_front` | white church with steeple, steps, lamp posts, benches, flowerbeds | `steps` | church, door, steeple, road, bench | `low` (looking up at the steeple) |
 | `park` | lawn, white gazebo, paths, benches, picnic tables, trees | `gazebo`, `bench1/2` | gazebo, path, bench, trees, lamp | |
 | `forest_edge` | meadow, rail fence, dirt path into a pine/round-tree forest, rocks, sign | `path` | forest, path, sign, trees | |
 | `road_night` | road running away (−Z) between porch houses and lamp posts (best with `time: night`/`dusk`) | `sidewalk` | road, horizon, house, lamp, door | `sidewalk` |
 | `shore_water` | sandy beach sloping into the lake, houses behind; marks **in the water** | `A–D` stand at thigh depth with `depth: 0` (`depth` adds: 1.5 ≈ waist, 3 ≈ chin); `deep`; dry `beach1/2`; arrays `crowd` (in water), `beach` (dry) | lake, across, shore, house, road | `low` (camera just above the water) |
 | `underwater` | lake bed (y=-14), rocks, seaweed, dock posts, surface at y=0 seen from below | `A–D` on the bed, `surface` | surface, bed, dock, shore | `up` (looking up at the surface) |
-| `kitchen` | dark-teal cabinets, counters, stove, fridge, wood table with chairs & food, pendant lamps, windows with garden view | `seat1/2` (chairs), `stove` | table, counter, stove, fridge, window, door, lamp | `table` |
-| `living_room` | wood-panelled walls, olive back wall, red-brick fireplace (flickering fire light), painting, red & green armchairs, sofa, rug, bookshelf, TV, curtained window | `armchair`, `sofa`, `fire` | fireplace, armchair, sofa, tv, window, picture, table | `fireplace` |
-| `bedroom` | upstairs room, big window on the back wall looking across the lake at the town (lit windows at night), bed, desk lamp | `bed`, `desk`; `A` is at the window | window, across, bed, desk, door, lamp | `window` (over the shoulder out of the window) |
+| `kitchen` | dark-teal cabinets, counters, stove, fridge, wood table with chairs & food, pendant lamps, windows with garden view. `opts.wall`; window-rig opts apply to the side window | `seat1/2` (chairs), `stove` | table, counter, stove, fridge, window, door, lamp, side_window, sill, outside | `table` |
+| `living_room` | wood-panelled walls, olive back wall (`opts.wall`), red-brick fireplace (flickering fire light), painting, red & green armchairs, sofa, rug, bookshelf, TV, curtained window (window-rig opts) | `armchair`, `sofa`, `fire` | fireplace, armchair, sofa, tv, window, picture, table, sill, outside, curtains | `fireplace` |
+| `bedroom` | upstairs room, big window (window rig) on the back wall looking across the lake at the town (lit windows at night), bed, desk lamp. `opts.variant` `boy`\|`girl`\|`parents`, `opts.wall`, window-rig opts (v3) | `bed`, `desk`; `A` is at the window | window, across, bed, desk, door, lamp, sill, outside, curtains, wall_art | `window` (over the shoulder out of the window), `curtains`, `sill`, `outside` |
 | `classroom` | chalkboard, teacher desk, 12 student desks facing −Z, windows, clock | `teacher`; array `seats` (12 desk chairs, yaw π = facing the board) | board, desk, window, students, door | `students` (from the board) |
 
 ### v2 sets (multi-reference, `docs/05-multi-reference.md`)
@@ -77,15 +81,17 @@ Previews: `docs/img/world_<set>.jpg`, cards: `docs/img/world_cards.jpg`.
 
 | Set | What | Extra marks | POIs | Extra hints |
 |---|---|---|---|---|
-| `suburban_street` | ref5 desert suburb: single-storey stucco/brick ranch houses with tile hip roofs, garages, driveways, dry lawns, wooden power poles + wires, wide plain road (camera side), dusty sky (`set.env`) | `road`, `driveway` | house, door, garage, road, pole, sky, across | `street` (along the road) |
+| `suburban_street` | ref5 desert suburb: single-storey stucco/brick ranch houses with tile hip roofs, garages, driveways, dry lawns, wooden power poles (34 tall, one just right of our house so est/wide views show it) + wires, wide plain road (camera side), dusty sky (`set.env`); our house = the one at x=−4 (`opts.home`); forest edge (dead end, barrier, dark pines) at the −X end of the street; `opts.footprints: true` = a giant footprint on every front lawn | `road`, `driveway`, `by_pole` (giant beside the pole at its depth), `by_home` (road, facing our house), `neighbor1` (the Millers, x=36) / `neighbor2` (x=−44) (on the road facing the house), `guard` (road near the trees, facing them) | house, door, garage, road, pole, sky, across, home, home_window, home_door, home_roof, pole_top (crossarm — put `fur_tuft` there), trees, street_end, footprint (lawn of our house), neighbor1, neighbor1_window, neighbor2, neighbor2_window | `street` (along the road), `to_forest` (from our house down the street to the trees), `pole_top` (low look up at the crossarm), `home` |
 | `forest_road` | ref2: two-lane road running away (−Z) through dense tall pines, guard rail, curve/speed signs, one lamp; great at night/rain. `opts.sign` = text of a roadside wooden sign | `shoulder` | road, forest, sign, rail, horizon | `shoulder` |
 | `hospital_room` | ref2 ending: hospital bed, heart monitor (72), IV pole, privacy curtain, window with blinds, chair, flowers | `bed` (on the mattress, y=3.1), `bedside`, `chair` | bed, patient, monitor, window, door, curtain | `monitor` (screen close-up), `patient` |
 | `warehouse` | ref5: big corrugated shed, roller door half open (`opts.open` 0–1), black sign with yellow letters (`opts.sign`, default TOWN WAREHOUSE), crates, pallets, bins, poles | `door`, `inside` | door, sign, crates, inside, lamp | `sign` |
 | `backyard` | ref3: lawn, privacy fence, swing set, treehouse in a big tree (ladder), neighbours over the fence; house back + deck behind the camera | `treehouse` (on the platform, y=11.3), `swing`, `ladder`, `deck` | treehouse, swing, fence, house, back_door, tree | `house` (reverse), `treehouse` |
 | `city_street` | ref6: brick brownstone rows with stoops along a street running away (−Z), street lamps, trees, parked cars, skyline at the vanishing point (towers light up at night) | `sidewalk`, `stoop` (top step, y=5) | skyline, road, stoop, door, lamp, buildings | `stoop` |
 | `town_square` | ref6: cobbled plaza, statue (`opts.statue` 'head'\|'figure') on a granite plinth with bronze plaque (`opts.title`, `opts.text`), benches, lamps, civic building with portico/dome, brownstones, skyline | `plaque` (in front of the plaque, facing it), `statue_top`; `crowd` = rings around the statue **facing it**, `audience` = rows facing camera | statue, plaque, hall, benches, lamp, square | `plaque` (close), `statue` (low angle) |
-| `rooftops_sky` | ref3/ref5: low camera looking up over the roofs, lots of sky; place a giant behind the row or a face in the sky | `giant` (ground behind the houses, for a `scale` 6–8 creature), `sky` (y=58, for `sky_face`), `roof` (on a ridge) | sky, giant, rooftops, moon, house, road | `up` (steep look up), `over` (over the roofs) |
+| `rooftops_sky` | ref3/ref5: low camera looking up over the roofs, lots of sky, power poles + wires (`opts.poles: false` removes them); our house = central front-row house (`opts.home`); place a giant behind the row or a face in the sky | `giant` (ground in the gap between/behind houses, x=−22 z=−52; needs a creature taller than ~32 to show over the roofs), `over_home` (right behind our house — towers over it), `by_home`, `sky` (y=58, for `sky_face`), `roof` (on a ridge) | sky, giant, rooftops, moon, house, road, home, home_window, home_door, home_roof, pole_top, over_home | `up` (steep look up), `over` (over the roofs), `home`, `giant_low` (low view from the road: houses in front, giant between them) |
 | `card` | full-frame text card, see below | `A–D`/`crowd` exist but are off-frame | card, text | `close`, `angled` |
+| `library` | (interior) back-wall bookshelves, double-sided shelf rows, 2 reading tables with green banker lamps, librarian L-desk (bell, books, lamp), newspaper rack (`opts.newspaper {title,text,date}` = front paper), globe, QUIET PLEASE sign, tall windows, `opts.wall` | `table` (reading seat), `librarian` (behind the desk), `shelves` (aisle), `newspapers` (at the rack) | shelves, table, newspapers, desk, window, door, lamp, sign | `newspapers`, `table`, `shelves`, `desk` |
+| `shop_front` | small-town hardware store: brick facade, 2-line sign `opts.sign` (default PIKE'S HARDWARE; `signColor`, `signInk`) lit by gooseneck lamps at night, striped awning, display window `opts.display` `curtains` (hanging + folded curtains for sale, price card `opts.price`, default "3 FOR $20") \| `tools` (default) \| `none`, door with OPEN sign (`opts.open:false` → CLOSED); BAKERY / DINER neighbours, street, cars | `door`, `window` (facing the display), `road` | sign, window, display, door, awning, road, bakery, diner, lamp | `sign`, `window`, `street` |
 
 ### Text cards — `set: "card"`, `setOptions: {style, text, title, drawing, …}`
 
@@ -110,12 +116,58 @@ line break). Each set instance is cached per options; card textures are disposed
 Sign/plaque cards are outdoor (`interior: false`, environment sky); the others are interior-lit
 (`interior: true`) with a soft lamp gradient, so `time: night` makes them darker/moodier.
 
+### v3 — showing exactly what the narration says
+
+**Power cut** — `applyEnvironment(ctx, {…, power: 'off'})` or set `opts.power: 'off'`: window glass (`win`, skyline `tower`) not
+emissive, lamp heads dark, no lamp-post / porch point lights, halos or ground pools, interior lamps and TV off, fireplace out
+(`opts.fire: true` keeps it), interiors at night/dusk get only cold moonlight (blue hemisphere + window light; people stay readable).
+Shot props keep their own light (`candle`, `giant_hand` rim light).
+
+**Our house** — `opts.home = {wall, roof, door, trim, shutter}` in `house_front`, `suburban_street`, `rooftops_sky` draws the same
+2-storey Victorian (style side, 32×23, ridge y≈30.6, below the 34-tall poles) in exactly those colours; the neighbours stay identical
+with or without it. Pois `home`, `home_window` (upstairs front window left of the door), `home_door` (door surface — tape a
+`note_paper` there), `home_roof` always exist (without `opts.home` they point at the default central house).
+
+**Window rig** (`bedroom`, `living_room`, `kitchen` side window) — set opts:
+* `curtains`: `{layers 1–3, state 'open'|'closed'|'gap'|'layered', color, animate 'close'|'open'|null, gap (0.55), delay (0.1), duration (1.5), sheer, blackout}`
+  (also a number = layers, a state string, a colour string, or `false`). Each layer hangs on its own rod at its own depth:
+  sheer (cream, translucent, next to the glass) → main (`color`) → blackout (dark navy). `open` stacks are staggered so each layer
+  peeks out; `layered` = sheer closed + main half open + blackout open (reads "3 curtains" in one frame); `gap` = closed with a crack
+  in the middle ("1 inch"); `animate:'close'` closes them one after another (glass side first) over `duration` s via set.update(t);
+  `animate:'open'` reverses. The window light and the moonlight pool on the floor follow the opening (the room darkens as they close).
+* `windowOpen: true` (lower sash raised; a closed sash shows a brass latch), `boarded: true` (4 planks + a diagonal nailed across, curtains
+  closed), `sill: ['cookie', {type: 'cookie_plate', x, z, yaw, opts}, …]` (any prop id, standing on the deep sill in front of the curtains).
+* Pois: `window`, `sill` (top centre of the sill), `outside` (window centre, 2.1 outside the glass — put `giant_hand` / `window_face` there), `curtains`.
+* `bedroom` `variant`: `boy` (blue walls, green wainscot, green bedspread, rocket / dino / GOAL! / race-car posters, soccer ball, toy box),
+  `girl` (pink walls, lilac wainscot, pink bed, glow-in-the-dark star stickers on walls + ceiling, 4 crayon drawings taped up, teddy on
+  the bed, lilac curtains), `parents` (beige, double burgundy bed, two nightstands + lamps, dresser with mirror, armchair). `wall` overrides the colour.
+
+**Props v3** (`createProp` → `userData.update(t)` on animated ones, `userData.focus` = close-up point):
+
+| id | what | opts |
+|---|---|---|
+| `cookie` | chocolate-chip cookie lying flat, Ø 0.64 | `size`, `chips`, `bitten` |
+| `cookie_plate` | plate + 3 cookies | `size`, `milk: true` (glass of milk) |
+| `fur_tuft` | clump of long dark strands hanging from the origin (snag point), ~2 long | `size` (1.25), `count`, `color`, `wind` — place at `poi:pole_top` |
+| `giant_footprint` | deep muddy print, toes +Z, 9 × 4: rim, wet floor, 5 toes, claw gouges | `length`, `width`, `side`, `mud: false` — frame it `wide`/`high_angle` (`insert` is too close) |
+| `footprint_trail` | prints alternating L/R along +Z | `count` (5), `spacing`, `length`, `mud` |
+| `note_paper` | taped paper note (same look as the `note` card), origin = sheet centre, faces +Z | `text`, `title`, `color`, `ink`, `width`, `height`, `tilt` |
+| `giant_hand` | huge furry hand + forearm (~6), palm toward +Z, pale claws, origin = hand centre (put at `poi:outside`) | `pose` `tap` (index finger taps the glass at `rate` 3 Hz) \| `open` \| `pinch`, `holding: 'cookie'` (with pinch), `fur`, `skin`, `reach` (1.8), `light: false` |
+| `window_face` | the furry giant's face (dark fur + unlit white eyes and grin) filling a window from outside, origin = window centre | `face` (`teeth`/`creepy_grin`/`scream`/`hollow`), `size` (11), `fur` |
+| `glowing_eyes` | pairs of glowing eyes in a volume facing +Z (instanced, additive), blinking | `count` (24), `spread` ([34,7,12] or a width), `color` ('#ffd84a', '#e8f4ff' …), `size` (0.6), `approach` (units/s toward +Z), `open: true` / `close: true` (one by one over `openTime` 1.2 / `closeTime` 1.5 s), `blink: false` |
+| `candle` | dish + candle + flickering flame/halo + small warm point light | `height`, `intensity` (14), `distance` |
+| `hammer_nails` | hammer + 5 nails lying flat | `yaw` |
+| `plush` | teddy bear sitting | `size`, `color`, `bow` |
+| `ball` | soccer ball | `size`, `color` |
+
 Interiors: `interior: true`, `waterLevel: null`. Walls/ceiling do not cast shadows so the window
 light (directional, `set.windowLight`) enters the room; practical lamps become point lights.
 
-`opts` for `createSet`: `{ seed }` (variation of the generated town; default 1).
+`opts` for `createSet`: `{ seed }` (variation of the generated town; default 1) + the per-set options above (`power`, `home`, `variant`,
+`wall`, `curtains`, `windowOpen`, `boarded`, `sill`, `footprints`, `poles`, `sign`, `display`, `price`, `newspaper` …). Bad option values
+never throw: they fall back to defaults (a builder that throws is rebuilt with `{}`).
 
-## Props (`PROPS`, 81)
+## Props (`PROPS`, 94 — v3 props above)
 
 `createProp(ctx, id, opts)` → merged `THREE.Group` (`userData.info` holds layout info, e.g. the
 house door position). Unknown ids return an empty group (warning, never throws).
@@ -140,7 +192,7 @@ house door position). Unknown ids return an empty group (warning, never throws).
   `ceiling_light`, `cabinet`, `desk` (school desk + chair), `chalkboard`, `clock`, `curtain`, `stairs`.
 * **Signs**: `sign_board ({text, width, height, posts, colors, bg})` — marker-style text texture;
   `shop_sign ({text, width, height, y, bg, ink})` — bold block letters (e.g. TOWN WAREHOUSE);
-  `road_sign ({kind: 'curve'|'stop'|'speed', text})`; `plaque ({title, text, width, height, y})`.
+  `road_sign ({kind: 'curve'|'stop'|'speed', text})`; `plaque ({title, text, width, height, y})`; `shop_sign` also takes `lines: 2` (or `\n` in the text).
 * **v2 buildings**: `house_ranch (color, roof, garage, boarded, door)` — single-storey stucco/brick,
   tile hip roof; `brownstone (floors 3–4, color, flip, stoopX)` — returns `stoop`/`door` positions;
   `civic_building`; `tower (width, depth, height, spire)` — skyline block with night-lit windows.
@@ -155,7 +207,7 @@ Composing a new place: create a `Builder` (`core.js`) and call `P.<id>(b, opts)`
 
 ## Environment
 
-`applyEnvironment(ctx, { time, weather, interior })`
+`applyEnvironment(ctx, { time, weather, interior, power })` (`power: 'off'` = blackout, see v3)
 * `time`: `day` (blue gradient sky, sun 45°), `golden` (low warm sun, peach sky), `dusk`
   (orange→purple sky, lamps and windows on), `night` (navy sky + stars, moonlight, warm window glow,
   lamp-post point lights near the action + halos and light pools on the ground).
