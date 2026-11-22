@@ -30,8 +30,9 @@ CLAUSE_END = re.compile(r"[,;:—–][\"'”’»)\]]*$")
 ABBREV = {"mr.", "mrs.", "ms.", "dr.", "st.", "jr.", "sr.", "vs.", "etc.", "m.", "mme.", "mlle.", "prof."}
 
 # Reference reel (docs/01-reference-analysis.md): 757 words / 170.6 s ≈ 266 wpm, pauses 0.12–0.24 s.
-DEFAULTS = {"wpm": 255.0, "sentence_pause": 0.18, "ellipsis_pause": 0.24, "paragraph_pause": 0.26,
-            "clause_pause": 0.10, "lead_in": 0.12, "tail": 0.40, "lufs": -16.0}
+# v2 (refs 1/3/5 transcribed): 254–272 wpm, inter-word gaps p90 ≈ 0.36 s, max ≈ 0.64 s → tighter pauses.
+DEFAULTS = {"wpm": 268.0, "sentence_pause": 0.12, "ellipsis_pause": 0.18, "paragraph_pause": 0.18,
+            "clause_pause": 0.06, "lead_in": 0.12, "tail": 0.40, "lufs": -16.0}
 SPEED_RANGE = (0.6, 1.9)  # kokoro engine speed bounds (model accepts 0.5–2.0)
 
 
@@ -313,6 +314,17 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
     (out_dir / "words.json").write_text(json.dumps({"duration": round(duration, 3), "words": res},
                                                    ensure_ascii=False, indent=1))
     al.write_wav(out_dir / "narration.wav", wav, sr)
+    # ---- delivery: reshape intonation/pitch/dynamics like the reference narrator (timing unchanged)
+    delivery = (episode.get("voice") or {}).get("delivery", "reference")
+    if provider == "kokoro" and delivery == "reference":
+        import prosody
+        vcfg = episode.get("voice") or {}
+        prosody.process(str(out_dir / "narration.wav"), str(out_dir / "narration.wav"),
+                        target_hz=float(vcfg.get("pitch_hz", 176)), rng=float(vcfg.get("range", 1.55)))
+        import soundfile as _sf
+        wav, _sr = _sf.read(str(out_dir / "narration.wav"))
+        wav, _ = al.normalize(wav.astype(np.float32), sr, opt["lufs"], -1.0)
+        al.write_wav(out_dir / "narration.wav", wav, sr)
 
     span = res[-1]["end"] - res[0]["start"]
     info = {"provider": provider, "voice": getattr(prov, "cfg", {}).get("voice", voice) if provider == "kokoro" else voice,
