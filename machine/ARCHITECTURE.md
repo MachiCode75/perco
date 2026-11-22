@@ -312,3 +312,7 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
     (`binoculars: true` stays an alias). Director narrows the FOV for any `pov`.
   - **New sets (world)**: `suburban_street`, `forest_road`, `hospital_room`, `warehouse`, `backyard`,
     `city_street`, `town_square`, `rooftops_sky`.
+- v3 voice: default narrator = preset `narrator_c2` (audio/voices.json): Chatterbox (open source, venv
+  models/cbx, installed on first use by audio/install_chatterbox.sh) conditioned on
+  assets/voice/narrator_prompt.wav, sentence groups ≤ 22 words, played ×1.114 faster; word timings from
+  offline ASR alignment (audio/tts_chatterbox.py). Kokoro stays available (`provider: kokoro`).

@@ -4,8 +4,8 @@
  "title": "The 3AM Neighbor",
  "language": "en",
  "voice": {
-  "provider": "kokoro",
-  "voice": "young_storyteller"
+  "provider": "chatterbox",
+  "voice": "narrator_c2"
  },
  "music": null,
  "captions": {

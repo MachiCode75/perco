@@ -220,6 +220,10 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
     provider = provider or vcfg.get("provider") or "kokoro"
     if voice is None and (vcfg.get("provider") or "kokoro") == provider:
         voice = vcfg.get("voice")
+    presets = json.loads((HERE / "voices.json").read_text()) if (HERE / "voices.json").exists() else {}
+    if provider == "chatterbox" or (voice in presets and presets[voice].get("provider") == "chatterbox"):
+        import tts_chatterbox  # expressive voice chosen by the user (narrator_c2)
+        return tts_chatterbox.synthesize(episode, out_dir, voice if voice in presets else "narrator_c2")
     speed = float(speed if speed is not None else vcfg.get("speed", 1.0) or 1.0)
     pitch = pitch if pitch is not None else vcfg.get("pitch")
     opt = {k: float(vcfg[k]) if vcfg.get(k) is not None else d for k, d in DEFAULTS.items()}
@@ -352,7 +356,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--episode", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--provider", choices=["kokoro", "elevenlabs", "espeak"])
+    ap.add_argument("--provider", choices=["kokoro", "elevenlabs", "espeak", "chatterbox"])
     ap.add_argument("--voice", help="kokoro: preset (young_storyteller, adult_calm, fr_storyteller…), voice id "
                                     "or blend 'am_fenrir*0.7+am_michael*0.3'; elevenlabs: name or voice_id")
     ap.add_argument("--speed", type=float, help="pace multiplier on --wpm (1.0 = 255 wpm)")

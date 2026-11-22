@@ -6,7 +6,7 @@ FORMAT (see docs/CHEATSHEET.md for the full reference)
 ----------------------------------------------------
     title: The 13th Bell
     lang: en
-    voice: young_storyteller          # optional: provider:voice, e.g. edge:en-US-ChristopherNeural
+    voice: narrator_c2                # default (user-approved Chatterbox voice); or kokoro:young_storyteller
     hold: 0.8                         # optional ending hold (s)
 
     cast:
@@ -304,8 +304,14 @@ def compile_screenplay(text, V, SETS):
     for s in shots:
         for t, col in s.pop("_quotes", []):
             highlight.append({"text": t, "color": col})
-    voice = meta.get("voice", "young_storyteller")
-    prov, _, vname = voice.partition(":") if ":" in voice else ("kokoro", "", voice)
+    voice = meta.get("voice", "narrator_c2")
+    presets = json.load(open(os.path.join(ROOT, "audio", "voices.json"))) if os.path.exists(os.path.join(ROOT, "audio", "voices.json")) else {}
+    if ":" in voice:
+        prov, _, vname = voice.partition(":")
+    elif voice in presets:
+        prov, vname = presets[voice].get("provider", "chatterbox"), voice
+    else:
+        prov, vname = "kokoro", voice
     title = meta.get("title", "untitled")
     slug = meta.get("id") or re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
     ep = {"version": 1, "id": slug, "title": title, "language": meta.get("lang", "en"),
