@@ -64,6 +64,22 @@ def validate(ep, vocab, strict=False):
         elif vocab and st not in sets:
             E(f"{where}: unknown set '{st}' (known: {', '.join(sorted(sets))})")
         sinfo = sets.get(st, {})
+        # props placed in this shot register pois named after them (type, type2, … or their name)
+        extra, seen = set(), Counter()
+        props_known = set(V.get("PROPS") or [])
+        for p in s.get("props", []) or []:
+            t = p.get("type")
+            if props_known and t not in props_known:
+                E(f"{where}: unknown prop '{t}' (see data/vocab.json PROPS)")
+            nm = p.get("name") or t
+            seen[nm] += 1
+            extra.add(nm if seen[nm] == 1 else f"{nm}{seen[nm]}")
+            at = p.get("at")
+            if isinstance(at, str) and at.startswith("poi:") and sinfo and at[4:] not in sinfo.get("pois", []) and at[4:] not in extra:
+                E(f"{where}: prop '{t}' at poi '{at[4:]}' not in set '{st}' pois {sinfo.get('pois')}")
+            if isinstance(at, str) and at.startswith("mark:") and sinfo and at[5:] not in sinfo.get("marks", []):
+                E(f"{where}: prop '{t}' at mark '{at[5:]}' not in set '{st}' marks")
+        pois_ok = set(sinfo.get("pois", [])) | extra
         check("FRAMINGS", s.get("framing"), where)
         check("MOVES", s.get("move"), where)
         for a in s.get("actors", []):
@@ -76,7 +92,7 @@ def validate(ep, vocab, strict=False):
             f = a.get("facing")
             if isinstance(f, str) and f not in FACING_WORDS:
                 kind, _, name = f.partition(":")
-                if kind == "poi" and sinfo and name not in sinfo.get("pois", []):
+                if kind == "poi" and sinfo and name not in pois_ok:
                     E(f"{where}: facing poi '{name}' not in set '{st}' pois {sinfo.get('pois')}")
                 elif kind == "actor" and name not in [x.get("id") for x in s.get("actors", [])]:
                     W(f"{where}: facing actor '{name}' is not in this shot")
@@ -88,11 +104,20 @@ def validate(ep, vocab, strict=False):
             ptype = p.get("type") if isinstance(p, dict) else p
             check("PROPS_HELD", ptype, where)
         subj = s.get("subject")
+        if isinstance(subj, str) and subj.startswith("poi:") and sinfo and subj[4:] not in pois_ok:
+            E(f"{where}: subject poi '{subj[4:]}' not in set '{st}' pois or this shot's props")
+        for a in s.get("actors", []):
+            w = a.get("walk")
+            to = w.get("to") if isinstance(w, dict) else w
+            if isinstance(to, str) and sinfo and not to.startswith("actor:"):
+                nm = to.split(":", 1)[-1]
+                if nm not in sinfo.get("marks", []) and nm not in pois_ok:
+                    E(f"{where}: walk target '{to}' is not a mark/poi of set '{st}'")
         if isinstance(subj, str) and subj not in ("set",) and not subj.startswith(("poi:", "mark:")):
             if subj not in [x.get("id") for x in s.get("actors", [])]:
                 E(f"{where}: subject '{subj}' is not an actor of this shot")
         tgt = s.get("target")
-        if isinstance(tgt, str) and tgt.startswith("poi:") and sinfo and tgt[4:] not in sinfo.get("pois", []):
+        if isinstance(tgt, str) and tgt.startswith("poi:") and sinfo and tgt[4:] not in pois_ok:
             E(f"{where}: target poi '{tgt[4:]}' not in set '{st}'")
         if s.get("crowd", {}).get("count", 0) and sinfo:
             area = s["crowd"].get("area", "crowd")

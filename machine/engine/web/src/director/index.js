@@ -336,6 +336,8 @@ export function frameShot(ctx, opts = {}) {
 
   if (camOpt.pos && camOpt.target) {
     base = { pos: v3(THREE, camOpt.pos), pivot: v3(THREE, camOpt.target), u: 0, v: 0, fov: fovOverride || num(camOpt.fov, 50), kind: 'manual' };
+  } else if (camOpt.hint && set.cameraHints?.[camOpt.hint] && hintPose([camOpt.hint])) {
+    base = hintPose([camOpt.hint]); // a named set camera hint (screenplay `cam:<hint>`)
   } else if (useHints) {
     base = hintPose(hintNames[framing] || ['establishing']) || (framing === 'aerial' ? aerialFromHints() : null) || fallbackSetPose();
     if (subjectPoint && framing !== 'aerial' && base.kind === 'fallback') base.pivot = subjectPoint.clone();

@@ -1,0 +1,33 @@
+{
+ "_doc": "Coherence check (pipeline/screenplay.py). When a shot's spoken line matches `re`, at least one `any` evidence must be on screen, else WARN with `hint`. Evidence: actor:<id> creature:<id> pose:<p> face:<f> held:<type> wear:<type> prop:<type> holding:<x> opt:<key> sill:<item> card:<style> set:<id> poi:<name> mark:<name> move:<m> pov:<mask>. `count_opt`: a number right before the word must equal that set option.",
+ "entries": [
+  {"re": "\\bcookies?\\b", "any": ["prop:cookie", "prop:cookie_plate", "held:cookie", "held:plate", "sill:cookie", "holding:cookie"], "hint": "sill=cookie (place opt) / +cookie@sill / bea:offer:cookie / +giant_hand@outside:pose=pinch:holding=cookie"},
+  {"re": "\\bcurtains?\\b", "any": ["opt:curtains", "pose:pull_curtain"], "count_opt": "curtains.layers", "hint": "opt:curtains=3 / opt:curtains.animate=close / dad:pull_curtain>window"},
+  {"re": "\\bmasks?\\b", "any": ["wear:sleep_mask"], "hint": "mayor:+sleep_mask=NOT_LOOKING (and :+sleep_mask2=… for a second one)"},
+  {"re": "\\bfur\\b", "any": ["prop:fur_tuft", "creature:furry_giant"], "hint": "+fur_tuft@pole_top with `ins s:fur_tuft` / show the furry giant"},
+  {"re": "\\bfootprints?\\b", "any": ["prop:giant_footprint", "prop:footprint_trail"], "hint": "+footprint_trail@road:count=6 / +giant_footprint@road"},
+  {"re": "\\bnotes?\\b", "any": ["card:note", "prop:note_paper", "held:note", "held:letter"], "hint": "card:note text=… / +note_paper@home_door:text=… / mom:worried:note"},
+  {"re": "\\bnewspapers?\\b", "any": ["card:newspaper", "set:library", "held:book"], "hint": "card:newspaper … / == library"},
+  {"re": "\\b(power )?poles?\\b", "any": ["poi:pole", "poi:pole_top", "mark:by_pole", "prop:fur_tuft"], "hint": "s:pole / beast@by_pole for scale / +fur_tuft@pole_top"},
+  {"re": "\\bflashlight\\b|\\bclick\\b", "any": ["held:flashlight"], "hint": "bea:flashlight=on"},
+  {"re": "\\b(hammer|nail(ed|s)?)\\b", "any": ["held:hammer", "pose:hammer", "opt:boarded"], "hint": "dad:hammer:hammer>window opt:boarded"},
+  {"re": "\\bcandles?\\b", "any": ["held:candle", "prop:candle"], "hint": "+candle@table / mom:candle"},
+  {"re": "\\bknock(s|ed|ing)?\\b", "any": ["pose:knock", "move:shake"], "hint": "beast:knock / shake"},
+  {"re": "\\btap(s|ped|ping)?\\b", "any": ["pose:tap", "prop:giant_hand"], "hint": "+giant_hand@outside:pose=tap / beast:tap / bea:tap>window"},
+  {"re": "\\bwindows?(sill)?\\b", "any": ["poi:window", "poi:home_window", "poi:outside", "poi:sill", "opt:curtains", "opt:sill", "opt:windowOpen", "opt:boarded", "prop:giant_hand", "prop:window_face", "pose:tap", "pose:peek"], "hint": "frame the window: ins >window / >home_window / +giant_hand@outside"},
+  {"re": "\\bdoor\\b", "any": ["poi:door", "poi:home_door", "prop:note_paper", "pose:knock"], "hint": ">home_door / +note_paper@home_door"},
+  {"re": "\\broof\\b", "any": ["poi:home_roof", "poi:rooftops", "set:rooftops_sky", "mark:over_home"], "hint": "== rooftops_sky … / >home_roof"},
+  {"re": "\\b(trees|forest|woods)\\b", "any": ["set:forest_edge", "poi:trees", "poi:street_end", "prop:glowing_eyes", "cam:to_forest"], "hint": "== forest_edge / suburban_street >trees"},
+  {"re": "\\beyes\\b(?! in)", "any": ["prop:glowing_eyes", "creature:shadow_eyes", "face:wide_eyes", "prop:window_face"], "hint": "+glowing_eyes@trees"},
+  {"re": "\\b(giant|monster|creature)\\b", "any": ["creature:furry_giant", "creature:shadow_eyes", "creature:tall_thin", "creature:sky_face", "creature:stretched", "prop:giant_hand", "prop:window_face"], "hint": "show the creature (or its hand/face in the window)"},
+  {"re": "\\b(grin|smiled?)\\b", "any": ["face:grin", "face:smile", "face:creepy_grin", "creature:furry_giant", "prop:window_face"], "hint": "a face that grins"},
+  {"re": "\\blibrary\\b", "any": ["set:library"], "hint": "== library"},
+  {"re": "\\b(store|shop)\\b", "any": ["set:shop_front", "card:sign_metal", "card:sign_wood"], "hint": "== shop_front sign=…"},
+  {"re": "\\bsign\\b", "any": ["card", "held:sign", "wear:sleep_mask", "set:shop_front"], "hint": "show the text: card / sign=… / a mask with text"},
+  {"re": "\\b(hums?|humming|song)\\b", "any": ["pose:rock", "pose:sit_rock", "face:talk", "face:happy"], "hint": "mom:sit_rock:happy"},
+  {"re": "\\b(ran|run|running)\\b", "any": ["pose:run", "walk"], "hint": "me:run^door"},
+  {"re": "\\b(dark|blackout)\\b", "any": ["opt:power", "card:clock"], "hint": "`dark` in the scene header (power off)"},
+  {"re": "\\bcount(s|ed|ing)?\\b", "any": ["pose:count", "pose:tap", "prop:giant_hand", "card:notebook"], "hint": "dad:count>window / +giant_hand@outside:pose=tap"},
+  {"re": "\\bbakery\\b", "any": ["card", "set:shop_front"], "hint": "card:sign_wood title=BAKERY …"}
+ ]
+}

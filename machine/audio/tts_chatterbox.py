@@ -142,7 +142,8 @@ def synthesize(episode, out_dir, voice="narrator_c2", threads=4):
     ensure_installed(); ensure_asr()
     toks = T.words(T.narration(episode))
     groups = make_groups(toks, P.get("group_words", 22))
-    job = {"groups": [" ".join(toks[i] for i in g) for g in groups], "prompt": str(ROOT / P["prompt"]),
+    speak = episode.get("speak") or {}
+    job = {"groups": [T.spoken_text([toks[i] for i in g], speak) for g in groups], "prompt": str(ROOT / P["prompt"]),
            "exaggeration": P["exaggeration"], "cfg_weight": P["cfg_weight"], "temperature": P["temperature"],
            "seed": P.get("seed", 7), "gap": P.get("gap", 0.05), "threads": threads,
            "out": str(out_dir / "chatterbox_raw.wav")}

@@ -14,10 +14,12 @@ Everything lives in `machine/`. **Read only `machine/docs/CHEATSHEET.md`, `machi
 2. Fill the adaptation template (06 §9) in a few lines, then write `machine/episodes/<slug>/story.screen` directly (format: CHEATSHEET §4). The spoken column
    is the script: follow CHEATSHEET §2 beats and §3 visual grammar. Keep the user's plot.
    Missing a creature/set/prop? Pick the closest id; if the gap matters, tell the user.
-3. `cd machine && python3 pipeline/screenplay.py episodes/<slug>/story.screen` → fix every ERROR.
+3. `cd machine && python3 pipeline/screenplay.py episodes/<slug>/story.screen` → fix every ERROR and every
+   coherence WARN (what is said must be shown: CHEATSHEET §3.0).
 4. `python3 pipeline/validate.py episodes/<slug>/episode.json` → fix ERRORs, consider WARNs.
 5. `node engine/tools/storyboard.js --episode episodes/<slug>/episode.json --out build/<slug>/storyboard.jpg`
-   → look once; fix only shots that are broken (subject hidden/off-frame, wrong place, image ≠ words).
+   → look once; fix shots that are broken (subject hidden/off-frame, wrong place, image ≠ words, nothing moving,
+   the object named in the line not visible).
 6. `python3 pipeline/make_video.py episodes/<slug>/episode.json --workers 3` (background, ~45–55 min incl. ~20 min of voice synthesis
    for 3 min of video). Then check `out/<slug>_contact.jpg` and `out/<slug>_qa.json`.
 7. Commit `episodes/<slug>/` (not build/out), push, send the MP4 + contact sheet (SendUserFile) with a

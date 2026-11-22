@@ -24,3 +24,27 @@ def shot_word_ranges(episode):
         out.append((s["id"], i, i + n - 1 if n else None))
         i += n
     return out
+
+
+TIME_RE = re.compile(r"^(\d{1,2}):(\d{2})$")
+TOKEN_RE = re.compile(r"^([\"“(]*)(.*?)([.,!?;:\"”')…]*)$")
+
+
+def spoken_token(tok, mapping=None):
+    """How the voice says a caption token (captions keep the token as written).
+    Episode `speak` map first ({"3:00": "3 AM"}), then defaults: H:00 → "H AM", H:MM → "H MM", $N → "N dollars"."""
+    pre, core, post = TOKEN_RE.match(tok).groups()
+    if mapping and core in mapping:
+        return pre + mapping[core] + post
+    t = TIME_RE.match(core)
+    if t:
+        h, mm = int(t.group(1)), t.group(2)
+        say = f"{h} AM" if mm == "00" else (f"{h} oh {int(mm)}" if mm.startswith("0") else f"{h} {mm}")
+        return pre + say + post
+    if re.match(r"^\$\d+$", core):
+        return pre + core[1:] + " dollars" + post
+    return tok
+
+
+def spoken_text(toks, mapping=None):
+    return " ".join(spoken_token(t, mapping) for t in toks)

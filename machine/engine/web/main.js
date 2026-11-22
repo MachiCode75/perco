@@ -212,13 +212,16 @@ window.engine = {
       try { set = normalizeSet(await world.createSet(ctx, SETS[0], {})); W(`using set "${SETS[0]}" instead`); setId = SETS[0]; } catch (e) { W(`createSet("${SETS[0]}") failed: ${e.message}`); }
     }
     if (!set) { set = fallbackSet(); W('using built-in fallback set'); }
+    // per-shot view of the (cached, shared) set: shot props register pois without leaking into later shots
+    set = { ...set, pois: { ...set.pois } };
     state.set = set; state.setId = setId;
     scene.add(set.group);
 
     // ---------------- environment
     const interior = shot.interior != null ? !!shot.interior : !!set.interior;
     const time = shot.time || 'day', weather = shot.weather || 'clear';
-    try { await world.applyEnvironment(ctx, { time, weather, interior, set: setId }); } catch (e) { W(`applyEnvironment failed: ${e.message}`); fallbackEnvironment(time); }
+    const power = shot.power || shot.setOptions?.power || 'on';
+    try { await world.applyEnvironment(ctx, { time, weather, interior, set: setId, power }); } catch (e) { W(`applyEnvironment failed: ${e.message}`); fallbackEnvironment(time); }
     if (options.exposure != null) R.toneMappingExposure = num(+options.exposure, 1);
     if (typeof shot.exposure === 'number') R.toneMappingExposure *= shot.exposure;
 
@@ -227,13 +230,31 @@ window.engine = {
     const colliders = () => (colliderCache ||= director.collectColliders(THREE, set));
     const actorsById = {};
     const res = makeResolver(set, actorsById, colliders);
+    // Props live in a per-shot group (the set group is cached across shots). Each prop registers a poi
+    // (its name, or type, type2, …) at userData.focus or its bounding-box centre so shots can frame it;
+    // userData.update(t) animates it.
+    state.props = [];
+    const propGroup = new THREE.Group(); propGroup.name = 'shot-props'; scene.add(propGroup);
     for (const p of Array.isArray(shot.props) ? shot.props : []) {
       const id = p && (p.type || p.id); if (!id) continue;
       const obj = safe(`createProp("${id}")`, () => world.createProp(ctx, id, p.opts || {}), null);
       if (!obj || !obj.isObject3D) { W(`prop "${id}" not created`); continue; }
-      const at = res.point(p.at ?? p.mark) || new THREE.Vector3();
-      obj.position.copy(at); obj.rotation.y = num(p.yaw, 0) * DEG; if (num(p.scale, 0) > 0) obj.scale.setScalar(p.scale);
-      set.group.add(obj); colliderCache = null;
+      const atRef = p.at ?? p.mark;
+      const at = res.point(atRef);
+      if (!at && atRef != null) W(`prop "${id}": position "${JSON.stringify(atRef)}" not found → origin`);
+      obj.position.copy(at || new THREE.Vector3());
+      if (Array.isArray(p.offset)) obj.position.add(new THREE.Vector3(num(p.offset[0], 0), num(p.offset[1], 0), num(p.offset[2], 0)));
+      obj.rotation.y = num(p.yaw, 0) * DEG; if (num(p.scale, 0) > 0) obj.scale.setScalar(p.scale);
+      propGroup.add(obj); obj.updateMatrixWorld(true);
+      safe(`prop ${id} update(0)`, () => obj.userData.update?.(0));
+      const f = obj.userData.focus;
+      let c;
+      if (f && typeof f.x === 'number') c = obj.localToWorld(new THREE.Vector3(f.x, num(f.y, 0), num(f.z, 0)));
+      else { const bb = new THREE.Box3().setFromObject(obj); c = bb.isEmpty() ? obj.position.clone() : bb.getCenter(new THREE.Vector3()); }
+      let name = String(p.name || p.opts?.name || id), k = 2;
+      while (set.pois[name]) name = `${p.name || p.opts?.name || id}${k++}`;
+      set.pois[name] = { x: c.x, y: c.y, z: c.z };
+      state.props.push(obj);
     }
 
     // ---------------- actors
@@ -570,6 +591,7 @@ window.engine = {
     for (const e of state.actorList) { try { e.character.update(t + e.phase); } catch (err) { W(`update(${e.id}): ${err.message}`); } }
     try { state.cam.update(t); } catch (err) { W(`camera update: ${err.message}`); }
     try { state.set.update?.(t, ctx.camera); } catch (err) { W(`set.update: ${err.message}`); }
+    for (const o of state.props || []) { try { o.userData.update?.(t); } catch (err) { W(`prop update: ${err.message}`); } }
     ctx.renderer.render(ctx.scene, ctx.camera);
     const T1 = performance.now();
     const url = ctx.renderer.domElement.toDataURL(mime, q ?? options.jpegQuality);

@@ -19,6 +19,26 @@
   that are documents become text cards.
 
 ## 3. Visual grammar
+### 3.0 Show exactly what is said (user rule, v4 — the #1 quality criterion)
+A human editor illustrates every line. A shot of a character standing there is NOT an illustration.
+- **Every noun/action spoken is on screen in that shot**: "3 curtains" → 3 layered curtains (`opt:curtains=3`);
+  "a sleep mask that says NOT LOOKING" → a mask with that text (`:+sleep_mask=NOT_LOOKING`); "he wears 2" → 2 masks;
+  "fur on the pole" → `+fur_tuft@pole_top` framed close; "cookie" → the cookie; "tapped the window" → the tap.
+- **Numbers and comparisons are literal**: "taller than the poles" → giant and pole in the same frame (`@by_pole`);
+  "23 footprints" → a trail of footprints (+ a notebook card for the count).
+- **Inserts** (`ins s:<prop or poi>`) on objects ≈ 15–25 % of shots; reaction close-ups ≤ 20 % (only on fear/emotion words).
+- **Motion in every shot**: someone walks (`id^mark`), acts (tap knock hammer pull_curtain peek look_around rock
+  offer count bend step spread…), a prop animates (curtains closing, eyes approaching/closing, hand tapping), or the
+  camera moves. No dead "stand" shots.
+- **Clear geography**: name the places (`places:` my_room / bea_room / …: distinct variants), establish each place
+  with est/wide the first time, show exterior → interior when entering a building, keep "our house" identical
+  everywhere (`home:`), blackout = `dark` (no lit window, no street light) whenever the power is out.
+- Interactions across a window: inside shots use `+giant_hand@outside` / `+window_face@outside`; outside shots
+  use the creature at `by_home`/`neighbor1` bending to the window.
+- `screenplay.py` prints `WARN … says 'X' but nothing shows it → hint` (data/visual_lexicon.json) and
+  `first shot in '<place>' …`: **fix every coherence WARN** (only a deliberate absence — "the cookie was gone" —
+  may stay).
+
 - Hero of the channel (use unless the story says otherwise): `me kid spiky #f2d232 | stripes_h #e7c43f #151515 | pants #151515`.
 - The **creature/anomaly is the star**: show it big (low angle, looming over houses, `rooftops_sky`),
   plus close-ups of its face; reveal gradually (silhouette/far → closer → face).
@@ -51,6 +71,23 @@ panl panr drift orbit tiltu tiltd shake` · actor `id[:pose][:face][:prop][@mark
 `crowd:12:pose:face>poi@area` · `bino` / `pov:<mask>` · `card:<style> text="…" title="…" drawing=<id>` ·
 `q:<speaker>` colours the quoted words · `t:`/`w:`/`set:` overrides · `s:` subject override.
 Exact ids: `data/vocab.json` (sets → marks, pois, crowd areas; FACES, POSES, PROPS_HELD, CREATURES…).
+
+v4 additions (full list in the docstring of `pipeline/screenplay.py`):
+```
+home: wall=#9fc4e8 roof=#3f4a63 door=#c8323c trim=#ffffff      # our house, same in house_front/suburban_street/rooftops_sky
+speak: 2:59=2 59 AM                                            # voice reading of a caption token (default H:00 → "H AM")
+places:
+my_room   bedroom variant=boy curtains=3
+bea_room  bedroom variant=girl curtains=3
+== bea_room night dark                                         # place + time + dark (power off) + k=v options
+She leaves a cookie | med bea:offer:cookie>window
+on her windowsill.  | ins s:sill opt:sill=cookie push
+Tap. Tap. Tap.      | ins s:giant_hand +giant_hand@outside:pose=tap
+Dad walks in.       | wide dad:walk@D^A                        # ^ = walk to a mark/poi/actor during the shot
+He wears 2.         | med mayor:wave:+sleep_mask=NOT_LOOKING:+sleep_mask2=NOT_LOOKING
+Click.              | ots bea:carry:flashlight=on >outside
+At the end of the street, | cam:to_forest                      # a named camera hint of the set
+```
 
 ## 5. Engine lessons
 - Places/landmarks: subject `set` with est/wide/aer/low (uses the set's camera hints); never a `poi:`

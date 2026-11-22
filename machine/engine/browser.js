@@ -72,6 +72,11 @@ function resolveShot(ep, shot, { frames = null, fps = 30 } = {}) {
     let spec = a.spec || null;
     if (!spec && cast[id]) spec = cast[id];
     if (!spec && id && !/^extra:/.test(id)) warnings.push(`actor "${id}" not in cast → random townsperson`);
+    // per-shot extra accessories (e.g. a sleep mask only in the bedtime shots): a.wear = [acc, …]
+    if (Array.isArray(a.wear) && a.wear.length) {
+      spec = JSON.parse(JSON.stringify(spec || {}));
+      spec.accessories = [...(Array.isArray(spec.accessories) ? spec.accessories : []), ...a.wear];
+    }
     return { ...a, id, spec };
   });
   // a subject that is a cast member but missing from actors gets added (auto-placed)

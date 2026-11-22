@@ -65,7 +65,7 @@ def main():
     force = a.force or bool(a.only)
 
     # narration/voice fingerprint: re-run TTS only when the spoken text or the voice changes
-    fp = hashlib.sha1(json.dumps([T.narration(ep), ep.get("voice"), ep.get("language")], ensure_ascii=False).encode()).hexdigest()
+    fp = hashlib.sha1(json.dumps([T.narration(ep), ep.get("voice"), ep.get("language"), ep.get("speak")], ensure_ascii=False).encode()).hexdigest()
     stamp = os.path.join(audio, ".tts_stamp")
 
     t_start = time.time()
