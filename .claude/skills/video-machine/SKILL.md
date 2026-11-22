@@ -92,6 +92,10 @@ and look at them (captions, mask, sync). Fix and re-run only the needed steps
 - Send the user the MP4 (SendUserFile) + the contact sheet, and a 3-line summary (duration, shots,
   voice used, anything to improve).
 
+## Music
+No music bed by default (the user adds music in his editor): omit `music` or set it to null.
+Only add `"music": {"mood": "calm_to_eerie"}` if the user asks for it.
+
 ## Voice
 `episode.voice.provider`: `kokoro` (local, free — default), `elevenlabs` (best quality; needs the
 ElevenLabs host allowed in the environment + API key), `espeak` (tests only). See `machine/audio/README.md`.

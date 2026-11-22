@@ -85,7 +85,10 @@ def main():
             run([sys.executable, "pipeline/timing.py", "--episode", ep_path, "--words", words, "--out", timeline], step)
         elif step == "music":
             dur = json.load(open(timeline))["duration"]
-            m = ep.get("music", {})
+            m = ep.get("music") or {}
+            if not m.get("mood") and not m.get("file"):
+                print("\n=== [music] skipped (no music: voice only — music is added later in the editor)")
+                continue
             if force or not newer(music, timeline):
                 cmd = [sys.executable, "audio/music.py", "--duration", f"{dur + 0.5:.2f}", "--mood", m.get("mood", "calm_to_eerie"),
                        "--seed", str(m.get("seed", 1)), "--out", music]
@@ -101,8 +104,12 @@ def main():
                 cmd.append("--force")
             run(cmd, step)
         elif step == "assemble":
-            run([sys.executable, "post/assemble.py", "--episode", ep_path, "--timeline", timeline, "--words", words,
-                 "--shots", shots_dir, "--narration", narr, "--music", music, "--out", final], step)
+            cmd = [sys.executable, "post/assemble.py", "--episode", ep_path, "--timeline", timeline, "--words", words,
+                   "--shots", shots_dir, "--narration", narr, "--out", final]
+            m = ep.get("music") or {}
+            if m.get("mood") or m.get("file"):
+                cmd += ["--music", music]
+            run(cmd, step)
         elif step == "qa":
             run([sys.executable, "post/qa.py", "--video", final, "--timeline", timeline, "--words", words,
                  "--out", os.path.join(out_dir, f"{slug}_qa.json")], step)

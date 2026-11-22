@@ -218,7 +218,7 @@ and `node engine/tools/preview.js --spec scene.json --out x.png` (free-form scen
   "title": "…",
   "language": "en",
   "voice": { "provider": "kokoro", "voice": "young_storyteller", "wpm": 255 },
-  "music": { "mood": "calm_to_eerie", "file": null },
+  "music": null,
   "captions": { "highlight": ["Toby", "Grandpa"] },
   "cast": { "me": { …CharacterSpec… }, "toby": { … } },
   "shots": [
@@ -294,3 +294,5 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
   - Characters: extra spec fields (`shirt.sleeves`, `sleevePattern`, `sleeveColors`, `neck`, `logo`,
     `inner`, `pants.pattern`, `colors`, `shoes`, `hair.capColor`), extra patterns `vest`, `cardigan`,
     extra face `wink`, setPose options (see engine/web/src/characters/README.md).
+- v1.2: **no music bed by default** (`music` omitted/null → voice-only mix; the user adds music later).
+  `post/assemble.py --music` is optional.

@@ -110,7 +110,7 @@ def validate(a, ep, tl, wd, work):
         raise Fail(f"narration ({nd:.2f}s) is longer than the video ({vd:.2f}s)")
     if words and words[-1]["end"] > vd:
         raise Fail(f"last word ends at {words[-1]['end']:.2f}s after the video end {vd:.2f}s")
-    if not os.path.exists(a.music):
+    if a.music and not os.path.exists(a.music):
         raise Fail(f"music not found: {a.music}")
     # clips
     clips, problems = [], []
@@ -215,7 +215,10 @@ def build_audio(a, n_samples, work):
     dur = n_samples / SR
     voice = decode(a.narration, 1)[:n_samples]
     voice = np.pad(voice, ((0, n_samples - len(voice)), (0, 0)))
-    music = decode(a.music, 2)
+    if not a.music:  # no music bed (the user adds music later in his editor)
+        music = np.zeros((n_samples, 2), dtype=np.float32)
+    else:
+        music = decode(a.music, 2)
     if len(music) == 0:
         raise Fail("music decodes to 0 samples")
     if len(music) < n_samples:
@@ -234,7 +237,8 @@ def build_audio(a, n_samples, work):
     tmpv, tmpm = os.path.join(work, "voice_raw.wav"), os.path.join(work, "music_raw.wav")
     write_wav(tmpv, voice.repeat(2, axis=1))  # measured as played: dual-mono stereo (+3 dB vs mono)
     write_wav(tmpm, music)
-    lv, lm = float(loudness(tmpv)["input_i"]), float(loudness(tmpm)["input_i"])
+    lv = float(loudness(tmpv)["input_i"])
+    lm = float(loudness(tmpm)["input_i"]) if a.music else float("-inf")
     if not np.isfinite(lv) or lv < -70:
         raise Fail(f"narration is silent (integrated {lv} LUFS)")
     gv = a.voice_lufs - lv
@@ -313,7 +317,7 @@ def main():
     ap.add_argument("--words", required=True)
     ap.add_argument("--shots", required=True)
     ap.add_argument("--narration", required=True)
-    ap.add_argument("--music", required=True)
+    ap.add_argument("--music", default=None, help="music bed WAV; omit for voice only (default)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--crf", type=int, default=18)
     ap.add_argument("--preset", default="medium")
@@ -330,7 +334,7 @@ def main():
     ap.add_argument("--keep-temp", action="store_true")
     a = ap.parse_args()
     for k in ("episode", "timeline", "words", "shots", "narration", "music", "out"):
-        setattr(a, k, os.path.abspath(getattr(a, k)))
+        if getattr(a, k): setattr(a, k, os.path.abspath(getattr(a, k)))
     try:
         ep = json.load(open(a.episode, encoding="utf-8"))
         tl = json.load(open(a.timeline, encoding="utf-8"))
@@ -343,7 +347,7 @@ def main():
     contact = os.path.join(os.path.dirname(a.out), f"{os.path.splitext(os.path.basename(a.out))[0]}_contact.jpg")
     try:
         shot_files = [os.path.join(a.shots, f"{s['id']}.mp4") for s in tl["shots"]]
-        inputs = [a.episode, a.timeline, a.words, a.narration, a.music, MASK, CAP.FONT_FILE] + \
+        inputs = [x for x in (a.episode, a.timeline, a.words, a.narration, a.music, MASK, CAP.FONT_FILE) if x] + \
             [f for f in shot_files if os.path.exists(f)]
         stamp = stamp_of(a, inputs)
         stamp_path = os.path.join(work, "assemble.stamp")

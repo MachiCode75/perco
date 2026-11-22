@@ -7,10 +7,7 @@
   "provider": "kokoro",
   "voice": "young_storyteller"
  },
- "music": {
-  "mood": "calm_to_eerie",
-  "seed": 7
- },
+ "music": null,
  "captions": {
   "highlight": [
    {
