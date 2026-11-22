@@ -1,4 +1,4 @@
-# CHEATSHEET — everything needed to turn a story into a video (read this, not docs 01–05)
+# CHEATSHEET — everything needed to turn a story into a video (read this + docs/06, not docs 01–05)
 
 ## 1. Targets (6 references measured)
 - Length **110–170 s**. Narration **≈ 4.2 words/s** with our TTS → words ≈ seconds × 4.2 (170 s ≈ 700 words).
@@ -6,19 +6,17 @@
 - Hard cuts only; the engine adds the slow zoom. Cut just **before the payoff word** ("…a sign that says | HI ME").
 - No music (user adds it). Captions are automatic (one word, white, ~70 % height).
 
-## 2. Writing (first-person kid, deadpan, fast)
-- Present tense for "how things work here", **past tense from the first incident**. Plain words, short
-  sentences (half ≤ 6 words, none > 25). No "…", no long dialogue, no moral at the end.
-- Beats (% of runtime): 0–3 hook = the impossible rule in ≤ 15 words · 3–13 the town lives with it
-  (3 quick funny examples, each "us / them" or before/after) · 13–18 **personal example + recurring
-  object** · 18–22 first wrong detail · 22–33 elder/expert lore + **countdown device** (numbers as
-  digits) · 33–45 escalation (first personal incident) · 45–54 town reaction + ominous quoted line ·
-  54–60 **climax** · 60–69 **twist** that reframes everything in 2–3 short lines · 69–78 emotional beat,
-  recurring object returns changed · 78–98 dark accelerating ending (triplets, body countdown) ·
-  98–100 **final image = the recurring object**, last word = payoff.
-- Devices: refrain ×3 (hook, elder quote, inverted at the end) · a tag for doubles/monsters ("Other X",
-  "the Tall Mom") · triplets · ≤ 5 short quotes, tag after ("Grandpa said") · time markers ("By winter…").
-- Every sentence must be **picturable**: a cast member doing one visible action in a known set.
+## 2. Writing — READ `docs/06-storytelling.md` (the story engine, 1 page) and fill its §9 template first
+- Open with **"In this town, <impossible rule as a boring fact>."** (6/6 references).
+- Order: rule → the town copes (3 rituals with numbers + a comic townsperson + a local saying) →
+  **attachment** (little sibling / pet / friend / parent ritual shown by small acts) → hero's stake →
+  **"Then I started noticing things."** + 3–5 seeds → escalation → hero **breaks the taboo** (fast,
+  onomatopoeia beats "Tug. Tug. Tug.") → **twist "X was never Y. It was Z."** + "That's why…" paying the
+  seeds → payoff on the loved one → **last line = callback to an early line, inverted/completed**.
+- Voice: kid 9–12, first person, deadpan, numbers as digits, ≤ 5 short iconic quotes (repeat one later),
+  run-on action sentences + 1–3-word punches. No moral, nothing after the sting.
+- Every sentence must be **picturable**: a cast member doing one visible action in a known set; seeds
+  that are documents become text cards.
 
 ## 3. Visual grammar
 - Hero of the channel (use unless the story says otherwise): `me kid spiky #f2d232 | stripes_h #e7c43f #151515 | pants #151515`.

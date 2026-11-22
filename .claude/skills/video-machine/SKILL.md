@@ -5,13 +5,13 @@ description: Turn a story the user sends into a finished vertical narrated video
 
 # Video Machine — story → video (cheap path)
 
-Everything lives in `machine/`. **Read only `machine/docs/CHEATSHEET.md` and `machine/data/vocab.json`**
+Everything lives in `machine/`. **Read only `machine/docs/CHEATSHEET.md`, `machine/docs/06-storytelling.md` and `machine/data/vocab.json`**
 (skip docs 01–05 and the module READMEs unless you are changing the engine).
 
 ## Steps
 0. Fresh session: `cd machine && bash setup.sh` (idempotent; installs deps, vocab).
 1. Decide length (default ≈ 150–170 s ⇒ ≈ 650–700 words), language (default: the story's), voice.
-2. Write `machine/episodes/<slug>/story.screen` directly (format: CHEATSHEET §4). The spoken column
+2. Fill the adaptation template (06 §9) in a few lines, then write `machine/episodes/<slug>/story.screen` directly (format: CHEATSHEET §4). The spoken column
    is the script: follow CHEATSHEET §2 beats and §3 visual grammar. Keep the user's plot.
    Missing a creature/set/prop? Pick the closest id; if the gap matters, tell the user.
 3. `cd machine && python3 pipeline/screenplay.py episodes/<slug>/story.screen` → fix every ERROR.
