@@ -1,0 +1,85 @@
+title: The 13th Bell
+id: the-13th-bell
+lang: en
+voice: young_storyteller
+
+cast:
+me      kid   messy #5a3a22    | hoodie #3f8f5a #2f6e45 | pants #2d3b55
+lily    kid   ponytail #b5482e | polka #f6a6c4 #ffffff  | skirt #f6a6c4
+grandpa elder bald #dddddd     | cardigan #8a5a3c #f2efe6 | pants #6b6b6b | glasses beard
+mayor   adult short #2a2a2a    | suit #1f2f5c #ffffff   | pants #1f2f5c | tie mayor_chain
+
+== church_front night
+In our town, the church | est push
+bell rings 13 times at midnight. | low push
+== bedroom night
+Not 12. 13. | cu me:surprised
+== street night
+Everybody counts. | est crowd:10:neutral>church
+== house_front night
+Nobody asks why. | two extra1:neutral extra2:neutral
+== church_front night
+Same bell. Same tower. | est push
+== bedroom night
+Same 13. | cu lily:smile
+== living_room night
+Grandpa watches the tower every night | med grandpa:binoculars>window
+== church_front night
+through his old binoculars. | est bino
+== living_room night
+He says the 13th ring is | cu grandpa:talk push
+== road_night night
+for whoever didn't make it home. | est drift
+== bedroom night
+My little sister Lily | med lily:wave:grin
+counts from her bedroom window. | ots lily >window
+When the bell stops, she blinks | mcu lily:carry:smile:flashlight
+her flashlight 13 times back at the tower. | ots lily:carry:flashlight >across
+Like a goodnight. | cu lily:happy push
+== church_front night
+One night, the bell rang 14 times. | low shake
+== bedroom night
+Lily blinked 14 times. | mcu lily:carry:worried:flashlight
+== living_room night
+Grandpa lowered his binoculars | med grandpa:look_down:worried:binoculars
+and didn't say a word. | cu grandpa:sad push
+== house_front day
+The next morning, Mr Hale's house | est push
+was empty. | wide push
+== street day
+Nobody saw him leave. | est crowd:8:worried>house
+The mayor said | med mayor:talk:smile
+Mr Hale moved away. | cu mayor:smirk push
+Nobody asked where. | est crowd:10:look_down:sad
+== church_front night
+The next night, 15 rings. | est push
+== kitchen day
+The baker was gone. | wide drift
+== church_front night
+Then 16. | low shake
+== park day
+The whole Miller family. | est drift
+== street night
+People stopped counting. | est crowd:10:scared
+== road_night night
+They shut their curtains before midnight. | est push
+== living_room night
+Grandpa didn't. | med grandpa:angry push
+He sat by the fire with his stopwatch. | med grandpa:sit:stopwatch@armchair
+"Count with me," he whispered. | two grandpa:talk>me me:worried>grandpa q:grandpa
+"If you stop counting, it counts you." | cu grandpa:scared push q:grandpa
+== church_front night
+Last night, the bell rang | low shake
+== bedroom night
+30 times. | cu me:scared push
+I counted every single one. | med me:sit:worried@bed
+== living_room night
+Grandpa's chair is empty now. | wide push
+== bedroom night
+Lily has his binoculars. | mcu lily:binoculars
+She still sits at her window every night. | ots lily:binoculars >window
+== church_front night
+But she doesn't watch the tower anymore. | est bino
+== bedroom night
+She watches me. | cu lily:binoculars push
+And she's counting. | med me:scared bino push
