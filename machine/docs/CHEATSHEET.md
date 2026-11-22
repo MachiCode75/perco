@@ -1,8 +1,8 @@
 # CHEATSHEET — everything needed to turn a story into a video (read this + docs/06, not docs 01–05)
 
 ## 1. Targets (6 references measured)
-- Length **110–170 s**. Narration **≈ 4.2 words/s** with our TTS → words ≈ seconds × 4.2 (170 s ≈ 700 words).
-- **1 shot per 1.2–1.5 s** → shots ≈ words ÷ 5.2 (700 words ≈ 135 shots). A shot = 2–11 words (median 5).
+- Length **110–170 s**. Narration **≈ 4.45 words/s (268 wpm, like the references)** → words ≈ seconds × 4.45 (170 s ≈ 750 words).
+- **1 shot per 1.2–1.5 s** → shots ≈ words ÷ 5.2 (750 words ≈ 140 shots). A shot = 2–11 words (median 5).
 - Hard cuts only; the engine adds the slow zoom. Cut just **before the payoff word** ("…a sign that says | HI ME").
 - No music (user adds it). Captions are automatic (one word, white, ~70 % height).
 
