@@ -21,7 +21,7 @@ bea   kid ponytail #6b3f22 | pajamas_stars #7fb2ee #ffffff | bow
 mom   adult bun #2a1d17 | cardigan #f0a6b8 #fff3f6 | pants #3b4a6b
 dad   adult short #4a3426 | plaid #3a6ea5 #1d2b45 | pants #555555 | glasses
 mayor adult short #2a2a2a | suit #1f2f5c #ffffff | pants #1f2f5c | tie mayor_chain mustache
-beast creature furry_giant | scale 5
+beast creature furry_giant | scale 8
 
 places:
 my_room      bedroom variant=boy curtains=3
@@ -40,10 +40,10 @@ For exactly 11 minutes. | aer drift
 == house_front night dark
 Nobody looks outside. | est push
 == my_room night
-Lights out, eyes in. | wide me:pull_curtain>window opt:curtains.animate=close
+Lights out, eyes in. | ots me:pull_curtain >curtains opt:curtains.animate=close
 That's the rule. | cu me:nod
 == my_room day
-Every window in town has 3 curtains. | ins s:window opt:curtains.animate=close push
+Every window in town has 3 curtains. | cam:curtains opt:curtains.state=layered opt:curtains.color=#b0413e push
 == shop_front day sign=PIKE'S_HARDWARE display=curtains
 Mr. Pike's hardware store | est push
 sells 900 of them a year. | wide crowd:10:carry:smile>door
@@ -58,39 +58,38 @@ He wears 2. | med mayor:wave:grin:+sleep_mask=NOT_LOOKING:+sleep_mask2=NOT_LOOKI
 == town_square dusk
 Every night, the whole town says it. | est crowd:16:talk>statue
 "Lights out, eyes in." | two extra:talk extra2:nod q:town
-== kitchen night
-Like goodnight. | wide mom:hug:smile me:smile
 == bea_room night
-My little sister Bea is 6. | wide bea:wave:grin
+Like goodnight. | wide mom:hug:smile bea:smile
+My little sister Bea is 6. | med bea:wave:grin
 And she's not scared of anything. | cu bea:smirk push
-Every night, she leaves a cookie | med bea:offer:smile:cookie>window
+Every night, she leaves a cookie | med bea:offer:smile:cookie
 on her windowsill. | ins s:sill opt:sill=cookie push
 "For the one who turns the lights off." | cu bea:talk:happy:cookie q:bea push
 == living_room night
-Dad checks every curtain twice. | wide dad:pull_curtain>window opt:curtains.animate=close
+Dad checks every curtain twice. | med dad:pull_curtain
 Once to close it. Once to be sure. | med dad:nod>window
 == kitchen night dark
-Mom hums the same song for 11 minutes. | med mom:sit_rock:happy@seat1 +candle@table
-In the dark. | wide mom:sit_rock:happy@seat1 bea:sit:sleep@seat2 +candle@table
+Mom hums the same song for 11 minutes. | wide mom:sit_rock:happy@seat1 +candle@table
+In the dark. | med mom:sit_rock:happy@seat1 +candle@table push
 == my_room night
 And this year, I'm 10. | med me:arms_up:grin
 == bea_room night
-So I close Bea's curtains now. | wide me:pull_curtain>window bea:lie:smile@bed opt:curtains.animate=close
+So I close Bea's curtains now. | ots me:pull_curtain >curtains opt:curtains.animate=close
 Twice. Like Dad. | cu me:nod:smirk push
 == my_room day
 Then I started noticing things. | cu me:look_around:worried push
 == bea_room day
-Every morning, Bea's cookie was gone. | ins s:sill push
+Every morning, Bea's cookie was gone. | cam:sill push
 == kitchen day
 Mom said birds. | med mom:shrug
 == bea_room day
-The window was locked. | med me:tap:worried>window
+The window was locked. | ots me:tap >window
 == suburban_street day
-There was black fur on the power pole. | low s:pole_top +fur_tuft@pole_top tiltu
+There was black fur on the power pole. | cam:pole_top +fur_tuft@pole_top:size=3 push
 Way up. Higher than our roof. | wide me:point>pole_top >home_roof
-In the mud, there were footprints | high s:footprint_trail +footprint_trail@road:count=6
-as long as Dad's car. | med dad:surprised@driveway>road +giant_footprint@road
-One in front of every house. | aer +footprint_trail@road:count=10:spacing=22 drift
+In the mud, there were footprints | high s:footprint opt:footprints
+as long as Dad's car. | wide dad:surprised@driveway>footprint opt:footprints
+One in front of every house. | aer +footprint_trail@road:count=10:spacing=22 opt:footprints drift
 == card day
 23 houses. 23 footprints. | card:notebook title="MY NOTES" text="23 houses. 23 footprints." push
 == library day
@@ -108,39 +107,39 @@ She said, "Then who eats the cookies?" | cu bea:talk:smirk:cookie q:bea push
 So that night, at 3:00, | cu me:wide_eyes push
 I opened my curtain. 1 inch. | ots me:peek >window opt:curtains.state=gap
 == suburban_street night dark
-Something was walking down our street. | est beast:walk@road^by_home pov:vignette
-Taller than the power poles. | wide beast:walk@by_pole push
-Black fur. | cu beast:walk@by_pole push
-A grin as wide as a car. | xcu beast@by_pole push
-It stopped at the Millers' house, | wide beast:bend@neighbor1
-leaned down, and tapped their window. | med beast:tap@neighbor1 push
+Something was walking down our street. | wide beast:walk@road^by_home exp:2.2
+Taller than the power poles. | wide beast:loom@by_pole exp:2.5 push
+Black fur. | cu beast:walk@by_pole exp:1.6 push
+A grin as wide as a car. | xcu beast@by_pole exp:1.6 push
+It stopped at the Millers' house, | med beast:loom@neighbor1 exp:1.8
+leaned down, and tapped their window. | cu beast:tap@neighbor1 exp:1.6 push
 == millers_room night dark
-Tap. Tap. Tap. | ins s:giant_hand +giant_hand@outside:pose=tap
+Tap. Tap. Tap. | cam:outside +giant_hand@outside:pose=tap
 3 Millers. | wide extra:scared extra2:scared extra3:scared
 == mayor_room night dark
 Then the mayor's house. Tap. | wide mayor:lie:sleep:+sleep_mask=NOT_LOOKING:+sleep_mask2=NOT_LOOKING@bed +giant_hand@outside:pose=tap
 He lives alone. With his masks. | cu mayor:lie:sleep:+sleep_mask=NOT_LOOKING:+sleep_mask2=NOT_LOOKING@bed push
-== suburban_street night dark
-Then it stopped at our house. | wide beast:bend@by_home push
+== rooftops_sky night dark
+Then it stopped at our house. | wide s:home_roof beast:loom@over_home exp:1.8 push
 == my_room night dark
-Tap. Tap. Tap. Tap. | ins s:giant_hand +giant_hand@outside:pose=tap
+Tap. Tap. Tap. Tap. | cam:outside +giant_hand@outside:pose=tap
 4. | cu me:wide_eyes push
 == living_room night dark
 Mom, Dad, Bea, me. | wide mom:scared dad:scared bea:sleep me:scared
 == suburban_street night dark
-It was counting us. | cu beast:tap@by_home push
+It was counting us. | cu beast:tap@neighbor2 exp:1.6 push
 == my_room night dark
-Then it turned to my window. | ins s:window_face +window_face@outside
-And it smiled. | xcu s:window_face +window_face@outside push
+Then it turned to my window. | cam:outside +window_face@outside
+And it smiled. | ins s:window_face +window_face@outside push
 == house_front day
 The next morning, | est push
-there was a note on our door. | med me:surprised@porch>home_door +note_paper@home_door:text=You_looked.
+there was a note on our door. | cam:door +note_paper@home_door:text=You_looked. push
 == card day
 "You looked." | card:note text="You looked." push
 == kitchen day
 Mom read it twice. | med mom:worried:note=You_looked.
 == my_room day
-Dad nailed my curtain shut. | med dad:hammer:hammer>window opt:boarded
+Dad nailed my curtain shut. | ots dad:hammer:hammer >window opt:boarded
 "Lights out, eyes in," he said. | cu dad:angry q:dad push
 == card night
 The next night, the lights went out at 2:59. | card:clock text=2:59 title=AM push
@@ -149,64 +148,66 @@ One minute early. | cu me:wide_eyes push
 Then something knocked. | wide me:scared>door shake
 Not on the door. | cu me:scared >door push
 == rooftops_sky night dark
-On the roof. | low beast:knock@over_home push
+On the roof. | wide s:home_roof beast:knock@over_home exp:1.6 push
 == bea_room night dark
-Then I heard Bea's window open. | wide bea:reach>window opt:windowOpen
+Then I heard Bea's window open. | ots bea:reach >window opt:windowOpen
 She had her flashlight. | mcu bea:carry:smile:flashlight
 And a cookie. | cu bea:offer:happy:cookie push
 Click. | ots bea:carry:flashlight=on >outside opt:windowOpen
 == suburban_street night dark
-The only light in the whole town. | est +candle@home_window:scale=3 push
-At the end of the street, in the trees, | cam:to_forest push
-something opened its eyes. | cu s:glowing_eyes +glowing_eyes@trees push
-Lots of eyes. | wide s:glowing_eyes +glowing_eyes@trees:count=40
-And they started coming toward the light. | med s:glowing_eyes +glowing_eyes@trees:approach=4 push
+The only light in the whole town. | cam:home +candle@home_window:scale=4 exp:1.4 push
+At the end of the street, in the trees, | cam:to_forest exp:2.2 push
+== forest_edge night dark
+something opened its eyes. | wide s:glowing_eyes +glowing_eyes@path:open=true exp:1.5
+Lots of eyes. | est +glowing_eyes@path:count=40 exp:1.5
+And they started coming toward the light. | med s:glowing_eyes +glowing_eyes@path:approach=5 push
 == bea_room night dark
 I ran down the hall, into her room, | wide me:run:scared@D^A
 and grabbed the flashlight. | mcu me:scared:flashlight=on
 Click. Dark. | cu me:scared:flashlight push
-== suburban_street night dark
-But the eyes kept coming. | med s:glowing_eyes +glowing_eyes@trees:approach=6 push
-Closer. | cu s:glowing_eyes +glowing_eyes@trees:approach=8 push
+== forest_edge night dark
+But the eyes kept coming. | med s:glowing_eyes +glowing_eyes@path:approach=6 push
+Closer. | cu s:glowing_eyes +glowing_eyes@path:approach=8 push
 == house_front night dark
 Then the ground shook. | est shake
-== rooftops_sky night dark
-Thud. | low beast:step@giant shake
 == suburban_street night dark
-Thud. | wide beast:walk@road^by_home shake
-Thud. | cu beast:step@by_home shake
+Thud. | low beast:step@guard exp:1.8 shake
+Thud. | wide beast:walk@road^by_home exp:2.2 shake
+Thud. | cu beast:step@by_pole exp:1.6 shake
 == rooftops_sky night dark
-The giant stepped over our house | low beast:straddle@over_home push
+The giant stepped over our house | wide s:home_roof beast:straddle@over_home exp:1.6 push
 == suburban_street night dark
-and stood between us and the trees. | back beast:spread@guard>trees +glowing_eyes@trees
-It spread its arms wide. | low beast:spread@guard push
-The eyes stopped. | med s:glowing_eyes +glowing_eyes@trees
-Then, one by one, they closed. | med s:glowing_eyes +glowing_eyes@trees:close=true
+and stood between us and the trees. | beast:spread@guard cam:to_forest exp:2
+It spread its arms wide. | low beast:spread@guard exp:1.8 push
+== forest_edge night dark
+The eyes stopped. | med s:glowing_eyes +glowing_eyes@path
+Then, one by one, they closed. | med s:glowing_eyes +glowing_eyes@path:close=true
+== suburban_street night dark
+The giant was never hunting us. | med beast:spread@guard exp:1.8 push
 == rooftops_sky night dark
-The giant was never hunting us. | low beast:spread@over_home push
-It was hiding us. | high beast:straddle@over_home
+It was hiding us. | wide s:home_roof beast:spread@over_home exp:1.6 pull
 == suburban_street night dark
 That's why the lights go out at 3:00. | aer drift
-The things in the trees can only find us by our light. | wide s:glowing_eyes +glowing_eyes@trees >home
-That's why it checks every window. | wide beast:tap@neighbor2
+== forest_edge night dark
+The things in the trees can only find us by our light. | wide s:glowing_eyes +glowing_eyes@path exp:1.5
+== suburban_street night dark
+That's why it checks every window. | med beast:tap@neighbor2 exp:1.6
 == bea_room night dark
 One light is enough. | ots bea:carry:flashlight=on >outside
 == suburban_street night dark
-That's why it counts us, every house, every night. | wide beast:tap@neighbor1
+That's why it counts us, every house, every night. | cu beast:tap@neighbor1 exp:1.6 push
 == town_square day
 Nobody's gone missing since 1994. | est crowd:18:happy>statue
 == bea_room night dark
-And that's why the cookies were gone. | ins s:sill opt:sill=cookie +giant_hand@outside:pose=open
-Bea held out her cookie. | med bea:offer:happy:cookie>window opt:windowOpen
-== suburban_street night dark
-The giant bent down, all the way down, | wide beast:bend@by_home push
-== bea_room night dark
-and took it with 2 fingers. | ins s:giant_hand +giant_hand@outside:pose=pinch:holding=cookie opt:windowOpen
+And that's why the cookies were gone. | cam:sill opt:sill=cookie +giant_hand@outside:pose=open
+Bea held out her cookie. | med bea:offer:happy:cookie opt:windowOpen
+The giant bent down, all the way down, | cam:outside +window_face@outside opt:windowOpen push
+and took it with 2 fingers. | cam:outside +giant_hand@outside:pose=pinch:holding=cookie opt:windowOpen
 Very, very carefully. | mcu bea:happy +giant_hand@outside:pose=pinch:holding=cookie opt:windowOpen
-Then it tapped her window. Once. | ins s:giant_hand +giant_hand@outside:pose=tap
+Then it tapped her window. Once. | cam:outside +giant_hand@outside:pose=tap
 Bea tapped back. | ots bea:tap >window +giant_hand@outside:pose=open
 == house_front day
-The next morning, there was a new note. | med me:smile@porch>home_door +note_paper@home_door:text=Thank_you_for_the_cookie.
+The next morning, there was a new note. | cam:door +note_paper@home_door:text=Thank_you_for_the_cookie. push
 == card day
 "Thank you for the cookie." | card:note text="Thank you for the cookie." push
 "Lights out, eyes in." | card:note text="Thank you for the cookie. Lights out, eyes in." push
@@ -214,9 +215,10 @@ The next morning, there was a new note. | med me:smile@porch>home_door +note_pap
 Last night, the power went out at 3:00. | card:clock text=3:00 title=AM push
 == suburban_street night dark
 Like always. | est drift
-The giant walked down our street, | wide beast:walk@road^by_home
-checking every house. | wide beast:bend@neighbor2
-It stopped at ours. | wide beast:bend@by_home push
+The giant walked down our street, | wide beast:walk@road^by_home exp:2.2
+checking every house. | med beast:tap@neighbor2 exp:1.6
+== rooftops_sky night dark
+It stopped at ours. | wide s:home_roof beast:knock@over_home exp:1.8 push
 == my_room night dark
-Tap. Tap. Tap. Tap. Tap. | ins s:giant_hand +giant_hand@outside:pose=tap
+Tap. Tap. Tap. Tap. Tap. | cam:outside +giant_hand@outside:pose=tap
 There are only 4 of us. | cu me:wide_eyes push

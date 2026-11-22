@@ -52,6 +52,7 @@ v4 (coherence: show exactly what is said)
   opt:k=v  per-shot set option (opt:curtains.animate=close, opt:boarded, opt:windowOpen)
   dark / lit  per-shot power off / on
   cam:<hint>  use a named camera hint of the set (e.g. cam:to_forest)
+  exp:<x>     exposure multiplier for this shot (blackout exteriors: exp:1.6–2.2)
   Coherence check: data/visual_lexicon.json — a WARN when a line names something (cookie, curtain,
   mask, fur, footprint, note, pole, flashlight…) that nothing in the shot shows.
 """
@@ -380,6 +381,8 @@ def compile_screenplay(text, V, SETS):
             elif tok.startswith("opt:"):
                 k, eq, v = tok[4:].partition("=")
                 set_opt(shot_opts, k, opt_value(v) if eq else True)
+            elif tok.startswith("exp:"):  # exposure multiplier (e.g. exp:1.8 for a blackout exterior)
+                shot["exposure"] = float(tok[4:])
             elif tok.startswith("cam:"):  # named camera hint of the set (vocab.json cameraHints)
                 shot["camera"] = {"hint": tok[4:]}
             elif tok in ("dark", "lit"):
@@ -441,7 +444,7 @@ def compile_screenplay(text, V, SETS):
         # defaults
         acts = shot["actors"]
         if shot["framing"] is None:
-            shot["framing"] = "medium" if acts else "establishing"
+            shot["framing"] = "establishing" if (shot.get("camera") or {}).get("hint") or not acts else "medium"
         if subject:
             if subject in ("set",) or subject.startswith("poi:") or subject in cast:
                 shot["subject"] = subject

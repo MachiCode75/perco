@@ -5,7 +5,7 @@
   {"re": "\\bcurtains?\\b", "any": ["opt:curtains", "pose:pull_curtain"], "count_opt": "curtains.layers", "hint": "opt:curtains=3 / opt:curtains.animate=close / dad:pull_curtain>window"},
   {"re": "\\bmasks?\\b", "any": ["wear:sleep_mask"], "hint": "mayor:+sleep_mask=NOT_LOOKING (and :+sleep_mask2=… for a second one)"},
   {"re": "\\bfur\\b", "any": ["prop:fur_tuft", "creature:furry_giant"], "hint": "+fur_tuft@pole_top with `ins s:fur_tuft` / show the furry giant"},
-  {"re": "\\bfootprints?\\b", "any": ["prop:giant_footprint", "prop:footprint_trail"], "hint": "+footprint_trail@road:count=6 / +giant_footprint@road"},
+  {"re": "\\bfootprints?\\b", "any": ["prop:giant_footprint", "prop:footprint_trail", "opt:footprints"], "hint": "+footprint_trail@road:count=6 / +giant_footprint@road"},
   {"re": "\\bnotes?\\b", "any": ["card:note", "prop:note_paper", "held:note", "held:letter"], "hint": "card:note text=… / +note_paper@home_door:text=… / mom:worried:note"},
   {"re": "\\bnewspapers?\\b", "any": ["card:newspaper", "set:library", "held:book"], "hint": "card:newspaper … / == library"},
   {"re": "\\b(power )?poles?\\b", "any": ["poi:pole", "poi:pole_top", "mark:by_pole", "prop:fur_tuft"], "hint": "s:pole / beast@by_pole for scale / +fur_tuft@pole_top"},

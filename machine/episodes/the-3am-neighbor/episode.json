@@ -133,17 +133,35 @@
   },
   "beast": {
    "name": "Beast",
-   "creature": "furry_giant"
-  },
-  "eyes": {
-   "name": "Eyes",
-   "creature": "shadow_eyes"
+   "creature": "furry_giant",
+   "scale": 8.0
   }
  },
  "shots": [
   {
    "id": "001",
    "say": "In this town, the power goes out",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "establishing",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "subject": "set"
+  },
+  {
+   "id": "002",
+   "say": "at 3:00 every night.",
    "set": "card",
    "time": "night",
    "weather": "clear",
@@ -160,19 +178,6 @@
    "subject": "set"
   },
   {
-   "id": "002",
-   "say": "at 3:00 every night.",
-   "set": "suburban_street",
-   "time": "night",
-   "weather": "clear",
-   "framing": "establishing",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [],
-   "subject": "set"
-  },
-  {
    "id": "003",
    "say": "For exactly 11 minutes.",
    "set": "suburban_street",
@@ -183,6 +188,16 @@
    "move": "drift",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
@@ -196,6 +211,16 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
@@ -204,19 +229,26 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "over_shoulder",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "me",
-     "face": "neutral",
+     "pose": "pull_curtain",
      "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "facing": "poi:curtains"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3,
+     "animate": "close"
+    }
+   },
+   "target": "poi:curtains",
    "subject": "me"
   },
   {
@@ -225,18 +257,24 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "close_up",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "me",
-     "pose": "shrug",
+     "pose": "nod",
      "mark": "A",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "me"
   },
   {
@@ -250,47 +288,59 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3,
+     "state": "layered",
+     "color": "#b0413e"
+    }
+   },
+   "camera": {
+    "hint": "curtains"
+   },
    "subject": "set"
   },
   {
    "id": "008",
    "say": "Mr. Pike's hardware store",
-   "set": "card",
+   "set": "shop_front",
    "time": "day",
    "weather": "clear",
    "framing": "establishing",
    "angle": "eye",
-   "move": "static",
+   "move": "push_in",
    "binoculars": false,
    "actors": [],
    "setOptions": {
-    "style": "sign_metal",
-    "title": "PIKE'S HARDWARE",
-    "text": "CURTAINS 3 FOR $20"
+    "sign": "PIKE'S HARDWARE",
+    "display": "curtains"
    },
    "subject": "set"
   },
   {
    "id": "009",
    "say": "sells 900 of them a year.",
-   "set": "city_street",
+   "set": "shop_front",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
-   "actors": [
-    {
-     "id": "extra:1",
-     "pose": "carry",
-     "face": "smile",
-     "mark": "sidewalk",
-     "facing": "camera"
-    }
-   ],
-   "subject": "extra:1"
+   "actors": [],
+   "setOptions": {
+    "sign": "PIKE'S HARDWARE",
+    "display": "curtains"
+   },
+   "crowd": {
+    "count": 10,
+    "pose": "carry",
+    "area": "crowd",
+    "face": "smile",
+    "facing": "poi:door"
+   },
+   "subject": "set"
   },
   {
    "id": "010",
@@ -313,22 +363,20 @@
   {
    "id": "011",
    "say": "Never 3:00.",
-   "set": "town_square",
+   "set": "card",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "static",
+   "move": "push_in",
    "binoculars": false,
-   "actors": [
-    {
-     "id": "extra:2",
-     "pose": "shrug",
-     "mark": "A",
-     "facing": "camera"
-    }
-   ],
-   "subject": "extra:2"
+   "actors": [],
+   "setOptions": {
+    "style": "sign_wood",
+    "title": "BAKERY",
+    "text": "CLOSED AT 3:00 AM"
+   },
+   "subject": "set"
   },
   {
    "id": "012",
@@ -336,20 +384,25 @@
    "set": "town_square",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "establishing",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "mayor",
-     "pose": "talk",
-     "face": "talk",
+     "pose": "offer",
      "mark": "plaque",
      "facing": "camera"
     }
    ],
-   "subject": "mayor"
+   "crowd": {
+    "count": 14,
+    "pose": "stand",
+    "area": "crowd",
+    "facing": "poi:plaque"
+   },
+   "subject": "set"
   },
   {
    "id": "013",
@@ -357,24 +410,58 @@
    "set": "town_square",
    "time": "day",
    "weather": "clear",
+   "framing": "medium_close",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "extra:1",
+     "face": "smile",
+     "wear": [
+      {
+       "type": "sleep_mask",
+       "slot": "forehead",
+       "text": "NOT LOOKING"
+      }
+     ],
+     "mark": "A",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "subject": "extra:1"
+  },
+  {
+   "id": "014",
+   "say": "NOT LOOKING.",
+   "set": "town_square",
+   "time": "day",
+   "weather": "clear",
    "framing": "close_up",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
-     "id": "mayor",
-     "face": "smirk",
+     "id": "extra:1",
+     "face": "smile",
+     "wear": [
+      {
+       "type": "sleep_mask",
+       "text": "NOT LOOKING"
+      }
+     ],
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
-   "subject": "mayor"
+   "subject": "extra:1"
   },
   {
-   "id": "014",
-   "say": "NOT LOOKING.",
+   "id": "015",
+   "say": "He wears 2.",
    "set": "town_square",
    "time": "day",
    "weather": "clear",
@@ -385,34 +472,20 @@
    "actors": [
     {
      "id": "mayor",
-     "prop": {
-      "type": "sign",
-      "text": "NOT LOOKING"
-     },
-     "pose": "hold_sign",
+     "pose": "wave",
      "face": "grin",
+     "wear": [
+      {
+       "type": "sleep_mask",
+       "text": "NOT LOOKING"
+      },
+      {
+       "type": "sleep_mask",
+       "slot": "forehead",
+       "text": "NOT LOOKING"
+      }
+     ],
      "mark": "A",
-     "facing": "camera"
-    }
-   ],
-   "subject": "mayor"
-  },
-  {
-   "id": "015",
-   "say": "He wears 2.",
-   "set": "town_square",
-   "time": "day",
-   "weather": "clear",
-   "framing": "close_up",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "mayor",
-     "face": "wink",
-     "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     }
    ],
@@ -443,7 +516,7 @@
    "set": "town_square",
    "time": "dusk",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "two_shot",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -454,38 +527,50 @@
      "face": "talk",
      "mark": "A",
      "facing": "camera"
+    },
+    {
+     "id": "extra:2",
+     "pose": "nod",
+     "mark": "B",
+     "facing": "camera"
     }
    ],
-   "subject": "extra:1"
+   "subject": "extra:1",
+   "target": "extra:2"
   },
   {
    "id": "018",
    "say": "Like goodnight.",
-   "set": "kitchen",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "two_shot",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "mom",
+     "pose": "hug",
      "face": "smile",
      "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     },
     {
-     "id": "dad",
+     "id": "bea",
      "face": "smile",
      "mark": "B",
      "pose": "stand",
      "facing": "camera"
     }
    ],
-   "subject": "mom",
-   "target": "dad"
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
+   "subject": "mom"
   },
   {
    "id": "019",
@@ -506,6 +591,12 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea"
   },
   {
@@ -527,6 +618,12 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea"
   },
   {
@@ -535,19 +632,28 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium_close",
+   "framing": "medium",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "bea",
-     "pose": "reach",
+     "pose": "offer",
      "face": "smile",
-     "facing": "poi:window",
-     "mark": "A"
+     "prop": {
+      "type": "cookie"
+     },
+     "mark": "A",
+     "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea"
   },
   {
@@ -556,20 +662,21 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "over_shoulder",
+   "framing": "insert",
    "angle": "eye",
-   "move": "static",
+   "move": "push_in",
    "binoculars": false,
-   "actors": [
-    {
-     "id": "bea",
-     "pose": "reach",
-     "mark": "A",
-     "facing": "poi:window"
-    }
-   ],
-   "target": "poi:window",
-   "subject": "bea"
+   "actors": [],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "sill": [
+     "cookie"
+    ]
+   },
+   "subject": "poi:sill"
   },
   {
    "id": "023",
@@ -586,15 +693,24 @@
      "id": "bea",
      "pose": "talk",
      "face": "happy",
+     "prop": {
+      "type": "cookie"
+     },
      "mark": "A",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea"
   },
   {
    "id": "024",
-   "say": "Dad checks all 7 curtains twice.",
+   "say": "Dad checks every curtain twice.",
    "set": "living_room",
    "time": "night",
    "weather": "clear",
@@ -605,58 +721,46 @@
    "actors": [
     {
      "id": "dad",
-     "pose": "look_down",
-     "facing": "poi:window",
-     "mark": "A"
+     "pose": "pull_curtain",
+     "mark": "A",
+     "facing": "camera"
     }
    ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "dad"
   },
   {
    "id": "025",
-   "say": "1, 2, 3, 4, 5, 6, 7.",
+   "say": "Once to close it. Once to be sure.",
    "set": "living_room",
    "time": "night",
    "weather": "clear",
-   "framing": "over_shoulder",
+   "framing": "medium",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "dad",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "poi:window"
+     "pose": "nod",
+     "facing": "poi:window",
+     "mark": "A"
     }
    ],
-   "target": "poi:window",
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "dad"
   },
   {
    "id": "026",
    "say": "Mom hums the same song for 11 minutes.",
-   "set": "kitchen",
-   "time": "night",
-   "weather": "clear",
-   "framing": "medium_close",
-   "angle": "eye",
-   "move": "static",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "mom",
-     "pose": "sit",
-     "face": "smile",
-     "mark": "seat1",
-     "facing": "camera"
-    }
-   ],
-   "subject": "mom"
-  },
-  {
-   "id": "027",
-   "say": "In the dark.",
    "set": "kitchen",
    "time": "night",
    "weather": "clear",
@@ -667,17 +771,57 @@
    "actors": [
     {
      "id": "mom",
-     "pose": "sit",
-     "face": "smile",
+     "pose": "sit_rock",
+     "face": "happy",
      "mark": "seat1",
      "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
     },
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "bea",
-     "pose": "sit",
-     "face": "sleep",
-     "mark": "seat2",
+     "type": "candle",
+     "at": "poi:table"
+    }
+   ],
+   "subject": "mom"
+  },
+  {
+   "id": "027",
+   "say": "In the dark.",
+   "set": "kitchen",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "mom",
+     "pose": "sit_rock",
+     "face": "happy",
+     "mark": "seat1",
      "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "candle",
+     "at": "poi:table"
     }
    ],
    "subject": "mom"
@@ -695,12 +839,18 @@
    "actors": [
     {
      "id": "me",
+     "pose": "arms_up",
      "face": "grin",
      "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "me"
   },
   {
@@ -709,28 +859,27 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "two_shot",
+   "framing": "over_shoulder",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "me",
-     "pose": "reach",
-     "face": "smile",
+     "pose": "pull_curtain",
      "mark": "A",
-     "facing": "camera"
-    },
-    {
-     "id": "bea",
-     "face": "smile",
-     "mark": "B",
-     "pose": "stand",
-     "facing": "camera"
+     "facing": "poi:curtains"
     }
    ],
-   "subject": "me",
-   "target": "bea"
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3,
+     "animate": "close"
+    }
+   },
+   "target": "poi:curtains",
+   "subject": "me"
   },
   {
    "id": "030",
@@ -745,12 +894,18 @@
    "actors": [
     {
      "id": "me",
+     "pose": "nod",
      "face": "smirk",
      "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "me"
   },
   {
@@ -766,12 +921,18 @@
    "actors": [
     {
      "id": "me",
+     "pose": "look_around",
      "face": "worried",
      "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "me"
   },
   {
@@ -785,7 +946,15 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
+   "camera": {
+    "hint": "sill"
+   },
    "subject": "set"
   },
   {
@@ -806,6 +975,11 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "mom"
   },
   {
@@ -814,19 +988,25 @@
    "set": "bedroom",
    "time": "day",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "over_shoulder",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "me",
-     "face": "worried",
+     "pose": "tap",
      "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "facing": "poi:window"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
+   "target": "poi:window",
    "subject": "me"
   },
   {
@@ -835,12 +1015,32 @@
    "set": "suburban_street",
    "time": "day",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "tilt_up",
+   "move": "push_in",
    "binoculars": false,
    "actors": [],
-   "subject": "poi:pole"
+   "camera": {
+    "hint": "pole_top"
+   },
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "props": [
+    {
+     "type": "fur_tuft",
+     "at": "poi:pole_top",
+     "opts": {
+      "size": 3
+     }
+    }
+   ],
+   "subject": "set"
   },
   {
    "id": "036",
@@ -848,7 +1048,7 @@
    "set": "suburban_street",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -856,10 +1056,19 @@
     {
      "id": "me",
      "pose": "point",
-     "facing": "poi:pole",
+     "facing": "poi:pole_top",
      "mark": "A"
     }
    ],
+   "target": "poi:home_roof",
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
    "subject": "me"
   },
   {
@@ -868,13 +1077,21 @@
    "set": "suburban_street",
    "time": "day",
    "weather": "clear",
-   "framing": "wide",
+   "framing": "high_angle",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:road",
-   "subject": "set"
+   "setOptions": {
+    "footprints": true,
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "subject": "poi:footprint"
   },
   {
    "id": "038",
@@ -882,7 +1099,7 @@
    "set": "suburban_street",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -891,10 +1108,19 @@
      "id": "dad",
      "face": "surprised",
      "mark": "driveway",
-     "facing": "poi:road",
+     "facing": "poi:footprint",
      "pose": "stand"
     }
    ],
+   "setOptions": {
+    "footprints": true,
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
    "subject": "dad"
   },
   {
@@ -905,9 +1131,28 @@
    "weather": "clear",
    "framing": "aerial",
    "angle": "eye",
-   "move": "pan_right",
+   "move": "drift",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "footprints": true,
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "props": [
+    {
+     "type": "footprint_trail",
+     "at": "poi:road",
+     "opts": {
+      "count": 10,
+      "spacing": 22
+     }
+    }
+   ],
    "subject": "set"
   },
   {
@@ -931,12 +1176,12 @@
   {
    "id": "041",
    "say": "At the library, I found a newspaper from 1994.",
-   "set": "classroom",
+   "set": "library",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "static",
+   "move": "push_in",
    "binoculars": false,
    "actors": [
     {
@@ -949,7 +1194,7 @@
      "facing": "camera"
     }
    ],
-   "subject": "me"
+   "subject": "set"
   },
   {
    "id": "042",
@@ -990,7 +1235,7 @@
   {
    "id": "044",
    "say": "The blackouts started the next year.",
-   "set": "road_night",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
@@ -998,6 +1243,16 @@
    "move": "drift",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
@@ -1026,6 +1281,12 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea",
    "target": "me"
   },
@@ -1047,6 +1308,12 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "me"
   },
   {
@@ -1064,10 +1331,19 @@
      "id": "bea",
      "pose": "talk",
      "face": "smirk",
+     "prop": {
+      "type": "cookie"
+     },
      "mark": "A",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "bea"
   },
   {
@@ -1089,6 +1365,14 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1104,98 +1388,26 @@
    "actors": [
     {
      "id": "me",
-     "pose": "reach",
+     "pose": "peek",
      "mark": "A",
      "facing": "poi:window"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3,
+     "state": "gap"
+    },
+    "power": "off"
+   },
    "target": "poi:window",
+   "power": "off",
    "subject": "me"
   },
   {
    "id": "050",
    "say": "Something was walking down our street.",
-   "set": "suburban_street",
-   "time": "night",
-   "weather": "clear",
-   "framing": "establishing",
-   "angle": "eye",
-   "move": "static",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "walk",
-     "mark": "road",
-     "facing": "camera"
-    }
-   ],
-   "pov": "vignette",
-   "subject": "set"
-  },
-  {
-   "id": "051",
-   "say": "Taller than the power poles.",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "low_angle",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "walk",
-     "mark": "giant",
-     "facing": "camera"
-    }
-   ],
-   "subject": "beast"
-  },
-  {
-   "id": "052",
-   "say": "Black fur.",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "close_up",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "loom",
-     "mark": "A",
-     "facing": "camera"
-    }
-   ],
-   "subject": "beast"
-  },
-  {
-   "id": "053",
-   "say": "A grin as wide as a car.",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "extreme_close_up",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
-    }
-   ],
-   "subject": "beast"
-  },
-  {
-   "id": "054",
-   "say": "It stopped at the Millers' house,",
    "set": "suburban_street",
    "time": "night",
    "weather": "clear",
@@ -1206,17 +1418,62 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "lean",
+     "pose": "walk",
      "mark": "road",
+     "walk": {
+      "to": "by_home"
+     },
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 2.2,
+   "power": "off",
    "subject": "beast"
   },
   {
-   "id": "055",
-   "say": "leaned down, and tapped their window.",
-   "set": "rooftops_sky",
+   "id": "051",
+   "say": "Taller than the power poles.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "wide",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "loom",
+     "mark": "by_pole",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 2.5,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "052",
+   "say": "Black fur.",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "close_up",
@@ -1226,34 +1483,157 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "reach",
-     "mark": "A",
+     "pose": "walk",
+     "mark": "by_pole",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "053",
+   "say": "A grin as wide as a car.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "extreme_close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "mark": "by_pole",
+     "pose": "stand",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "054",
+   "say": "It stopped at the Millers' house,",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "loom",
+     "mark": "neighbor1",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "055",
+   "say": "leaned down, and tapped their window.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "tap",
+     "mark": "neighbor1",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
    "subject": "beast"
   },
   {
    "id": "056",
    "say": "Tap. Tap. Tap.",
-   "set": "house_front",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
    "angle": "eye",
-   "move": "shake",
+   "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "parents",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "tap"
+     }
+    }
+   ],
    "subject": "set"
   },
   {
    "id": "057",
    "say": "3 Millers.",
-   "set": "living_room",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -1280,6 +1660,14 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "parents",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "extra:1"
   },
   {
@@ -1288,7 +1676,7 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -1297,8 +1685,37 @@
      "id": "mayor",
      "pose": "lie",
      "face": "sleep",
+     "wear": [
+      {
+       "type": "sleep_mask",
+       "text": "NOT LOOKING"
+      },
+      {
+       "type": "sleep_mask",
+       "slot": "forehead",
+       "text": "NOT LOOKING"
+      }
+     ],
      "mark": "bed",
      "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "variant": "parents",
+    "wall": "#d8c8a4",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "tap"
+     }
     }
    ],
    "subject": "mayor"
@@ -1316,12 +1733,32 @@
    "actors": [
     {
      "id": "mayor",
+     "pose": "lie",
      "face": "sleep",
-     "mark": "A",
-     "pose": "stand",
+     "wear": [
+      {
+       "type": "sleep_mask",
+       "text": "NOT LOOKING"
+      },
+      {
+       "type": "sleep_mask",
+       "slot": "forehead",
+       "text": "NOT LOOKING"
+      }
+     ],
+     "mark": "bed",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "parents",
+    "wall": "#d8c8a4",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "mayor"
   },
   {
@@ -1330,19 +1767,30 @@
    "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "wide",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "pose": "lean",
-     "mark": "giant",
+     "pose": "loom",
+     "mark": "over_home",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
+   "subject": "poi:home_roof"
   },
   {
    "id": "061",
@@ -1352,10 +1800,29 @@
    "weather": "clear",
    "framing": "establishing",
    "angle": "eye",
-   "move": "shake",
+   "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "tap"
+     }
+    }
+   ],
    "subject": "set"
   },
   {
@@ -1377,6 +1844,14 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1385,7 +1860,7 @@
    "set": "living_room",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -1410,69 +1885,111 @@
      "mark": "C",
      "pose": "stand",
      "facing": "camera"
+    },
+    {
+     "id": "me",
+     "face": "scared",
+     "mark": "D",
+     "pose": "stand",
+     "facing": "camera"
     }
    ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "mom"
   },
   {
    "id": "064",
    "say": "It was counting us.",
-   "set": "rooftops_sky",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
-   "framing": "extreme_close_up",
+   "framing": "close_up",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "mark": "A",
-     "pose": "stand",
+     "pose": "tap",
+     "mark": "neighbor2",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
    "subject": "beast"
   },
   {
    "id": "065",
    "say": "Then it turned to my window.",
-   "set": "rooftops_sky",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "establishing",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "beast",
-     "pose": "lean",
-     "mark": "giant",
-     "facing": "camera"
+     "type": "window_face",
+     "at": "poi:outside"
     }
    ],
-   "subject": "beast"
+   "subject": "set"
   },
   {
    "id": "066",
    "say": "And it smiled.",
-   "set": "rooftops_sky",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "extreme_close_up",
+   "framing": "insert",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "beast",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "window_face",
+     "at": "poi:outside"
     }
    ],
-   "subject": "beast"
+   "subject": "poi:window_face"
   },
   {
    "id": "067",
@@ -1485,6 +2002,14 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
    "subject": "set"
   },
   {
@@ -1493,20 +2018,32 @@
    "set": "house_front",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "static",
+   "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "camera": {
+    "hint": "door"
+   },
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "props": [
     {
-     "id": "me",
-     "face": "surprised",
-     "mark": "porch",
-     "facing": "poi:door",
-     "pose": "stand"
+     "type": "note_paper",
+     "at": "poi:home_door",
+     "opts": {
+      "text": "You looked."
+     }
     }
    ],
-   "subject": "me"
+   "subject": "set"
   },
   {
    "id": "069",
@@ -1540,13 +2077,19 @@
      "id": "mom",
      "face": "worried",
      "prop": {
-      "type": "letter"
+      "type": "note",
+      "text": "You looked."
      },
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "mom"
   },
   {
@@ -1555,18 +2098,29 @@
    "set": "bedroom",
    "time": "day",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "over_shoulder",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "dad",
-     "pose": "reach",
-     "facing": "poi:window",
-     "mark": "A"
+     "prop": {
+      "type": "hammer"
+     },
+     "pose": "hammer",
+     "mark": "A",
+     "facing": "poi:window"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "boarded": true
+   },
+   "target": "poi:window",
    "subject": "dad"
   },
   {
@@ -1588,6 +2142,12 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    }
+   },
    "subject": "dad"
   },
   {
@@ -1627,6 +2187,15 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "boarded": true
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1648,6 +2217,15 @@
      "pose": "stand"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "boarded": true
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1669,6 +2247,16 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "boarded": true
+   },
+   "target": "poi:door",
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1677,19 +2265,30 @@
    "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "wide",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "pose": "reach",
-     "mark": "giant",
+     "pose": "knock",
+     "mark": "over_home",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "poi:home_roof"
   },
   {
    "id": "078",
@@ -1697,7 +2296,7 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "over_shoulder",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -1705,10 +2304,20 @@
     {
      "id": "bea",
      "pose": "reach",
-     "facing": "poi:window",
-     "mark": "A"
+     "mark": "A",
+     "facing": "poi:window"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "target": "poi:window",
+   "power": "off",
    "subject": "bea"
   },
   {
@@ -1733,6 +2342,14 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "bea"
   },
   {
@@ -1748,12 +2365,23 @@
    "actors": [
     {
      "id": "bea",
+     "pose": "offer",
      "face": "happy",
+     "prop": {
+      "type": "cookie"
+     },
      "mark": "A",
-     "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "bea"
   },
   {
@@ -1771,13 +2399,23 @@
      "id": "bea",
      "pose": "carry",
      "prop": {
-      "type": "flashlight"
+      "type": "flashlight",
+      "on": true
      },
      "mark": "A",
-     "facing": "poi:across"
+     "facing": "poi:outside"
     }
    ],
-   "target": "poi:across",
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "target": "poi:outside",
+   "power": "off",
    "subject": "bea"
   },
   {
@@ -1786,17 +2424,38 @@
    "set": "suburban_street",
    "time": "night",
    "weather": "clear",
-   "framing": "aerial",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "drift",
+   "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "camera": {
+    "hint": "home"
+   },
+   "exposure": 1.4,
+   "power": "off",
+   "props": [
+    {
+     "type": "candle",
+     "at": "poi:home_window",
+     "scale": 4.0
+    }
+   ],
    "subject": "set"
   },
   {
    "id": "083",
    "say": "At the end of the street, in the trees,",
-   "set": "forest_edge",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
@@ -1804,6 +2463,20 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "camera": {
+    "hint": "to_forest"
+   },
+   "exposure": 2.2,
+   "power": "off",
    "subject": "set"
   },
   {
@@ -1812,19 +2485,26 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "wide",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "exposure": 1.5,
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "open": true
+     }
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "085",
@@ -1832,19 +2512,26 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "extreme_close_up",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "exposure": 1.5,
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "count": 40
+     }
     }
    ],
-   "subject": "eyes"
+   "subject": "set"
   },
   {
    "id": "086",
@@ -1852,19 +2539,25 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "medium",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "approach": 5
+     }
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "087",
@@ -1872,7 +2565,7 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
@@ -1881,10 +2574,21 @@
      "id": "me",
      "pose": "run",
      "face": "scared",
-     "mark": "A",
+     "mark": "D",
+     "walk": {
+      "to": "A"
+     },
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1902,13 +2606,22 @@
      "id": "me",
      "face": "scared",
      "prop": {
-      "type": "flashlight"
+      "type": "flashlight",
+      "on": true
      },
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1925,11 +2638,22 @@
     {
      "id": "me",
      "face": "scared",
+     "prop": {
+      "type": "flashlight"
+     },
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   },
   {
@@ -1938,19 +2662,25 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "medium",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "approach": 6
+     }
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "091",
@@ -1958,19 +2688,25 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "extreme_close_up",
+   "framing": "close_up",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "approach": 8
+     }
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "092",
@@ -1983,12 +2719,22 @@
    "move": "shake",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
    "id": "093",
    "say": "Thud.",
-   "set": "rooftops_sky",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "low_angle",
@@ -1998,35 +2744,26 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "walk",
-     "mark": "giant",
+     "pose": "step",
+     "mark": "guard",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
    "subject": "beast"
   },
   {
    "id": "094",
-   "say": "Thud.",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "close_up",
-   "angle": "eye",
-   "move": "shake",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "walk",
-     "mark": "A",
-     "facing": "camera"
-    }
-   ],
-   "subject": "beast"
-  },
-  {
-   "id": "095",
    "say": "Thud.",
    "set": "suburban_street",
    "time": "night",
@@ -2040,9 +2777,54 @@
      "id": "beast",
      "pose": "walk",
      "mark": "road",
+     "walk": {
+      "to": "by_home"
+     },
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 2.2,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "095",
+   "say": "Thud.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "close_up",
+   "angle": "eye",
+   "move": "shake",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "step",
+     "mark": "by_pole",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
    "subject": "beast"
   },
   {
@@ -2051,44 +2833,69 @@
    "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "wide",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "pose": "loom",
-     "mark": "giant",
+     "pose": "straddle",
+     "mark": "over_home",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "poi:home_roof"
   },
   {
    "id": "097",
    "say": "and stood between us and the trees.",
-   "set": "forest_edge",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "pull_out",
+   "move": "static",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "pose": "loom",
-     "mark": "A",
+     "pose": "spread",
+     "mark": "guard",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "camera": {
+    "hint": "to_forest"
+   },
+   "exposure": 2.0,
+   "power": "off",
+   "subject": "set"
   },
   {
    "id": "098",
    "say": "It spread its arms wide.",
-   "set": "rooftops_sky",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "low_angle",
@@ -2098,11 +2905,22 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "reach",
-     "mark": "giant",
+     "pose": "spread",
+     "mark": "guard",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
    "subject": "beast"
   },
   {
@@ -2111,24 +2929,84 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "medium",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path"
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "100",
    "say": "Then, one by one, they closed.",
    "set": "forest_edge",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "glowing_eyes",
+     "at": "poi:path",
+     "opts": {
+      "close": true
+     }
+    }
+   ],
+   "subject": "poi:glowing_eyes"
+  },
+  {
+   "id": "101",
+   "say": "The giant was never hunting us.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "push_in",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "spread",
+     "mark": "guard",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "102",
+   "say": "It was hiding us.",
+   "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
    "framing": "wide",
@@ -2137,62 +3015,24 @@
    "binoculars": false,
    "actors": [
     {
-     "id": "eyes",
-     "mark": "path",
-     "pose": "stand",
-     "facing": "camera"
-    }
-   ],
-   "subject": "eyes"
-  },
-  {
-   "id": "101",
-   "say": "The giant was never hunting us.",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "low_angle",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
      "id": "beast",
-     "pose": "lean",
-     "mark": "giant",
+     "pose": "spread",
+     "mark": "over_home",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
-  },
-  {
-   "id": "102",
-   "say": "It was hiding us.",
-   "set": "bedroom",
-   "time": "night",
-   "weather": "clear",
-   "framing": "two_shot",
-   "angle": "eye",
-   "move": "static",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "me",
-     "face": "surprised",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
-    },
-    {
-     "id": "bea",
-     "face": "smile",
-     "mark": "B",
-     "pose": "stand",
-     "facing": "camera"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
     }
-   ],
-   "subject": "me",
-   "target": "bea"
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "poi:home_roof"
   },
   {
    "id": "103",
@@ -2205,6 +3045,16 @@
    "move": "drift",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
@@ -2213,24 +3063,92 @@
    "set": "forest_edge",
    "time": "night",
    "weather": "clear",
-   "framing": "medium",
+   "framing": "wide",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "power": "off"
+   },
+   "exposure": 1.5,
+   "power": "off",
+   "props": [
     {
-     "id": "eyes",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "glowing_eyes",
+     "at": "poi:path"
     }
    ],
-   "subject": "eyes"
+   "subject": "poi:glowing_eyes"
   },
   {
    "id": "105",
    "say": "That's why it checks every window.",
-   "set": "rooftops_sky",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "tap",
+     "mark": "neighbor2",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "106",
+   "say": "One light is enough.",
+   "set": "bedroom",
+   "time": "night",
+   "weather": "clear",
+   "framing": "over_shoulder",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "bea",
+     "pose": "carry",
+     "prop": {
+      "type": "flashlight",
+      "on": true
+     },
+     "mark": "A",
+     "facing": "poi:outside"
+    }
+   ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "target": "poi:outside",
+   "power": "off",
+   "subject": "bea"
+  },
+  {
+   "id": "107",
+   "say": "That's why it counts us, every house, every night.",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "close_up",
@@ -2240,62 +3158,41 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "lean",
-     "mark": "A",
+     "pose": "tap",
+     "mark": "neighbor1",
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
    "subject": "beast"
   },
   {
-   "id": "106",
-   "say": "One light is enough.",
-   "set": "bedroom",
-   "time": "night",
+   "id": "108",
+   "say": "Nobody's gone missing since 1994.",
+   "set": "town_square",
+   "time": "day",
    "weather": "clear",
    "framing": "establishing",
    "angle": "eye",
    "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
-   "subject": "set"
-  },
-  {
-   "id": "107",
-   "say": "That's why it counts us, every house, every night.",
-   "set": "suburban_street",
-   "time": "night",
-   "weather": "clear",
-   "framing": "establishing",
-   "angle": "eye",
-   "move": "pan_right",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "walk",
-     "mark": "road",
-     "facing": "camera"
-    }
-   ],
-   "subject": "set"
-  },
-  {
-   "id": "108",
-   "say": "Nobody's gone missing since 1994.",
-   "set": "card",
-   "time": "day",
-   "weather": "clear",
-   "framing": "establishing",
-   "angle": "eye",
-   "move": "pull_out",
-   "binoculars": false,
-   "actors": [],
-   "setOptions": {
-    "style": "newspaper",
-    "title": "ELM DAILY - 1994",
-    "text": "9 GONE IN ONE WINTER"
+   "crowd": {
+    "count": 18,
+    "pose": "stand",
+    "area": "crowd",
+    "face": "happy",
+    "facing": "poi:statue"
    },
    "subject": "set"
   },
@@ -2305,20 +3202,35 @@
    "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "sill": [
+     "cookie"
+    ]
+   },
+   "camera": {
+    "hint": "sill"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "bea",
-     "face": "grin",
-     "mark": "A",
-     "pose": "stand",
-     "facing": "camera"
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "open"
+     }
     }
    ],
-   "subject": "bea"
+   "subject": "set"
   },
   {
    "id": "110",
@@ -2333,73 +3245,131 @@
    "actors": [
     {
      "id": "bea",
-     "pose": "reach",
-     "face": "smile",
-     "facing": "poi:window",
-     "mark": "A"
+     "pose": "offer",
+     "face": "happy",
+     "prop": {
+      "type": "cookie"
+     },
+     "mark": "A",
+     "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "power": "off",
    "subject": "bea"
   },
   {
    "id": "111",
    "say": "The giant bent down, all the way down,",
-   "set": "rooftops_sky",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "low_angle",
+   "framing": "establishing",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "beast",
-     "pose": "lean",
-     "mark": "giant",
-     "facing": "camera"
+     "type": "window_face",
+     "at": "poi:outside"
     }
    ],
-   "subject": "beast"
+   "subject": "set"
   },
   {
    "id": "112",
    "say": "and took it with 2 fingers.",
-   "set": "rooftops_sky",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "establishing",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
-   "actors": [
+   "actors": [],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
     {
-     "id": "beast",
-     "pose": "reach",
-     "mark": "A",
-     "facing": "camera"
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "pinch",
+      "holding": "cookie"
+     }
     }
    ],
-   "subject": "beast"
+   "subject": "set"
   },
   {
    "id": "113",
    "say": "Very, very carefully.",
-   "set": "rooftops_sky",
+   "set": "bedroom",
    "time": "night",
    "weather": "clear",
-   "framing": "extreme_close_up",
+   "framing": "medium_close",
    "angle": "eye",
-   "move": "push_in",
+   "move": "static",
    "binoculars": false,
    "actors": [
     {
-     "id": "beast",
+     "id": "bea",
+     "face": "happy",
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off",
+    "windowOpen": true
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "pinch",
+      "holding": "cookie"
+     }
+    }
+   ],
+   "subject": "bea"
   },
   {
    "id": "114",
@@ -2412,7 +3382,26 @@
    "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "tap"
+     }
+    }
+   ],
    "subject": "set"
   },
   {
@@ -2428,13 +3417,29 @@
    "actors": [
     {
      "id": "bea",
-     "pose": "reach",
-     "face": "happy",
+     "pose": "tap",
      "mark": "A",
      "facing": "poi:window"
     }
    ],
+   "setOptions": {
+    "variant": "girl",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
    "target": "poi:window",
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "open"
+     }
+    }
+   ],
    "subject": "bea"
   },
   {
@@ -2448,6 +3453,26 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "camera": {
+    "hint": "door"
+   },
+   "setOptions": {
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "props": [
+    {
+     "type": "note_paper",
+     "at": "poi:home_door",
+     "opts": {
+      "text": "Thank you for the cookie."
+     }
+    }
+   ],
    "subject": "set"
   },
   {
@@ -2505,7 +3530,7 @@
   {
    "id": "120",
    "say": "Like always.",
-   "set": "house_front",
+   "set": "suburban_street",
    "time": "night",
    "weather": "clear",
    "framing": "establishing",
@@ -2513,31 +3538,21 @@
    "move": "drift",
    "binoculars": false,
    "actors": [],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "power": "off",
    "subject": "set"
   },
   {
    "id": "121",
    "say": "The giant walked down our street,",
-   "set": "rooftops_sky",
-   "time": "night",
-   "weather": "clear",
-   "framing": "low_angle",
-   "angle": "eye",
-   "move": "push_in",
-   "binoculars": false,
-   "actors": [
-    {
-     "id": "beast",
-     "pose": "walk",
-     "mark": "giant",
-     "facing": "camera"
-    }
-   ],
-   "subject": "beast"
-  },
-  {
-   "id": "122",
-   "say": "checking every house.",
    "set": "suburban_street",
    "time": "night",
    "weather": "clear",
@@ -2548,11 +3563,56 @@
    "actors": [
     {
      "id": "beast",
-     "pose": "lean",
+     "pose": "walk",
      "mark": "road",
+     "walk": {
+      "to": "by_home"
+     },
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 2.2,
+   "power": "off",
+   "subject": "beast"
+  },
+  {
+   "id": "122",
+   "say": "checking every house.",
+   "set": "suburban_street",
+   "time": "night",
+   "weather": "clear",
+   "framing": "medium",
+   "angle": "eye",
+   "move": "static",
+   "binoculars": false,
+   "actors": [
+    {
+     "id": "beast",
+     "pose": "tap",
+     "mark": "neighbor2",
+     "facing": "camera"
+    }
+   ],
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.6,
+   "power": "off",
    "subject": "beast"
   },
   {
@@ -2561,19 +3621,30 @@
    "set": "rooftops_sky",
    "time": "night",
    "weather": "clear",
-   "framing": "close_up",
+   "framing": "wide",
    "angle": "eye",
    "move": "push_in",
    "binoculars": false,
    "actors": [
     {
      "id": "beast",
-     "pose": "lean",
-     "mark": "A",
+     "pose": "knock",
+     "mark": "over_home",
      "facing": "camera"
     }
    ],
-   "subject": "beast"
+   "setOptions": {
+    "power": "off",
+    "home": {
+     "wall": "#9fc4e8",
+     "roof": "#3f4a63",
+     "door": "#c8323c",
+     "trim": "#ffffff"
+    }
+   },
+   "exposure": 1.8,
+   "power": "off",
+   "subject": "poi:home_roof"
   },
   {
    "id": "124",
@@ -2583,10 +3654,29 @@
    "weather": "clear",
    "framing": "establishing",
    "angle": "eye",
-   "move": "shake",
+   "move": "static",
    "binoculars": false,
    "actors": [],
-   "target": "poi:window",
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "camera": {
+    "hint": "outside"
+   },
+   "power": "off",
+   "props": [
+    {
+     "type": "giant_hand",
+     "at": "poi:outside",
+     "opts": {
+      "pose": "tap"
+     }
+    }
+   ],
    "subject": "set"
   },
   {
@@ -2608,10 +3698,21 @@
      "facing": "camera"
     }
    ],
+   "setOptions": {
+    "variant": "boy",
+    "curtains": {
+     "layers": 3
+    },
+    "power": "off"
+   },
+   "power": "off",
    "subject": "me"
   }
  ],
  "ending": {
   "hold": 0.8
+ },
+ "speak": {
+  "2:59": "2 59"
  }
 }
