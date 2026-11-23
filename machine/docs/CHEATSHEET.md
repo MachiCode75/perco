@@ -15,12 +15,10 @@
   seeds → payoff on the loved one → **last line = callback to an early line, inverted/completed**.
 - Voice: kid 9–12, first person, deadpan, numbers as digits, ≤ 5 short iconic quotes (repeat one later),
   run-on action sentences + 1–3-word punches. No moral, nothing after the sting.
-- **Intonation finishing (campfire storytelling)**: put a tag before ~15–25 % of sentences — it changes only how
-  the voice says it, never the captions: `{down}` ominous closer / deadpan punchline (the end falls),
-  `{surprise}` reveal or comic number, `{excited}` action burst, `{low}` quiet aside, `{whisper}` the scary
-  secret or the rule, `{slow}` the sting line, `{pause}` a beat after the sentence (before a payoff), `{up}`/`{flat}`
-  keep the end from falling. Default without tag: every "." sentence ends slightly lower (the user's reference
-  voice ends low; the clone tended to end high). E.g. `{whisper} Lights out, eyes in. | …`
+- **Intonation tags (campfire storytelling)**: put a tag before ~15–25 % of sentences — voice only, never captions:
+  `{surprise}`/`{excited}` (more expressive take), `{low}`/`{whisper}` (calmer take, quieter), `{pause}` (a beat
+  after the sentence). `{down}` `{slow}` `{up}` `{flat}` are accepted but currently have no effect: post-hoc pitch /
+  tempo processing sounded synthetic to the user and is disabled.
 - Every sentence must be **picturable**: a cast member doing one visible action in a known set; seeds
   that are documents become text cards.
 

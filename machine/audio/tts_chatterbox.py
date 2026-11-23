@@ -169,10 +169,7 @@ def group_plan(P, words, tags):
         fin["fall"] = min(fin["fall"], base_fall) + float(P.get("down_fall_st", -2.0)); fin["fall_len"] = 0.7
     if "up" in tags or "flat" in tags:
         fin["fall"] = 0.0
-    if "slow" in tags:
-        fin["tempo"] = 0.88
-    if "fast" in tags:
-        fin["tempo"] = 1.12
+    # no per-sentence DSP beyond gain/pauses: time-stretch / pitch maps added audible artifacts (user test)
     if "pause" in tags:
         fin["pause"] = 0.35
     return {"gen": gen, "fin": fin}
