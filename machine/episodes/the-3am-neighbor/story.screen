@@ -36,14 +36,14 @@ In this town, the power goes out | est push
 == card night
 at 3:00 every night. | card:clock text=3:00 title=AM push
 == suburban_street night dark
-For exactly 11 minutes. | aer drift
+{down} For exactly 11 minutes. | aer drift
 == house_front night dark
-Nobody looks outside. | est push
+{low} Nobody looks outside. | est push
 == my_room night
-Lights out, eyes in. | ots me:pull_curtain >curtains opt:curtains.animate=close
-That's the rule. | cu me:nod
+{whisper} Lights out, eyes in. | ots me:pull_curtain >curtains opt:curtains.animate=close
+{down} That's the rule. | cu me:nod
 == my_room day
-Every window in town has 3 curtains. | cam:curtains opt:curtains.state=layered opt:curtains.color=#b0413e push
+{surprise} Every window in town has 3 curtains. | cam:curtains opt:curtains.state=layered opt:curtains.color=#b0413e push
 == shop_front day sign=PIKE'S_HARDWARE display=curtains
 Mr. Pike's hardware store | est push
 sells 900 of them a year. | wide crowd:10:carry:smile>door
@@ -221,4 +221,4 @@ checking every house. | med beast:tap@neighbor2 exp:1.6
 It stopped at ours. | wide s:home_roof beast:knock@over_home exp:1.8 push
 == my_room night dark
 Tap. Tap. Tap. Tap. Tap. | cam:outside +giant_hand@outside:pose=tap
-There are only 4 of us. | cu me:wide_eyes push
+{slow} {down} There are only 4 of us. | cu me:wide_eyes push

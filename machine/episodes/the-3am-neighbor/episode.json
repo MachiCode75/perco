@@ -188,6 +188,12 @@
    "move": "drift",
    "binoculars": false,
    "actors": [],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "down"
+    }
+   ],
    "setOptions": {
     "power": "off",
     "home": {
@@ -211,6 +217,12 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "low"
+    }
+   ],
    "setOptions": {
     "power": "off",
     "home": {
@@ -241,6 +253,12 @@
      "facing": "poi:curtains"
     }
    ],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "whisper"
+    }
+   ],
    "setOptions": {
     "variant": "boy",
     "curtains": {
@@ -269,6 +287,12 @@
      "facing": "camera"
     }
    ],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "down"
+    }
+   ],
    "setOptions": {
     "variant": "boy",
     "curtains": {
@@ -288,6 +312,12 @@
    "move": "push_in",
    "binoculars": false,
    "actors": [],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "surprise"
+    }
+   ],
    "setOptions": {
     "variant": "boy",
     "curtains": {
@@ -3696,6 +3726,16 @@
      "mark": "A",
      "pose": "stand",
      "facing": "camera"
+    }
+   ],
+   "prosody": [
+    {
+     "at": 0,
+     "tag": "slow"
+    },
+    {
+     "at": 0,
+     "tag": "down"
     }
    ],
    "setOptions": {

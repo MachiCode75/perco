@@ -135,6 +135,123 @@ def align(toks, groups, gtimes, hyp, duration):
     return res
 
 
+def token_tags(episode, n):
+    """global token index → set of intonation tags (screenplay `{tag}` → shot.prosody)."""
+    out, off = {}, 0
+    for sh in episode["shots"]:
+        k = len(T.words(sh.get("say", "")))
+        for p in sh.get("prosody", []) or []:
+            i = min(n - 1, off + int(p.get("at", 0)))
+            out.setdefault(i, set()).add(p["tag"])
+        off += k
+    return out
+
+
+def group_plan(P, words, tags):
+    """Generation overrides + finishing for one sentence group.
+    Default (preset end_fall_st, e.g. -1.5): a declarative sentence ('.') ends with a gentle pitch fall —
+    the user's reference narrator ends sentences low, the clone tends to end high."""
+    ex = float(P.get("exaggeration", 1.0)); gen, fin = {}, {"fall": 0.0, "fall_len": 0.45, "gain_db": 0.0, "tempo": 1.0, "pause": 0.0}
+    last = words[-1] if words else ""
+    end = re.sub(r"[\"”')\]]+$", "", last)[-1:] if last else ""
+    base_fall = float(P.get("end_fall_st", 0.0))
+    if end == "." or end == "…":
+        fin["fall"] = base_fall
+    elif end == "!":
+        fin["fall"] = base_fall * 0.4
+    if "surprise" in tags or "excited" in tags:
+        gen = {"exaggeration": round(min(1.4, ex + 0.35), 2), "cfg_weight": 0.4}; fin["fall"] = 0.0 if "surprise" in tags else fin["fall"]
+    if "low" in tags:
+        gen = {"exaggeration": round(max(0.3, ex - 0.25), 2)}; fin["gain_db"] = -2.5
+    if "whisper" in tags:
+        gen = {"exaggeration": round(max(0.25, ex - 0.35), 2)}; fin["gain_db"] = -7.0
+    if "down" in tags:
+        fin["fall"] = min(fin["fall"], base_fall) + float(P.get("down_fall_st", -2.0)); fin["fall_len"] = 0.7
+    if "up" in tags or "flat" in tags:
+        fin["fall"] = 0.0
+    if "slow" in tags:
+        fin["tempo"] = 0.88
+    if "fast" in tags:
+        fin["tempo"] = 1.12
+    if "pause" in tags:
+        fin["pause"] = 0.35
+    return {"gen": gen, "fin": fin}
+
+
+def _fall(x, sr, st, length, tmp):
+    """Glide the final vowel to `st` semitones relative to the sentence median (rubberband R3, formants kept)."""
+    import soundfile as sf
+    # voiced end = last frame the pitch tracker calls voiced (not the breath / final "s" or "t")
+    import librosa
+    f0, vflag, vprob = librosa.pyin(x, fmin=80, fmax=450, sr=sr, frame_length=1024, hop_length=256)
+    vmask = (vprob > 0.5) & ~np.isnan(f0)
+    vi = np.nonzero(vmask)[0]
+    if len(vi) < 10:
+        return x
+    # end of the last sustained voiced run (≥ 4 frames), ignoring a final creak
+    runs, k0 = [], vi[0]
+    for a_, b_ in zip(vi[:-1], vi[1:]):
+        if b_ != a_ + 1:
+            runs.append((k0, a_)); k0 = b_
+    runs.append((k0, vi[-1]))
+    last = next((r for r in reversed(runs) if r[1] - r[0] >= 3), runs[-1])
+    endv = min(len(x), (int(last[1]) + 1) * 256); start = max(0, endv - int(length * sr))
+    # adaptive: bring the final vowel to `st` semitones relative to the sentence's median pitch (never raise)
+    med = float(np.median(f0[vmask])); endf = float(np.median(f0[last[0]:last[1] + 1][-6:]))
+    st = max(-5.0, min(0.0, st + 12 * np.log2(med / endf)))
+    if st > -0.2:
+        return x
+    lines = ["0 0"]
+    for j in range(start, len(x), int(0.01 * sr)):
+        u = min(1.0, (j - start) / max(1, endv - start))
+        lines.append(f"{j} {st * u ** 0.8:.3f}")
+    pad = int(0.5 * sr)  # realtime pitch-map mode has latency: pad, then re-align on the unshifted start
+    for j in range(len(x), len(x) + pad, int(0.01 * sr)):
+        lines.append(f"{j} {st:.3f}")
+    Path(tmp + ".map").write_text("\n".join(lines) + "\n")
+    sf.write(tmp + ".in.wav", np.concatenate([x, np.zeros(pad, np.float32)]), sr)
+    r = subprocess.run(["rubberband", "-3", "-F", "-q", "--pitchmap", tmp + ".map", tmp + ".in.wav", tmp + ".out.wav"], capture_output=True)
+    if r.returncode != 0:
+        return x
+    y, _ = sf.read(tmp + ".out.wav", dtype="float32")
+    y = y if y.ndim == 1 else y.mean(axis=1)
+    n = min(len(x), int(0.6 * sr), max(1, start)); best, off = -1e9, 0
+    for o in range(0, min(int(0.3 * sr), len(y) - n), 24):
+        c = float(np.dot(x[:n], y[o:o + n]))
+        if c > best:
+            best, off = c, o
+    y = y[off:off + len(x)]
+    return np.pad(y, (0, len(x) - len(y))) if len(y) < len(x) else y
+
+
+def finish_groups(out_dir, job, meta, plan, P):
+    """Apply per-group finishing to chatterbox_raw.wav and rewrite it with new group offsets."""
+    import soundfile as sf
+    if not any(pl["fin"]["fall"] or pl["fin"]["gain_db"] or pl["fin"]["tempo"] != 1.0 or pl["fin"]["pause"] for pl in plan):
+        return meta
+    x, sr = sf.read(job["out"], dtype="float32")
+    x = x if x.ndim == 1 else x.mean(axis=1)
+    gap = float(job.get("gap", 0.05)); parts, groups, cur = [], [], 0
+    tmp = str(out_dir / "_fin")
+    for g, pl in zip(meta["groups"], plan):
+        y = x[int(g["start"] * sr):int(g["end"] * sr)].copy(); f = pl["fin"]
+        if f["tempo"] != 1.0:
+            sf.write(tmp + ".t.wav", y, sr)
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", tmp + ".t.wav", "-af", f"atempo={f['tempo']}", "-c:a", "pcm_f32le", tmp + ".t2.wav"], check=True)
+            y, _ = sf.read(tmp + ".t2.wav", dtype="float32")
+        if f["fall"]:
+            y = _fall(y, sr, f["fall"], f["fall_len"], tmp)
+        if f["gain_db"]:
+            y = y * (10 ** (f["gain_db"] / 20))
+        groups.append({"text": g["text"], "start": cur / sr, "end": (cur + len(y)) / sr})
+        pad = np.zeros(int((gap + f["pause"]) * sr), np.float32)
+        parts += [y.astype(np.float32), pad]; cur += len(y) + len(pad)
+    sf.write(job["out"], np.concatenate(parts), sr)
+    meta = dict(meta, groups=groups)
+    (out_dir / "chatterbox_raw.json").write_text(json.dumps(meta, indent=1))
+    return meta
+
+
 def synthesize(episode, out_dir, voice="narrator_ref", threads=4):
     t0 = time.time()
     out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
@@ -143,7 +260,10 @@ def synthesize(episode, out_dir, voice="narrator_ref", threads=4):
     toks = T.words(T.narration(episode))
     groups = make_groups(toks, P.get("group_words", 22))
     speak = episode.get("speak") or {}
-    job = {"groups": [T.spoken_text([toks[i] for i in g], speak) for g in groups], "prompt": str(ROOT / P["prompt"]),
+    tags = token_tags(episode, len(toks))
+    plan = [group_plan(P, [toks[i] for i in g], set().union(*[tags.get(i, set()) for i in g])) for g in groups]
+    job = {"groups": [dict(text=T.spoken_text([toks[i] for i in g], speak), **pl["gen"]) for g, pl in zip(groups, plan)],
+           "prompt": str(ROOT / P["prompt"]),
            "exaggeration": P["exaggeration"], "cfg_weight": P["cfg_weight"], "temperature": P["temperature"],
            "seed": P.get("seed", 7), "gap": P.get("gap", 0.05), "threads": threads,
            "out": str(out_dir / "chatterbox_raw.wav")}
@@ -151,6 +271,7 @@ def synthesize(episode, out_dir, voice="narrator_ref", threads=4):
     env = dict(os.environ, HF_HUB_OFFLINE="1")
     subprocess.run([str(VENV_PY), str(HERE / "chatterbox_worker.py"), str(out_dir / "chatterbox_job.json")], check=True, env=env)
     meta = json.loads((out_dir / "chatterbox_raw.json").read_text())
+    meta = finish_groups(out_dir, job, meta, plan, P)  # intonation finishing (falls, whisper, tempo, pauses)
     sr0 = meta["sr"]
     fast = out_dir / "chatterbox_fast.wav"
     if "tempo" in P or "pitch_semitones" in P:

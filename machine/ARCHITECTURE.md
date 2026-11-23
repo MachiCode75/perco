@@ -330,3 +330,7 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
   user's own original reel; user-tuned in the voice tuner artifact: exaggeration 0.7, one sentence per
   generation, 20 ms gaps, pitch +0.75 st (asetrate+atempo, tempo-neutral), tempo ×1.04, shelving EQ
   bass +8 dB @220 Hz / treble +8 dB @3.2 kHz (audio/voices.json, tts_chatterbox.py).
+- v4.2 intonation: screenplay `{tag}` in spoken text → shot.prosody [{at, tag}] (captions untouched);
+  tts_chatterbox per sentence: generation overrides (surprise/excited/low/whisper exaggeration), finishing
+  (adaptive end fall via rubberband R3 pitch map to end_fall_st below the sentence median, down = extra fall,
+  whisper/low gain, slow/fast tempo, pause). Preset keys end_fall_st, down_fall_st.

@@ -52,6 +52,8 @@ v4 (coherence: show exactly what is said)
   opt:k=v  per-shot set option (opt:curtains.animate=close, opt:boarded, opt:windowOpen)
   dark / lit  per-shot power off / on
   cam:<hint>  use a named camera hint of the set (e.g. cam:to_forest)
+  {tag}       voice intonation in the spoken text, before a sentence (never shown in captions):
+              {surprise} {excited} {down} (falls at the end) {low} {whisper} {slow} {fast} {pause} {up} {flat}
   exp:<x>     exposure multiplier for this shot (blackout exteriors: exp:1.6–2.2)
   Coherence check: data/visual_lexicon.json — a WARN when a line names something (cookie, curtain,
   mask, fur, footprint, note, pole, flashlight…) that nothing in the shot shows.
@@ -280,6 +282,26 @@ def apply_word(a, w, V):
     return True
 
 
+PROSODY_TAGS = {"surprise", "excited", "down", "low", "whisper", "slow", "fast", "pause", "up", "flat"}
+
+
+def split_prosody(say):
+    """'{down} For exactly 11 minutes.' → ('For exactly 11 minutes.', [{'at': 0, 'tag': 'down'}], [])
+    A tag applies to the sentence containing the next word (voice only; captions never show it)."""
+    out, pros, bad = [], [], []
+    for tok in say.split():
+        while True:
+            m = re.match(r"^\{(\w+)\}(.*)$", tok)
+            if not m:
+                break
+            (pros if m.group(1) in PROSODY_TAGS else bad).append(
+                {"at": len(out), "tag": m.group(1)} if m.group(1) in PROSODY_TAGS else m.group(1))
+            tok = m.group(2)
+        if tok:
+            out.append(tok)
+    return " ".join(out), pros, bad
+
+
 HOME_SETS = {"house_front", "suburban_street", "rooftops_sky"}
 HOME = {}
 TIME_RE = re.compile(r"^(\d{1,2}):(\d{2})$")
@@ -352,12 +374,16 @@ def compile_screenplay(text, V, SETS):
             cast[k] = spec; continue
         # shot line
         say, _, dirs = line.partition("|")
-        say = say.strip()
+        say, prosody, bad = split_prosody(say.strip())
+        for t in bad:
+            errors.append(f"line {ln}: unknown intonation tag '{{{t}}}' (known: {', '.join(sorted(PROSODY_TAGS))})")
         if not say:
             errors.append(f"line {ln}: empty spoken text"); continue
         shot = {"id": f"{len(shots) + 1:03d}", "say": say, "set": scene["set"], "time": scene["time"],
                 "weather": scene["weather"], "framing": None, "angle": "eye", "move": "static",
                 "binoculars": False, "actors": []}
+        if prosody:
+            shot["prosody"] = prosody
         if scene["opts"]:
             shot["setOptions"] = json.loads(json.dumps(scene["opts"]))
         shot["_place"] = scene["place"]

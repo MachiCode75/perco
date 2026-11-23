@@ -24,6 +24,8 @@
   "pitch_semitones": 0.75,
   "brightness_db": 8,
   "body_db": 8,
-  "note": "user-tuned 2026-11-23 in the voice tuner (artifact HGPYPjK9pfzaK5zDbBwr73): prompt isolated from the user's own reel; one sentence per generation"
+  "note": "user-tuned 2026-11-23 in the voice tuner (artifact HGPYPjK9pfzaK5zDbBwr73): prompt isolated from the user's own reel; one sentence per generation",
+  "end_fall_st": -1.5,
+  "down_fall_st": -2.0
  }
 }

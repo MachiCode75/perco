@@ -12,7 +12,8 @@ Everything lives in `machine/`. **Read only `machine/docs/CHEATSHEET.md`, `machi
 0. Fresh session: `cd machine && bash setup.sh` (idempotent; installs deps, vocab).
 1. Decide length (default ≈ 150–170 s ⇒ ≈ 500–570 words with the default voice narrator_ref), language (default: the story's).
 2. Fill the adaptation template (06 §9) in a few lines, then write `machine/episodes/<slug>/story.screen` directly (format: CHEATSHEET §4). The spoken column
-   is the script: follow CHEATSHEET §2 beats and §3 visual grammar. Keep the user's plot.
+   is the script: follow CHEATSHEET §2 beats (incl. intonation tags {down} {surprise} {whisper}… on ~20 % of
+   sentences) and §3 visual grammar. Keep the user's plot.
    Missing a creature/set/prop? Pick the closest id; if the gap matters, tell the user.
 3. `cd machine && python3 pipeline/screenplay.py episodes/<slug>/story.screen` → fix every ERROR and every
    coherence WARN (what is said must be shown: CHEATSHEET §3.0).

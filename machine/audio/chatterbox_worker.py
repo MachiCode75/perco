@@ -32,9 +32,11 @@ def main(job_path):
     torch.manual_seed(job.get("seed", 7))
     parts, meta, cursor = [], [], 0
     gap = torch.zeros(1, int(job.get("gap", 0.05) * m.sr))
-    for i, text in enumerate(job["groups"]):
-        w = m.generate(text, audio_prompt_path=job["prompt"], exaggeration=job.get("exaggeration", 1.0),
-                       cfg_weight=job.get("cfg_weight", 0.5), temperature=job.get("temperature", 0.8))
+    for i, g in enumerate(job["groups"]):
+        g = g if isinstance(g, dict) else {"text": g}  # per-group overrides (intonation tags)
+        text = g["text"]
+        w = m.generate(text, audio_prompt_path=job["prompt"], exaggeration=g.get("exaggeration", job.get("exaggeration", 1.0)),
+                       cfg_weight=g.get("cfg_weight", job.get("cfg_weight", 0.5)), temperature=g.get("temperature", job.get("temperature", 0.8)))
         w = trim(w, m.sr)
         meta.append({"text": text, "start": cursor / m.sr, "end": (cursor + w.shape[-1]) / m.sr})
         parts += [w, gap]
