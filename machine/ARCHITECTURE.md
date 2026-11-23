@@ -326,3 +326,7 @@ Also writes `out/<slug>_contact.jpg` (one frame per shot) for QA.
   sleep_mask with text; world: blackout, our-house identity, room variants + curtains/sill/boarded/
   windowOpen, story props (fur_tuft, footprints, giant_hand, window_face, glowing_eyes, note_paper…),
   library, shop_front. Voice: captions keep "3:00", Chatterbox reads "3 AM" (text.spoken_token).
+- v4.1 voice: default preset `narrator_ref` — Chatterbox prompt isolated (Spleeter, sherpa-onnx) from the
+  user's own original reel; user-tuned in the voice tuner artifact: exaggeration 0.7, one sentence per
+  generation, 20 ms gaps, pitch +0.75 st (asetrate+atempo, tempo-neutral), tempo ×1.04, shelving EQ
+  bass +8 dB @220 Hz / treble +8 dB @3.2 kHz (audio/voices.json, tts_chatterbox.py).

@@ -6,7 +6,7 @@ FORMAT (see docs/CHEATSHEET.md for the full reference)
 ----------------------------------------------------
     title: The 13th Bell
     lang: en
-    voice: narrator_c2                # default (user-approved Chatterbox voice); or kokoro:young_storyteller
+    voice: narrator_ref               # default (user-tuned Chatterbox voice); narrator_c2 = previous; or kokoro:young_storyteller
     hold: 0.8                         # optional ending hold (s)
 
     cast:
@@ -499,7 +499,7 @@ def compile_screenplay(text, V, SETS):
     for s in shots:
         for t, col in s.pop("_quotes", []):
             highlight.append({"text": t, "color": col})
-    voice = meta.get("voice", "narrator_c2")
+    voice = meta.get("voice", "narrator_ref")
     presets = json.load(open(os.path.join(ROOT, "audio", "voices.json"))) if os.path.exists(os.path.join(ROOT, "audio", "voices.json")) else {}
     if ":" in voice:
         prov, _, vname = voice.partition(":")

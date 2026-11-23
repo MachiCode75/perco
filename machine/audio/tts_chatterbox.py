@@ -1,4 +1,4 @@
-"""Chatterbox provider (expressive open-source TTS) with the user-approved preset `narrator_c2`.
+"""Chatterbox provider (expressive open-source TTS). Default preset `narrator_ref` (user-tuned, see audio/voices.json); `narrator_c2` = previous voice.
 
 Flow: narration tokens → sentence groups (≤ group_words) → chatterbox_worker.py in the models/cbx venv
 → played faster by `speedup` (pitch rises with speed, like the reference narrator; no time-stretch
@@ -135,7 +135,7 @@ def align(toks, groups, gtimes, hyp, duration):
     return res
 
 
-def synthesize(episode, out_dir, voice="narrator_c2", threads=4):
+def synthesize(episode, out_dir, voice="narrator_ref", threads=4):
     t0 = time.time()
     out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
     P = preset(voice)
@@ -151,10 +151,23 @@ def synthesize(episode, out_dir, voice="narrator_c2", threads=4):
     env = dict(os.environ, HF_HUB_OFFLINE="1")
     subprocess.run([str(VENV_PY), str(HERE / "chatterbox_worker.py"), str(out_dir / "chatterbox_job.json")], check=True, env=env)
     meta = json.loads((out_dir / "chatterbox_raw.json").read_text())
-    k, sr0 = float(P.get("speedup", 1.0)), meta["sr"]
+    sr0 = meta["sr"]
     fast = out_dir / "chatterbox_fast.wav"
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", job["out"], "-af",
-                    f"asetrate={sr0}*{k},aresample={al.OUT_SR},highpass=f=80", "-ac", "1", str(fast)], check=True)
+    if "tempo" in P or "pitch_semitones" in P:
+        # user-tuned chain (voice tuner): pitch shift without tempo change, then tempo (WSOLA), then shelving EQ
+        p = 2 ** (float(P.get("pitch_semitones", 0)) / 12); t = float(P.get("tempo", 1.0)); k = t
+        af = f"asetrate={sr0}*{p:.5f},aresample={al.OUT_SR},atempo={t / p:.5f}"
+    else:  # legacy: play faster (pitch rises with speed)
+        k = float(P.get("speedup", 1.0)); af = f"asetrate={sr0}*{k},aresample={al.OUT_SR}"
+    eq = []
+    if P.get("body_db") or P.get("brightness_db"):
+        eq.append("volume=-10dB")
+        if P.get("body_db"):
+            eq.append(f"bass=g={P['body_db']}:f=220:t=s:w=1")
+        if P.get("brightness_db"):
+            eq.append(f"treble=g={P['brightness_db']}:f=3200:t=s:w=1")
+    af = ",".join([af] + eq + ["highpass=f=80"])
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", job["out"], "-af", af, "-ac", "1", "-c:a", "pcm_f32le", str(fast)], check=True)
     wav = al.read_audio(str(fast), al.OUT_SR, 1)
     if wav.ndim > 1:
         wav = wav.mean(axis=1)

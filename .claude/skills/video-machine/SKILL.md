@@ -10,7 +10,7 @@ Everything lives in `machine/`. **Read only `machine/docs/CHEATSHEET.md`, `machi
 
 ## Steps
 0. Fresh session: `cd machine && bash setup.sh` (idempotent; installs deps, vocab).
-1. Decide length (default ≈ 150–170 s ⇒ ≈ 560–630 words with the default voice narrator_c2), language (default: the story's).
+1. Decide length (default ≈ 150–170 s ⇒ ≈ 500–570 words with the default voice narrator_ref), language (default: the story's).
 2. Fill the adaptation template (06 §9) in a few lines, then write `machine/episodes/<slug>/story.screen` directly (format: CHEATSHEET §4). The spoken column
    is the script: follow CHEATSHEET §2 beats and §3 visual grammar. Keep the user's plot.
    Missing a creature/set/prop? Pick the closest id; if the gap matters, tell the user.

@@ -1,7 +1,7 @@
 # CHEATSHEET — everything needed to turn a story into a video (read this + docs/06, not docs 01–05)
 
 ## 1. Targets (6 references measured)
-- Length **110–170 s**. Narration with the approved voice `narrator_c2` ≈ **3.7 words/s (≈ 225 wpm)** → words ≈ seconds × 3.7 (170 s ≈ 630 words).
+- Length **110–170 s**. Narration with the user-tuned default voice `narrator_ref` ≈ **3.35 words/s (≈ 200 wpm)** → words ≈ seconds × 3.35 (170 s ≈ 570 words).
 - **1 shot per 1.2–1.5 s** → shots ≈ words ÷ 5.2 (630 words ≈ 120 shots). A shot = 2–11 words (median 5).
 - Hard cuts only; the engine adds the slow zoom. Cut just **before the payoff word** ("…a sign that says | HI ME").
 - No music (user adds it). Captions are automatic (one word, white, ~70 % height).
@@ -57,7 +57,7 @@ A human editor illustrates every line. A shot of a character standing there is N
 
 ## 4. Screenplay format (`episodes/<slug>/story.screen` → `python3 pipeline/screenplay.py …`)
 ```
-title: …            lang: en|fr          voice: narrator_c2 (default)       hold: 0.8
+title: …            lang: en|fr          voice: narrator_ref (default)       hold: 0.8
 cast:
 <key> <build> <hair> <#hair> | <shirt pattern> <#c1> <#c2> | <pants style> <#c> | <accessories…>
 <key> creature <id> | scale 4 | eyes glow #ffd84a          # creatures
@@ -94,7 +94,7 @@ At the end of the street, | cam:to_forest                      # a named camera 
   subject with wide/low for big objects.
 - Crowds: street → `est`; lake_dock/shore → `wide`. Interiors fit ~3 actors.
 - `ots` needs `>target`. Two-shot: two actors, second = partner.
-- Voice: `narrator_c2` (default, user-approved expressive Chatterbox voice, EN; synthesis ≈ 6× real time). Fallback/FR: `kokoro:young_storyteller` / `kokoro:fr_storyteller`.
+- Voice: `narrator_ref` (default since v4.1: Chatterbox cloned from the user's own original reel, settings tuned by the user in the voice tuner artifact; EN; synthesis ≈ 6× real time). `narrator_c2` = previous voice. Fallback/FR: `kokoro:young_storyteller` / `kokoro:fr_storyteller`.
 
 ## 6. Procedure (cheap path)
 1. Write `story.screen` directly (the script = the spoken column). 2. `python3 pipeline/screenplay.py

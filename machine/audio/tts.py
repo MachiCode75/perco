@@ -222,8 +222,8 @@ def synthesize(episode, out_dir, provider="kokoro", voice=None, speed=None, pitc
         voice = vcfg.get("voice")
     presets = json.loads((HERE / "voices.json").read_text()) if (HERE / "voices.json").exists() else {}
     if provider == "chatterbox" or (voice in presets and presets[voice].get("provider") == "chatterbox"):
-        import tts_chatterbox  # expressive voice chosen by the user (narrator_c2)
-        return tts_chatterbox.synthesize(episode, out_dir, voice if voice in presets else "narrator_c2")
+        import tts_chatterbox  # expressive voice chosen by the user (narrator_ref)
+        return tts_chatterbox.synthesize(episode, out_dir, voice if voice in presets else "narrator_ref")
     speed = float(speed if speed is not None else vcfg.get("speed", 1.0) or 1.0)
     pitch = pitch if pitch is not None else vcfg.get("pitch")
     opt = {k: float(vcfg[k]) if vcfg.get(k) is not None else d for k, d in DEFAULTS.items()}

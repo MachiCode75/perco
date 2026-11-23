@@ -11,7 +11,7 @@
 title: The 3AM Neighbor
 id: the-3am-neighbor
 lang: en
-voice: narrator_c2
+voice: narrator_ref
 home: wall=#9fc4e8 roof=#3f4a63 door=#c8323c trim=#ffffff
 speak: 2:59=2 59
 

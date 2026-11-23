@@ -1,6 +1,6 @@
 {
  "narrator_c2": {
-  "_comment": "Voice chosen by the user (sample: assets/voice/narrator_c2_sample.mp3). Chatterbox (open source) conditioned on our own Kokoro prompt, sentence groups ≤ 22 words, then played faster (pitch rises with speed, no time-stretch artifacts).",
+  "_comment": "Voice chosen by the user (sample: assets/voice/narrator_c2_sample.mp3). Chatterbox (open source) conditioned on our own Kokoro prompt, sentence groups \u2264 22 words, then played faster (pitch rises with speed, no time-stretch artifacts).",
   "provider": "chatterbox",
   "prompt": "assets/voice/narrator_prompt.wav",
   "exaggeration": 1.0,
@@ -10,5 +10,20 @@
   "group_words": 22,
   "gap": 0.05,
   "speedup": 1.114
+ },
+ "narrator_ref": {
+  "provider": "chatterbox",
+  "prompt": "assets/voice/narrator_ref_prompt.wav",
+  "exaggeration": 0.7,
+  "cfg_weight": 0.5,
+  "temperature": 0.8,
+  "seed": 7,
+  "group_words": 1,
+  "gap": 0.02,
+  "tempo": 1.04,
+  "pitch_semitones": 0.75,
+  "brightness_db": 8,
+  "body_db": 8,
+  "note": "user-tuned 2026-11-23 in the voice tuner (artifact HGPYPjK9pfzaK5zDbBwr73): prompt isolated from the user's own reel; one sentence per generation"
  }
 }
