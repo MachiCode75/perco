@@ -5,7 +5,7 @@
  "language": "en",
  "voice": {
   "provider": "chatterbox",
-  "voice": "narrator_c2"
+  "voice": "narrator_ref"
  },
  "music": null,
  "captions": {
