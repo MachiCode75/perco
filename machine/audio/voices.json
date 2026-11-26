@@ -1,6 +1,6 @@
 {
  "narrator_c2": {
-  "_comment": "Voice chosen by the user (sample: assets/voice/narrator_c2_sample.mp3). Chatterbox (open source) conditioned on our own Kokoro prompt, sentence groups \u2264 22 words, then played faster (pitch rises with speed, no time-stretch artifacts).",
+  "_comment": "Voice chosen by the user (sample: assets/voice/narrator_c2_sample.mp3). Chatterbox (open source) conditioned on our own Kokoro prompt, sentence groups ≤ 22 words, then played faster (pitch rises with speed, no time-stretch artifacts).",
   "provider": "chatterbox",
   "prompt": "assets/voice/narrator_prompt.wav",
   "exaggeration": 1.0,
@@ -27,5 +27,16 @@
   "note": "user-tuned 2026-11-23 in the voice tuner (artifact HGPYPjK9pfzaK5zDbBwr73): prompt isolated from the user's own reel; one sentence per generation; post-hoc pitch falls (rubberband) disabled 2026-11-23: user heard synth artifacts",
   "end_fall_st": 0.0,
   "down_fall_st": 0.0
+ },
+ "narrator_adam": {
+  "_comment": "Voice pinned by the user on 2026-11-26 ('PARFAITE'): ElevenLabs premade 'Adam - Dominant, Firm', model eleven_v4, default voice settings, then played 1.3x faster with the pitch rising (asetrate, like a sped-up track in a video editor). Sample: assets/voice/narrator_adam_sample.mp3 (raw API output: narrator_adam_raw_v4.mp3). Measured vs the reference reels: speaker similarity 90.0 % (reference ceiling 92.5 %), F0 range 14.2 st (reference 13.9 st). API key: network secret on api.elevenlabs.io (header xi-api-key), never in code. Not wired into the TTS pipeline yet.",
+  "provider": "elevenlabs",
+  "voice_id": "pNInz6obpgDQGcFmaJgB",
+  "voice_name": "Adam - Dominant, Firm",
+  "model_id": "eleven_v4",
+  "voice_settings": null,
+  "output_format": "mp3_44100_128",
+  "speedup": 1.3,
+  "speedup_mode": "pitch_rises"
  }
 }
