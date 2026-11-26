@@ -53,6 +53,9 @@ def feats(x):
     """F0 median (Hz), F0 range p10–p90 (st), formant F1–F3 medians, syllable-free speech rate proxy, LTAS bands."""
     s = parselmouth.Sound(x.astype(np.float64), SR)
     f0 = s.to_pitch_ac(time_step=0.01, pitch_floor=100, pitch_ceiling=600).selected_array["frequency"]
+    st = 12 * np.log2(np.where(f0 > 0, f0, np.nan) / 100.0)
+    dv = np.abs(np.diff(st)) / 0.01
+    dv = dv[np.isfinite(dv) & (dv < 400)]  # voiced-to-voiced steps only, octave jumps dropped
     f0 = f0[f0 > 0]
     fm = s.to_formant_burg(time_step=0.01, max_number_of_formants=5, maximum_formant=6000)
     ts = [t for t in np.arange(0.02, s.duration - 0.02, 0.01)]
@@ -69,7 +72,8 @@ def feats(x):
     ltas = spec[act].mean(0) + 1e-12
     fr = np.fft.rfftfreq(2048, 1 / SR)
     return {"f0": float(np.median(f0)), "f0_range": float(12 * np.log2(np.percentile(f0, 90) / np.percentile(f0, 10))),
-            "F": [float(np.median(F[k])) for k in (1, 2, 3)], "ltas": ltas, "freqs": fr}
+            "F": [float(np.median(F[k])) for k in (1, 2, 3)], "ltas": ltas, "freqs": fr,
+            "vel": float(np.mean(dv)) if len(dv) else 0.0}
 
 
 def band_db(ltas, fr, lo, hi, scale=1.0):
@@ -177,12 +181,21 @@ def main():
                     if isinstance(v, (int, float)):
                         return float(v)
             return None
+        pr = man.get("params", {}).get("prompt")
+        prompt_rel = None
+        if pr:
+            prp = pr if os.path.isabs(pr) else os.path.join(M, pr)
+            if os.path.exists(prp):
+                prompt_rel = "prompts/" + os.path.splitext(os.path.basename(prp))[0] + ".mp3"
+                mp3(load(prp), os.path.join(PACK, prompt_rel))
         sim = pick("speaker_sim", "spk_sim", "sim_wespeaker", "wespeaker", "speaker_sim_mean")
         cands.append({"id": cid, "label": man.get("label", cid), "engine": man.get("engine", "?"), "license": man.get("license", ""),
                       "desc": man.get("desc", ""), "is_baseline": cid == a.baseline, "gen_params": man.get("params", {}),
                       "scores": {"fidelity": pick("fidelity"), "speaker_sim": sim, "rate_ratio": c_rate / R_rate,
                                  "f0_diff_st": 12 * math.log2(C["f0"] / R["f0"]), "wer": pick("wer"),
-                                 "ending_fall_pct": pick("ending_fall_pct", "falling_pct")},
+                                 "ending_fall_pct": pick("ending_fall_pct", "falling_pct"),
+                                 "melody_ratio": C["vel"] / max(R["vel"], 1e-6)},
+                      "prompt_audio": prompt_rel,
                       "auto": {"pitch_st": round(pitch_st, 2), "tempo": round(tempo, 2), "formant_idx": fi, "range_idx": ri,
                                "gap_ms": gap_ms, "eq": eq},
                       "files": files})
