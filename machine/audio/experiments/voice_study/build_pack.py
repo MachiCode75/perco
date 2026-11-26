@@ -110,7 +110,7 @@ def main():
     prof = json.load(open(os.path.join(A, "profile.json"))) if os.path.exists(os.path.join(A, "profile.json")) else {}
 
     # reference: held-out sentences + montage
-    ref_segs = [load(h["wav"] if os.path.isabs(h["wav"]) else os.path.join(A, h["wav"])) for h in held]
+    ref_segs = [load(h["wav"] if os.path.isabs(h["wav"]) else os.path.join(M, h["wav"])) for h in held]
     mont = load(os.path.join(A, "ref_montage.wav"))
     R = feats(np.concatenate(ref_segs + [mont]))
     mjson = os.path.join(A, "ref_montage.json")
